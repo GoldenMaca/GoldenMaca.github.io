@@ -1,0 +1,16 @@
+body {
+	background-color: #ff4d4d;
+	font-family: verdana;
+}
+
+img {
+	max-width: 50%; /* Ensures the image doesn't exceed its parent's width */
+	max-height: 400px; /* Limits the image's height to 400 pixels */
+	height: auto; /* Maintains the aspect ratio when scaling */
+}
+hr {
+	height: 4px;
+	background-color: black;
+	border: black;
+
+}
