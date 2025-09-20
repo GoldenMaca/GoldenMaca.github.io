@@ -14,3 +14,33 @@ hr {
 	border: black;
 
 }
+
+.btn {
+	background-color: black;
+	border: 2px solid white;
+	color: white;
+	text-align: center;
+	font-size: 16px;
+	border-radius: 10px;
+	transition-duration: 0.4s;
+	padding: 16px 38px;
+	border-color: white;
+	border-radius: 3px;
+}
+
+.btn:hover {
+	background-color: white;
+	color: black;
+	border: 2px solid black;
+	border-radius: 3px;
+}
+
+.border {
+	border-color: #2196F3;
+  	color: black;
+}
+
+.border:hover {
+  	background:#2196F3;
+  	color: white;
+}
