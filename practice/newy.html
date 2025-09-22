@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Block Sections Demo</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .block {
+      height: 75vh; /* full screen height per block */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 2rem;
+      color: white;
+      margin-bottom:10px;
+
+    }
+
+    .block h1 {
+	    margin: 0;
+	    margin-bottom: 2vh;
+    }
+
+    .block p {
+	    margin:0;
+    }
+
+    .cars {
+      background: #555; /* gray */
+    }
+
+    .food {
+      background: #2196f3; /* blue */
+    }
+
+    .travel {
+      background: #f2f2f2; /* light gray (text darker) */
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="block cars">
+    <h1>CARS</h1>
+    <br>
+    <p>🚗 This block is about cars</p>
+  </div>
+
+  <div class="block food">
+    <p>🍔 This block is about food</p>
+  </div>
+
+  <div class="block travel">
+    <p>✈️ This block is about travel</p>
+  </div>
+
+</body>
+</html>
+
