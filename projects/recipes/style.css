@@ -4,11 +4,17 @@ body {
 
 }
 
-.contentboxes {
+.block {
 	width: 100vw;
 	height: 75vh;
 	padding: 20px;
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
 
 
 }
 
+.topblock {
+	background-color:cornsilk;
+}
