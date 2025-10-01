@@ -1,5 +1,5 @@
 body {
-	background-color: #94c944;
+	background-color: #6cb6d3;
 	font-family:Arial, Helvetica, sans-serif;
 
 }
@@ -8,18 +8,29 @@ body {
 	width: 100%;
 	height: 75vh;
 	display: flex;
-	justify-content: center;
+	justify-content: top;
+	align-items: center;
 	flex-direction: column;
+	margin-bottom: 10px;
+
 	
 
 
 }
 
-.textcen {
-	text-align: center top;
-}
+
 
 .topblock {
-	background-color:rgb(148, 225, 41);
+	background-color:rgb(33, 139, 239);
+	border-radius: 10px;
+}
+
+.secondblock {
+	background-color: rgb(33, 139, 239);
+	border-radius: 10px;
+}
+
+.thirdblock {
+	background-color: rgb(33, 139, 239);
 	border-radius: 10px;
 }
