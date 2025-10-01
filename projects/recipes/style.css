@@ -1,54 +1,5 @@
+
 body {
-<!DOCTYPE html>
-
-
-<html lang="en">
-
-	<head>
-		<title>Class Schedule</table>
-		<script src="../js/validate.js"></script>
-
-
-	</head>
-
-
-	<body>
-
-		<table>
-			<tr>
-				<th colspan=2>Period</th>
-				<th colspan=2>Subject</th>
-			</tr>
-
-			<tr>
-				<td rowspan=5>a</td>
-				<td>1<td>
-				<td>French III</td>
-
-			</tr>
-
-			<tr>
-				<td>2</td>
-				<td>Archers Period</td>
-
-			</tr>
-
-			<tr>
-				<td>3</td>
-				<td>Engineering</td>
-
-			</tr>
-
-			<tr>
-				<td>4</td>
-				<td>Web Design</td>
-
-			</tr>
-
-			<tr>
-				<td>5</tr>
-				<td>Science</td>
-
 	background-color: #6cb6d3;
 	font-family:Arial, Helvetica, sans-serif;
 
