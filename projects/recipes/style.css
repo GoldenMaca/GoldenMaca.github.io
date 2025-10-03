@@ -80,13 +80,21 @@ img {
 	text-align: left;
 }
 
+.changefont2 {
+	text-align: left;
+	font-size: clamp(1vw, 3vw, 5vw);
+}
+
 .topblock {
-	background-color:rgb(33, 139, 239);
+	background-color:rgb(88, 174, 255);
 	border-radius: 10px;
+	height: auto;
+	display: flex;
+	gap: 20px;
 }
 
 .secondblock {
-	background-color: rgb(33, 139, 239);
+	background-color: rgb(74, 167, 255);
 	border-radius: 10px;
 	height: auto;
 	display: flex;
@@ -94,10 +102,31 @@ img {
 }
 
 .thirdblock {
-	background-color: rgb(117, 184, 248);
+	background-color: rgb(78, 170, 255);
 	border-radius: 10px;
 	height: auto;
 	display: flex;
 	gap: 20px;
 }
 
+.fourthblock {
+	background-color: rgb(142, 157, 172);
+	border-radius: 10px;
+	height: auto;
+	display: flex;
+	gap: 20px;
+}
+
+a:link, a:visited {
+	color: #000000;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #000000;
+	text-decoration: underline;
+}
+
+a:active {
+	color: #000000;
+}
