@@ -41,7 +41,7 @@ h1 {
 
 img {
 	align-items: left;
-	margin-left: 20px;
+	margin-left: 0;
 	margin-top: 5px;
 	max-width: 90%;
 	height: auto;
@@ -54,6 +54,18 @@ img {
 	flex-grow: 2;
 	margin-right: 20px;
 	margin-left: 0px;
+}
+.imagebox2 {
+	flex-grow: 1;
+	margin-right: 20px;
+	margin-left: 0px;
+	max-width: 50%;
+	
+}
+.paragraph2 {
+	flex-grow: 2;
+	width: 70vw;
+	margin-left: 20px;
 }
 .paragraph {
 	flex-grow: 1;
@@ -76,6 +88,9 @@ img {
 .secondblock {
 	background-color: rgb(33, 139, 239);
 	border-radius: 10px;
+	height: auto;
+	display: flex;
+	gap: 20px;
 }
 
 .thirdblock {
