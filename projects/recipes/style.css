@@ -1,5 +1,5 @@
 body {
-	background-color: #6cb6d3;
+	background-color: #fdfeff;
 	font-family:Arial, Helvetica, sans-serif;
 
 }
@@ -9,16 +9,64 @@ body {
 	height: 75vh;
 	display: flex;
 	justify-content: top;
-	align-items: center;
 	flex-direction: column;
 	margin-bottom: 10px;
 
 	
+}
 
+.nicetext {
+  font-family: "Funnel Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+  text-align: center;
+}
+
+h1 {
+	font-size: 3rem;
+}
+
+.side-side {
+	display: flex;
+	align-items: flex-start;
+}
+
+.headertoptitle {
+	text-align: center;
+	margin-top: 0px;
+	margin-bottom: 20px;
+	font-size: 10vw;
+}
+
+img {
+	align-items: left;
+	margin-left: 20px;
+	margin-top: 5px;
+	max-width: 90%;
+	height: auto;
+	border-radius: 10px;
+	float: right;
+	margin-bottom: 20px;
+}
+
+.imagebox {
+	flex-grow: 2;
+	margin-right: 20px;
+	margin-left: 0px;
+}
+.paragraph {
+	flex-grow: 1;
+	width: 70vw;
+	margin-left: 20px;
+	
 
 }
 
-
+.changefont {
+	font-size: clamp(1vw, 2.3vw, 4vw);
+	text-align: left;
+}
 
 .topblock {
 	background-color:rgb(33, 139, 239);
@@ -31,6 +79,10 @@ body {
 }
 
 .thirdblock {
-	background-color: rgb(33, 139, 239);
+	background-color: rgb(117, 184, 248);
 	border-radius: 10px;
+	height: auto;
+	display: flex;
+	gap: 20px;
 }
+
