@@ -1,0 +1,29 @@
+body {
+            background: #000;
+            color: #fff;
+            margin: 0;
+            font-family: sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-self: center;
+            align-items: center;
+            overflow: hidden;
+}
+
+.container {
+    font-size:10px;
+    width: 40em;
+    height: 40em;
+    position: relative;
+}
+
+.sun {
+    position: absolute;
+    top: 15em;
+    left: 15em;
+    width: 10em;
+    height: 10em;
+    background: yellow;
+    border-radius: 50%;
+    box-shadow: 0 0 3em white;
+}
