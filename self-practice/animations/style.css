@@ -37,7 +37,7 @@ body
 
 .box2 {
     background-color: transparent;
-    border: solid 10px aqua;
+    border: solid 10px rgb(105, 255, 255);
     filter: blur(1px);
     width: 75px;
     height: 75px;
@@ -94,20 +94,16 @@ body
     justify-content: center;
     align-items: center;
 
-    
+    transition: transform 0.5s ease;
 
 }
 
 .box3:hover {
-    transform: rotate(45deg) 1s ease;
-    animation-name: box3-anim;
+    transform: rotate(45deg);
 }
 
-@keyframes box3-anim {
-    to{
-        transform: rotate(45deg);
-    }
-}
+
+
 
 
 .sbox3 {
@@ -139,3 +135,112 @@ body
         
     }
 }
+
+
+.box4 {
+    height: 20vh;
+    width: 20vh;
+    background-color: #ff64fa;
+    border-radius: 5%;
+    justify-content: center;
+    align-items: center;
+
+
+
+    animation-name: slide-anim;
+    animation-duration: 4s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    animation-direction: alternate;
+    animation-delay: 0s;
+
+
+}
+
+.box5 {
+    height: 20vh;
+    width: 20vh;
+    background-color: #ff64fa;
+    border-radius: 5%;
+    justify-content: center;
+    align-items: center;
+
+    animation-name: slide-anim;
+    animation-duration: 4s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in;
+    animation-direction: alternate;
+    animation-delay: 0s;
+
+
+}
+
+.box6 {
+    height: 20vh;
+    width: 20vh;
+    background-color: #ff64fa;
+    border-radius: 5%;
+    justify-content: center;
+    align-items: center;
+
+    animation-name: slide-anim;
+    animation-duration: 4s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+    animation-direction: alternate;
+    animation-delay: 0s;
+
+
+}
+
+.box7 {
+    height: 20vh;
+    width: 20vh;
+    background-color: #ff64fa;
+    border-radius: 5%;
+    justify-content: center;
+    align-items: center;
+
+    animation-name: slide-anim;
+    animation-duration: 4s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-out;
+    animation-direction: alternate;
+    animation-delay: 0s;
+
+
+}
+
+.box8 {
+    height: 20vh;
+    width: 20vh;
+    background-color: #ff64fa;
+    border-radius: 5%;
+    justify-content: center;
+    align-items: center;
+
+    animation-name: slide-anim;
+    animation-duration: 4s;
+    animation-iteration-count: infinite;
+    animation-timing-function: random;
+    animation-direction: alternate;
+    animation-delay: 0s;
+
+
+}
+
+@keyframes slide-anim {
+    0%{
+        transform: translateX(0px);
+        
+    }
+    50%{
+        transform: translateX(80vw);
+        
+    }
+    100%{
+        transform: translateX(0px);
+        
+    }
+}
+
