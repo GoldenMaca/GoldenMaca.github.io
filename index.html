@@ -44,17 +44,37 @@
 		text-decoration: underline;
 		color: darkblue;
 	}
+
+
+	.link-holder {
+         align-items: center;
+         justify-content: center;
+         background-color: white;
+         border: 2px solid black;
+         border-radius: 10px;
+		 padding: 5px;
+
+		transition: background-color 0.2s ease;
+
+      }
+
+	  .link-holder:hover {
+		  transform: backg;
+
+	  }
+
+
 </style>
 </head>
 <body>
 
 	<nav>
 		<div class="topnav">
-			<a href="https://goldenmaca.github.io">Home</a>
-			<a href="https://goldenmaca.github.io/about.html">About</a>
-			<a href="https://goldenmaca.github.io/projects/recipes/index.html">Recipes</a>
-			<a href="https://goldenmaca.github.io/contact.html">Contact</a>
-			<a href="https://goldenmaca.github.io/blog.html">Blog</a>
+			<div class="link-holder"><a href="https://goldenmaca.github.io">Home</a></div>
+			<div class="link-holder"><a href="https://goldenmaca.github.io/about.html">About</a></div>
+			<div class="link-holder"><a href="https://goldenmaca.github.io/projects/recipes/index.html">Recipes</a></div>
+			<div class="link-holder"><a href="https://goldenmaca.github.io/contact.html">Contact</a></div>
+			<div class="link-holder"><a href="https://goldenmaca.github.io/blog.html">Blog</a></div>
 		</div>
 	</nav>
 
