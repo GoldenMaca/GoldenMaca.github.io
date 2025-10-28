@@ -1,0 +1,158 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.game-container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 90%;
+    max-width: 600px;
+}
+
+h1, h2, h3 {
+    color: #333;
+}
+
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 20px;
+    font-size: 1.2em;
+}
+
+.game-area {
+    margin-bottom: 20px;
+}
+
+#game-status {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+#boxes-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 20px;
+    margin: 20px auto;
+}
+
+.box {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 1.5em;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    border: 3px solid #333;
+}
+
+.box:hover {
+    transform: scale(1.05);
+}
+
+.box.revealed {
+    cursor: not-allowed;
+}
+
+.killbox {
+    background-color: #f44336;
+    color: white;
+}
+
+.prize-box {
+    background-color: #2196F3;
+    color: white;
+}
+
+.controls button {
+    padding: 12px 25px;
+    font-size: 1em;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    margin: 5px;
+    transition: background-color 0.3s ease;
+}
+
+#start-game-btn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+#start-game-btn:hover {
+    background-color: #45a049;
+}
+
+#end-round-btn {
+    background-color: #555;
+    color: white;
+}
+
+#end-round-btn:hover {
+    background-color: #333;
+}
+
+.prizes, .shop, #packs-display {
+    margin-top: 25px;
+    border-top: 1px solid #ccc;
+    padding-top: 20px;
+}
+
+#prize-list, #pack-list {
+    list-style: none;
+    padding: 0;
+}
+
+#prize-list li, #pack-list li {
+    background: #eee;
+    margin-bottom: 5px;
+    padding: 10px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.shop-item {
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin: 10px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.shop-item button {
+    padding: 8px 15px;
+    background-color: #FFC107;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.shop-item button:hover {
+    background-color: #ffb300;
+}
+
+/* Cosmetic Skin Example */
+.box.cosmetic-skin {
+    background: linear-gradient(45deg, #FF7F50, #6495ED);
+}

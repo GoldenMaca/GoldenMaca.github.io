@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Four Boxes</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <h1>The Four Boxes</h1>
+
+        <div class="stats">
+            <p>Coins: <span id="coins-display">1000</span></p>
+            <p>Gems: <span id="gems-display">0</span></p>
+        </div>
+
+        <div class="game-area">
+            <div id="game-status">Click "Start Game" to begin!</div>
+            <div id="boxes-container">
+                <!-- Boxes will be dynamically created by JavaScript -->
+            </div>
+            <div id="game-results"></div>
+        </div>
+        
+        <div class="controls">
+            <button id="start-game-btn" onclick="startGame()">Start Game (50 Coins)</button>
+            <button id="end-round-btn" onclick="collectPrizes()" disabled>Collect Prizes</button>
+        </div>
+        
+        <div class="prizes">
+            <h3>Prizes</h3>
+            <ul id="prize-list"></ul>
+        </div>
+
+        <div class="shop">
+            <h2>Shop</h2>
+            <div class="shop-item">
+                <h3>Prize Multiplier Pack</h3>
+                <p>Cost: 50 Gems</p>
+                <button onclick="buyPack()">Buy Pack</button>
+            </div>
+            <div class="shop-item">
+                <h3>Cosmetic Box Skin</h3>
+                <p>Cost: 20 Gems</p>
+                <button onclick="buySkin()">Buy Box Skin</button>
+            </div>
+        </div>
+
+        <div id="packs-display">
+            <h3>Your Packs</h3>
+            <ul id="pack-list"></ul>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
