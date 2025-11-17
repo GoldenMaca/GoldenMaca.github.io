@@ -94,4 +94,4 @@ In the internet layer, a routing table is made to send your message through bina
 - This protocol successfully encrypts the **content** of the message. Even though and adversary in the middle can't read the content of the message, what other
 information can they still see?
 
-They can see who the sener what, who it was intended for, the time and the key used to encrpt the message.
+They can see who the sender what, who it was intended for, the time and the key used to encrpt the message.
