@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fantasy Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    #controls, #actions {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    input, button, select {
+      margin: 5px;
+      padding: 8px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+    tr.selected {
+      background: #cde6ff;
+    }
+    #actions button {
+      margin: 5px;
+      padding: 10px 15px;
+      border: none;
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+    #actions button:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>Fantasy Football Tracker</h1>
+
+  <!-- Add Player -->
+  <div id="controls">
+    <input type="text" id="playerName" placeholder="Player Name">
+    <select id="position">
+      <option value="QB">QB</option>
+      <option value="RB">RB</option>
+      <option value="WR">WR</option>
+      <option value="TE">TE</option>
+      <option value="DEF">DEF</option>
+    </select>
+    <button onclick="addPlayer()">Add Player</button>
+  </div>
+
+  <!-- Player Table -->
+  <table id="playerTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Pos</th>
+        <th>Points</th>
+        <th>Passing Yds</th>
+        <th>Rushing Yds</th>
+        <th>TDs</th>
+        <th>INT</th>
+        <th>Fumbles</th>
+        <th>Remove</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <!-- Scoring Buttons -->
+  <div id="actions">
+    <p><strong>Selected Player Actions</strong></p>
+    <button onclick="awardPoints('tdFor')">Touchdown (+6)</button>
+    <button onclick="awardPoints('tdAgainst')">TD Against DEF (-3 each)</button>
+    <button onclick="awardPoints('passYds')">+25 Passing Yds (+1)</button>
+    <button onclick="awardPoints('rushYds')">+10 Rushing Yds (+1)</button>
+    <button onclick="awardPoints('interception')">Interception (-2)</button>
+    <button onclick="awardPoints('fumble')">Fumble (-2)</button>
+    <button onclick="manualAdjust()">Manual Adjust</button>
+  </div>
+
+  <script>
+    let players = [];
+    let selectedIndex = null;
+
+    function addPlayer() {
+      const name = document.getElementById('playerName').value.trim();
+      const pos = document.getElementById('position').value;
+
+      if (name === "") return;
+
+      players.push({
+        name: name,
+        pos: pos,
+        points: 0,
+        passYds: 0,
+        rushYds: 0,
+        tds: 0,
+        ints: 0,
+        fumbles: 0
+      });
+
+      document.getElementById('playerName').value = "";
+      renderTable();
+    }
+
+    function removePlayer(index) {
+      players.splice(index, 1);
+      if (selectedIndex === index) selectedIndex = null;
+      renderTable();
+    }
+
+    function selectPlayer(index) {
+      selectedIndex = index;
+      renderTable();
+    }
+
+    function awardPoints(action) {
+      if (action === "tdAgainst") {
+        players.forEach(p => {
+          if (p.pos === "DEF") {
+            p.points -= 3;
+          }
+        });
+      } else if (selectedIndex !== null) {
+        const player = players[selectedIndex];
+        switch (action) {
+          case "tdFor":
+            player.points += 6;
+            player.tds++;
+            break;
+          case "passYds":
+            player.passYds += 25;
+            player.points += 1;
+            break;
+          case "rushYds":
+            player.rushYds += 10;
+            player.points += 1;
+            break;
+          case "interception":
+            player.points -= 2;
+            player.ints++;
+            break;
+          case "fumble":
+            player.points -= 2;
+            player.fumbles++;
+            break;
+        }
+      }
+      renderTable();
+    }
+
+    function manualAdjust() {
+      if (selectedIndex === null) return;
+      const amt = parseInt(prompt("Enter points to add/remove (negative for subtract):", "0"));
+      if (!isNaN(amt)) {
+        players[selectedIndex].points += amt;
+        renderTable();
+      }
+    }
+
+    function renderTable() {
+      const tbody = document.querySelector("#playerTable tbody");
+      tbody.innerHTML = "";
+
+      players.forEach((p, index) => {
+        const row = document.createElement("tr");
+        if (index === selectedIndex) row.classList.add("selected");
+
+        row.innerHTML = `
+          <td>${p.name}</td>
+          <td>${p.pos}</td>
+          <td>${p.points}</td>
+          <td>${p.passYds}</td>
+          <td>${p.rushYds}</td>
+          <td>${p.tds}</td>
+          <td>${p.ints}</td>
+          <td>${p.fumbles}</td>
+          <td><button onclick="removePlayer(${index})">X</button></td>
+        `;
+        row.onclick = () => selectPlayer(index);
+
+        tbody.appendChild(row);
+      });
+    }
+  </script>
+</body>
+</html>

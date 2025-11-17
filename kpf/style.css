@@ -1,0 +1,9 @@
+body {
+    display: flex;
+
+    font-family: Funnel-sans, sans-serif;
+
+    justify-content: center;
+    align-items: center;
+    margin: 20px;
+}
