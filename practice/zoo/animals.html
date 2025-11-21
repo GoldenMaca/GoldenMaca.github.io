@@ -5,131 +5,21 @@
     <title>Animal Exhibits</title>
     <script src="../js/init.js"></script>
 
-    <style>
-        table, tr, td, th {
-            border: 2px solid black;
-            border-collapse: collapse;
-            padding: 8px;
-            font-weight: bold;
-            background-color: #fd6767;
-            
-        }
-
-        .top {
-            width: 100%;
-        }
-        
-
-        body {
-            font-family:Arial, Helvetica, sans-serif;
-            background-color: #ff8181;
-            margin-left: 2vw;
-        }
-
-        a {
-            text-decoration: none;
-            color: black;
-            font-weight: bold;
-            font-size: 4vw;
-            
-        }
-
-        .b {
-            transition: transform 0.5s ease;
-            
-        }
-
-        .b:hover {
-            transform: translateX(10px);
-            font-size: 3.1vw;
-            text-decoration: underline;
-        }
-
-
-        .jungletrek {
-            background-color: #ff6a6a;
-            border: 2px solid black;
-            padding: 2vw;
-            margin-top: 1vw;
-            display: inline-block;
-        }
-
-        .tiger {
-            width: 25vw;
-            height: auto;
-            background-image: url('../../images/tiger.png');
-            background-size: cover;
-            border: 4px solid black;
-            display: inline-block;
-            margin: 1vw;
-            border-radius: 10px;
-            max-width: 30vw;
-            height: auto;
-            transition: transform 0.5s ease;
-        }
-
-        .tiger:hover {
-            transform: scale(1.3);
-        }
-
-        .parrot {
-            width: 25vw;
-            height: auto;
-            background-image: url('../../images/parrot.png');
-            background-size: cover;
-            border: 4px solid black;
-            display: inline-block;
-            margin: 1vw;
-            border-radius: 10px;
-            max-width: 30vw;
-            height: auto;
-            transition: transform 0.5s ease;
-        }
-
-        .parrot:hover {
-            transform: scale(1.3);
-        }
-        .monkey {
-            width: 25vw;
-            height: auto;
-            background-image: url('../../images/monkey.png');      
-            background-size: cover;
-            border: 4px solid black;
-            display: inline-block;
-            margin: 1vw;
-            border-radius: 10px;
-            transition: transform 0.5s ease;
-        }
-
-        .monkey:hover {
-            transform: scale(1.3);
-        }
-        .textjt {
-            text-align: center;
-            font-size: 4vw;
-            font-weight: bold;
-            color: white;
-            background-color: black;
-            margin-top: 80%;
-            
-            
-        
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
-        <h1 style="font-size: 7vw;">Explore Our Animal Exhibits</h1>
-        <p>Meet the amazing animals that call our zoo home!</p>
+        <h1 style="font-size: 7vw; background-color: rgb(13, 154, 13); padding: 0.5rem 1rem; border-radius: 10px;">Explore Our Animal Exhibits</h1>
+        <p style="background-color: rgb(13, 154, 13); padding: 0.5rem 1rem; border-radius: 10px;">Meet the amazing animals that call our zoo home!</p>
     </header>
     <nav>
-        <ul>
+        <ul style="background-color: rgb(13, 154, 13); padding: 0.5rem 1rem; border-radius: 10px;">
             <div class="b"><li><a href="index.html">Home</a></li></div>
             <div class="b"><li><a href="animals.html">Animals</a></li></div>
         </ul>
     </nav>
     <main>
-        <section>
+        <section style="background-color: rgb(13, 154, 13); padding: 0.5rem 1rem; border-radius: 10px; padding-bottom: 15px;">
             <h2>Animal Exhibits</h2>
             <p>Our exhibits showcase animals from different regions of the world. Take a look at the details:</p>
             <table class="top">
@@ -162,22 +52,51 @@
         </section>
     </main>
 
-    <div class="container">
+    <div class="container" style="background-color: rgb(13, 154, 13); padding: 0.5rem 1rem; border-radius: 10px; margin-top: 10px;">
         <div class="jungletrek">
             <h1 style="font-size: 5vw; margin-bottom: 5px;">Jungle Trek</h1>
             <br>
             <p style="font-weight: bold; font-size: 3vw; margin-top: 0px;">Experience the dense foliage and vibrant wildlife of the Amazon Rainforest. Our Jungle contains the following animals:</p>
 
-                <div class="tiger">
-                    <h2 class="textjt">Tiger</h2>
-                </div>
-                <div class="parrot">
-                    <h2 class="textjt">Parrot</h2>
-                </div>
-                <div class="monkey">
-                    <h2 class="textjt">Monkey</h2>
-                </div>  
+            <div class="tiger">
+                <h2 class="textjt">Tiger</h2>
+            </div>
+            <div class="parrot">
+                <h2 class="textjt">Parrot</h2>
+            </div>
+            <div class="monkey">
+                <h2 class="textjt">Monkey</h2>
+            </div>  
         </div>
+
+        <div class="savannahsafari">
+            <h1 style="font-size: 5vw; margin-bottom: 5px;">Savannah Safari</h1>
+            <br>
+            <p style="font-weight: bold; font-size: 3vw; margin-top: 0px;">Roam the open plains of the African Savannah. Our Savannah is home to:</p>
+
+            <div class="lion">
+                <h2 class="textjt">Lion</h2>
+            </div>
+            <div class="giraffe">
+                <h2 class="textjt">Giraffe</h2>
+            </div>
+            <div class="elephant">
+                <h2 class="textjt">Elephant</h2>
+            </div>  
+        </div>
+
+        <div class="arcticwonders">
+            <h1 style="font-size: 5vw; margin-bottom: 5px;">Arctic Wonders</h1>
+            <br>
+            <p style="font-weight: bold; font-size: 3vw; margin-top: 0px;">Discover life in the icy polar regions. The Arctic exhibit features:</p>
+
+            <div class="polarbear">
+                <h2 class="textjt">Polar Bear</h2>
+            </div>
+            <div class="penguin">
+                <h2 class="textjt">Penguin</h2>
+            </div>  
+        </div></div>
         <div class="savannahsafari">
 
         </div>

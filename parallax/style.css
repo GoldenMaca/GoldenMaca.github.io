@@ -1,0 +1,39 @@
+body, html {
+  height: 100%; /* Ensure body and html take full height */
+  margin: 0;
+  font-family: sans-serif;
+}
+
+.parallax {
+  /* The image used for the background */
+  background-image: url('../images/image.png'); 
+
+  /* Full height of the viewport */
+  min-height: 100vh; 
+
+  justify-content: center;
+  align-items: center;
+
+  /* Create the parallax scrolling effect */
+  background-attachment: fixed; /* This is the key for parallax */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.content {
+  padding: 100px 20px; /* Add padding to push content off the top */
+  color: white;
+  text-align: center;
+  
+}
+
+.regular-section {
+  padding: 50px 20px;
+  background-color: #f0f0f0;
+  text-align: center;
+}
+#fu {
+    color: red;
+    font-size: 100px;
+}
