@@ -6,14 +6,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Parallax Scrolling Example</title>
   <link rel="stylesheet" href="style.css">
+  <script src="script.js"></script>
 </head>
 
 <body>
 
     <div class="parallax">
         <div class="content" style="padding-top: 30vh;">
-            <h1 style="font-size: 4rem;">Nature</h1>
-            <p style="font-size: 2rem;">Nature is beautiful.</p>
+            <h1 style="font-size: 4rem;" id="nature1">Nature</h1>
+            <p style="font-size: 2rem;" id="nature2">Nature is beautiful.</p>
+            <button id="magic" onClick="magicify()">magic</button>
         </div>
     </div>
 

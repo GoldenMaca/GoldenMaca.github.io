@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ice Cream Form</title>
+
+    <style>
+        body{
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    </style>
+    
+
+    
+</head>
+<body>
+    <main>
+        <h1>Ice Cream Party</h1>
+        <form action="https://httpbin.org/post" method="POST">
+            Name
+            <input type="text" name="Your Name" placeholder="John Smith" required>
+            <br>
+            <br>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" placeholder="exampletext@example.com">
+            <br>
+            <br>
+            <label for="country">Phone Number:</label>
+            <select type="text" id="country" name="Country" required>
+            <option value="slct">...</option>
+            <option value="USA">(USA) +1</option>
+            <option value="UK">(UK) +44</option>
+            </select>
+            <input type="tel" id="pn" name="phone number" placeholder="(123)-456-7890">
+            <br>
+            <br>
+            <label for="hmp">How many people will you bring with you?</label>
+            <input type="text" id="hmp" name="hmp" placeholder="eg. 1, 2, 3">
+            <br>
+            <br>
+            <fieldset>
+                <legend>What is your favorite ice cream?</legend>
+                <input type="radio" id="vanilla" name="vanilla" value="vanilla">
+                <label for="vanilla">Vanilla</label><br>
+                <input type="radio" id="chocolate" name="chocolate" value="chocolate">
+                <label for="chocolate">Chocolate</label><br>
+                <input type="radio" id="strawberry" name="strawberry" value="strawberry">
+                <label for="strawberry">Strawberry</label>
+                <input type="radio" id="Other" name="Other" value="Other">
+                <label for="Other">Other</label>
+              </fieldset>
+
+              <br>
+              <br>
+                <input type="checkbox" id="sprinkles" name="topping" value="Sprinkles">
+                <label for="sprinkles">Sprinkles</label><br>
+
+                <input type="checkbox" id="magic_shell" name="topping" value="Magic Shell">
+                <label for="magic_shell">Magic Shell</label><br>
+
+                <input type="checkbox" id="chocolate_chips" name="topping" value="Chocolate Chips">
+                <label for="chocolate_chips">Chocolate Chips</label><br>
+
+                <input type="checkbox" id="gummy_bears" name="topping" value="Gummy Bears">
+                <label for="gummy_bears">Gummy Bears</label><br>
+
+                <input type="checkbox" id="other" name="topping" value="Other">
+                <label for="other">Other:</label>
+                <input type="text" id="other_text" name="other_topping_details" placeholder="Specify other topping"><br><br>
+
+              <h2>Select Event Entertainment Option</h2>
+
+    
+                <label for="entertainment_options">Choose an option:</label>
+                <select name="entertainment_options" id="entertainment_options">
+                    <option value="select">...</option>
+                    <option value="balloon_animals">Balloon animals</option>
+                    <option value="bounce_house">Bounce house</option>
+                    <option value="clown">Clown</option>
+                    <option value="cornhole">Cornhole</option>
+                    <option value="dj">DJ</option>
+                    <option value="face_painting">Face painting</option>
+                    <option value="magician">Magician</option>
+                </select>
+                <br>
+                <br>
+                Do you have any other suggestions or comments?
+                <br>
+
+                <input type="text" name="extracomments" placeholder="...">
+                <br>
+                <br>
+
+            <input type="reset" value="Reset Form">
+            <br>
+            <button type="submit">Submit</button>
+            
+        </form>
+    </main>
+    
+</body>
+</html>
