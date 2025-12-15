@@ -21,3 +21,19 @@ myForm.addEventListener("submit", function (event) {
     // Optional: Clear the form fields after submission
     myForm.reset();
 });
+
+function sendEmail() {
+    const recipient = document.getElementById('recipientEmail').value;
+    let subject = "MyAccess Bypass";
+    const body = "Thank you for using our service. The process has been successfully completed.";
+    
+    // Encode subject and body for URL
+    const encodedSubject = encodeURIComponent(subject);
+    const encodedBody = encodeURIComponent(body);
+
+    // Construct the mailto URI
+    const mailtoUri = `mailto:${recipient}?subject=${encodedSubject}&body=${encodedBody}`;
+
+    // Open the user's default email client
+    window.location.href = mailtoUri;
+}
