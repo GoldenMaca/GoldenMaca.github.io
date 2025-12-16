@@ -1,0 +1,145 @@
+<!-- /Users/1012317/Desktop/Desktop/website/practice/position.html -->
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Tree</title>
+    
+
+    <style>
+        body{
+            background-color: #8dc1e6;
+            align-items: center;
+            display: flex;
+            justify-content: center;
+        }
+
+        .triangle {
+            aspect-ratio: 1/cos(30deg);
+            clip-path: polygon(50% 0,100% 100%,0 100%);
+            background-color: #3bc036;
+            position: absolute;
+        }
+        #tree{
+            align-items: center;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            margin-bottom: 0;
+            margin-top: 20px;
+        }
+        #stump{
+            width: 50px;
+            height: 75px;
+            background-color: #8b5a2b;
+            position: relative;
+            left: 125px;
+            top: 510px;
+            margin-bottom: 0;
+        }
+
+        #ground{
+            width: 100%;
+            height: 230px;
+            background-color: #d4dbd4;
+            position: absolute;
+            top: 575px;
+            left: 0;
+        }
+        .ornament{
+            width: 15px;
+            height: 15px;
+            background: linear-gradient(to right, #ff0000, #ff5500);
+            border-radius: 100%;
+            position: relative;
+            
+        }
+        .ornament-blue{
+            width: 15px;
+            height: 15px;
+            background: linear-gradient(to right, #0000ff, #7328ff);
+            border-radius: 100%;
+            position: relative;
+        }
+
+        /* HTML: <div class="lollipop"></div> */
+    .lollipop {
+        --r: 150px; /* control the size */
+        --c1: #fd99d7;
+        --c2: #4e4cb0;
+
+        height: calc(2* var(--r));
+        aspect-ratio: 1;
+        clip-path: circle();
+        display: flex;
+    }
+    .lollipop:before,
+    .lollipop:after {
+        content: "";
+        flex: 1;
+        --g1:radial-gradient(50% 50%,var(--c1) 99%,#0000) no-repeat;
+        --g2:radial-gradient(50% 50%,var(--c2) 99%,#0000) no-repeat;
+        background: var(--g1) calc(sin(60deg)* var(--r)) calc(var(--r) / -2), var(--g2) calc(var(--r) / 2) calc(sin(-60deg)* var(--r)), var(--g1) 0 calc(-1* var(--r)), var(--g2) calc(var(--r) / -2) calc(sin(-60deg)* var(--r)), var(--g1) calc(sin(-60deg)* var(--r)) calc(var(--r) / -2), var(--g2) calc(-1* var(--r)) 0, var(--g1) calc(sin(-60deg)* var(--r)) calc(var(--r) / 2);
+        background-size: 200%;
+    }
+    .lollipop:after {
+        rotate: 180deg;
+    }
+
+    /* HTML: <div class="star"></div> */
+    .star {
+        width: 60px;  
+        aspect-ratio: 1;
+        background: #F8CA00;
+        clip-path: polygon(50% 0,
+            calc(50%*(1 + sin(.4turn))) calc(50%*(1 - cos(.4turn))),
+            calc(50%*(1 - sin(.2turn))) calc(50%*(1 - cos(.2turn))),
+            calc(50%*(1 + sin(.2turn))) calc(50%*(1 - cos(.2turn))),
+            calc(50%*(1 - sin(.4turn))) calc(50%*(1 - cos(.4turn))) 
+        ); 
+        /* or more simple
+        clip-path: polygon(50% 0,79% 90%,2% 35%,98% 35%,21% 90%); 
+        */
+        position: absolute;
+    }
+                
+    </style>
+
+</head>
+<body>
+    <div id="tree">
+        <div class="triangle" style="width: 100px; left: 100px;"></div>
+        <div class="triangle" style="width: 150px; top:50px; left: 75px;"></div>
+        <div class="triangle" style="width: 200px; top:100px; left: 50px;"></div>
+        <div class="triangle" style="width: 250px; top:175px; left: 25px;"></div>
+        <div class="triangle" style="width: 300px; top:250px; left: 0px;"></div>
+        <div id="stump"></div>
+
+        <div class="star" style="left: 120px; top: -15px;"></div>
+
+        <div class="ornament" style="top: 200px; left: 62.5px;"></div>
+        <div class="ornament" style="top: 150px; left: 125px;"></div>
+        <div class="ornament" style="top: 300px; left: 200px;"></div>
+        <div class="ornament" style="top: 50px; left: 80px;"></div>
+        <div class="ornament" style="top: 250px; left: 100px;"></div>
+        <div class="ornament" style="top: 350px; left: 37.5px;"></div>
+        <div class="ornament" style="top: -50px; left: 130px;"></div>
+
+        <!--Blue ornaments-->
+        <div class="ornament-blue" style="top: 175px; left: 175px;"></div>
+        <div class="ornament-blue" style="top: 225px; left: 50px;"></div>
+        <div class="ornament-blue" style="top: 75px; left: 150px;"></div>
+        <div class="ornament-blue" style="top: 260px; left: 150px;"></div>
+        <div class="ornament-blue" style="top: -50px; left: 125px;"></div>
+        <div class="ornament-blue" style="top: 325px; left: 175px;"></div>
+
+        <div class="lollipop" style="--r:20px; position: relative; top: -60px; left: 170px;"></div>
+        <div class="lollipop" style="--r:15px; position: relative; top: 160px; left: 60px;"></div>
+        <div class="lollipop" style="--r:10px; position: relative; top: -200px; left: 120px;"></div>
+        <div class="lollipop" style="--r:25px; position: relative; top: 0; left: 140px;"></div>
+
+    </div>
+    <div id="ground"></div>
+</body>
+</html>
