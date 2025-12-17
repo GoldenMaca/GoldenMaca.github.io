@@ -1,36 +1,43 @@
-         	Zander’s Lawn & Landscape
-
-Phone number is 570-418-5199
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Funnel+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
 <title>Zander’s Lawn Care</title>
 
 <style>
+    html {
+  scroll-behavior: smooth;
+}
+
   body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: "Funnel Sans", sans-serif;
+    font-weight: 400;
     background: #fff;
     color: #fff;
+    min-width: 320px;
   }
 
-  .hero {
+  #hero {
     background: linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.6)),
       url("hero.jpg") center/cover no-repeat;
     padding: 100px 20px;
     text-align: center;
   }
 
-  .hero h1 {
+  #hero h1 {
     color: #ff7a00;
     font-size: 3rem;
     margin-bottom: 10px;
   }
 
-  .hero p {
+  
+  #hero p {
     font-size: 1.2rem;
     margin-bottom: 25px;
   }
@@ -87,7 +94,7 @@ Phone number is 570-418-5199
   }
 
   #gallery {
-    background: #111;
+    background: #564f4f;
     padding: 70px 20px;
     text-align: center;
   }
@@ -98,8 +105,9 @@ Phone number is 570-418-5199
   }
 
   .photo-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    display: flex;
+    
+    flex-direction: column;
     gap: 15px;
     max-width: 1000px;
     margin: auto;
@@ -138,19 +146,58 @@ Phone number is 570-418-5199
     display: flex;
     align-items: center;
     justify-content: space-between;
+    border-bottom: 4px solid #000000;
 
   }
 nav a {
     color: #000;
     margin: 0 15px;
-    font-size: 4vw;
+    font-size: clamp(1rem, 3vw, 2rem);
     text-decoration: none;
     font-weight: bold;
+    
     transition: font-size 0.3s;
 }
 
 nav a:hover {
-    font-size: 5vw;
+    font-size: calc(clamp(1rem, 3vw, 2rem) + 0.2rem);
+}
+
+.photos {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+#next-to {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+#hold {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+#about {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 50px 20px;
+    gap: 30px;
+}
+
+#contact-form {
+    color: black;
+    background-color: rgb(199, 230, 253);
+    border-radius: 10px;
+}
+
+textarea {
+    border: 2px solid #000000;
+    font-size: 1rem;
+    font-family: Arial, sans-serif;
 }
 </style>
 </head>
@@ -162,17 +209,27 @@ nav a:hover {
     <img src="logo.png" alt="Zander's Lawn Care Logo" style="height: 50px; border-radius: 10%;">
     </div>
   <a href="#hero">Home</a>
+  <a href="#about">About</a>
   <a href="#services">Services</a>
   <a href="#gallery">Gallery</a>
   <a href="#contact">Contact</a>
+
 </nav>
 <!-- HERO -->
-<section class="hero">
-  <h1>Zander’s Lawn Care</h1>
+<section id="hero">
+  <h1 style="font-size: 4rem;">Zander’s Lawn Care</h1>
   <p>Lawn • Landscaping • Snow Removal</p>
   <a class="quote-btn" href="sms:5704185199">
     📲 Text for a Free Quote
   </a>
+</section>
+
+<section id="about" style="background-color: #777; margin-top: 0; padding: 20px;">
+    <div style="text-align: center;">
+    <h1 style="font-size: 6vw; text-decoration: underline;">About</h1>
+    <p style="margin: 5vw;">Welcome to Zander’s Lawn Care! I specialize in providing top-notch lawn care, landscaping, and snow removal services to keep your outdoor spaces looking their best year-round.</p>
+    </div>
+    <img src="images/about.png" alt="About Zander’s Lawn Care" style="width: 40vw; height: auto; border-radius: 10px;">
 </section>
 
 <!-- SERVICES -->
@@ -210,23 +267,65 @@ nav a:hover {
 <section id="gallery">
   <h2 style="font-size: 8vw; margin-top: 5px; margin-bottom: 5px;">My Work</h2>
   <div class="photo-grid">
-    <h1>Before</h1>
-    <h1>After</h1>
+    <div id="next-to">
+    <h1 style="font-size: 4vw; margin-left: 10px;">Before</h1>
+    <h1 style="font-size: 4vw; margin-right: auto; margin-left:auto;">After</h1>
+    </div>
+    <div id="hold">
+    <div class="photos" style="margin-left: 10px;">
     <img src="images/before1.png" style="width: 35vw; height: auto;">
-    <img src="images/after1.png" style="width: 35vw; height: auto;">
     <img src="images/before2.png" style="width: 35vw; height: auto;">
+    </div>
+    <div class="photos" style="position: absolute; right: 10vw; margin-right: 0;">
+    <img src="images/after1.png" style="width: 35vw; height: auto;">
     <img src="images/after2.png" style="width: 35vw; height: auto;">
+    </div>
+    </div>
   </div>
 </section>
 
 <!-- CONTACT -->
 <section id="contact">
-  <h2 style="font-size: 8vw; margin-top: 5px; margin-bottom: 5px;">Contact</h2>
+  <h2 style="font-size: 8vw; margin-top: 5px; margin-bottom: 5px; margin: 0;">Contact</h2>
   <p><strong>Phone:</strong> 570-418-5199</p>
   <p><strong>Email:</strong> zanderjwest@gmail.com</p>
-  <a class="quote-btn" href="sms:5704185199">
+  <a class="quote-btn" href="sms:5704185199" style="margin-bottom: 3vh; margin-top: 0;">
     📲 Text Me Now
   </a>
+
+  <div id="contact-form">
+    <div style="display:flex;flex-direction: row; align-items: center; justify-content: center; margin-top: 6vh;">
+    <h3 style="margin-right: 10vw;">Arlington Va</h3>
+    <h3>570-418-5199</h3>
+    </div>
+    <form action="https://httpbin.org/post" method="POST" style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 3vh; color: black;">
+        <div id="first-last" style="display: flex; flex-direction: row; gap: 10px; justify-content: center; height: 3vh; margin-bottom: 20px; width: clamp(300px, 80vw, 800px); margin-left: auto; margin-right: auto; font-size: clamp(10px, 1.5vw, 20px); font-weight: bold;">
+            <label for="first-name" style="text-wrap-style: nowrap;">First*</label><br>
+            <input type="text" id="first-name" name="first-name" required><br><br>
+            <label for="last-name">Last*</label><br>
+            <input type="text" id="last-name" name="last-name" required><br><br>
+        </div>
+        <div id="email-subject" style="display: flex; flex-direction: row; gap: 10px; justify-content: center; height: 3vh; margin-bottom: 20px; width: clamp(300px, 80vw, 800px); margin-left: auto; margin-right: auto; font-size: clamp(10px, 1.5vw, 20px); font-weight: bold;">
+            <label for="email">Email*</label><br>
+            <input type="email" id="email" name="email" required><br><br>
+            <label for="subject">Subject*</label><br>
+            <input type="text" id="subject" name="subject" required><br><br>
+        </div>
+        <label for="message">Leave me a message:</label><br>
+        <textarea id="message" name="message" rows="4" style="width: 50vw; height: 30vh;" required></textarea><br><br>
+        <input type="submit" value="Send Message" style="margin-bottom: 20px;">
+
+        <br>
+
+        <div id="form-response" style="display: none; text-align: center; margin-top: 20px;">
+            <p>Thank you for your message! I'll get back to you soon.</p>
+        </div>
+
+
+
+    </form>
+
+    </div>
 </section>
 
 <footer>
@@ -237,6 +336,7 @@ nav a:hover {
   function showSummer() {
     document.getElementById("summer").classList.remove("hidden");
     document.getElementById("winter").classList.add("hidden");
+
   }
 
   function showWinter() {
