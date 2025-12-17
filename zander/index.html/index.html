@@ -1,0 +1,250 @@
+         	Zander’s Lawn & Landscape
+
+Phone number is 570-418-5199
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zander’s Lawn Care</title>
+
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #fff;
+    color: #fff;
+  }
+
+  .hero {
+    background: linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.6)),
+      url("hero.jpg") center/cover no-repeat;
+    padding: 100px 20px;
+    text-align: center;
+  }
+
+  .hero h1 {
+    color: #ff7a00;
+    font-size: 3rem;
+    margin-bottom: 10px;
+  }
+
+  .hero p {
+    font-size: 1.2rem;
+    margin-bottom: 25px;
+  }
+
+  .quote-btn {
+    display: inline-block;
+    background: #2ecc71;
+    color: #000;
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 8px;
+    text-decoration: none;
+  }
+
+  #services {
+    padding: 80px 20px;
+    text-align: center;
+  }
+
+  #services h2 {
+    color: #ff7a00;
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+  }
+
+  .season-toggle button {
+    background: #2ecc71;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  .service-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 20px;
+    max-width: 1100px;
+    margin: 30px auto 40px;
+  }
+
+  .service {
+    background: #111;
+    padding: 18px;
+    border-radius: 10px;
+    border: 1px solid #2ecc71;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  #gallery {
+    background: #111;
+    padding: 70px 20px;
+    text-align: center;
+  }
+
+  #gallery h2 {
+    color: #ff7a00;
+    margin-bottom: 30px;
+  }
+
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    max-width: 1000px;
+    margin: auto;
+  }
+
+  .photo-grid img {
+    width: 100%;
+    border-radius: 10px;
+  }
+
+  #contact {
+    padding: 60px 20px;
+    text-align: center;
+  }
+
+  #contact h2 {
+    color: #ff7a00;
+    margin-bottom: 15px;
+  }
+
+  footer {
+    background: #000;
+    padding: 20px;
+    text-align: center;
+    font-size: .9rem;
+    color: #777;
+  }
+
+  nav {
+    background: #fffefe;
+    padding: 15px 20px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+  }
+nav a {
+    color: #000;
+    margin: 0 15px;
+    font-size: 4vw;
+    text-decoration: none;
+    font-weight: bold;
+    transition: font-size 0.3s;
+}
+
+nav a:hover {
+    font-size: 5vw;
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+    <div id="logo">
+    <img src="logo.png" alt="Zander's Lawn Care Logo" style="height: 50px; border-radius: 10%;">
+    </div>
+  <a href="#hero">Home</a>
+  <a href="#services">Services</a>
+  <a href="#gallery">Gallery</a>
+  <a href="#contact">Contact</a>
+</nav>
+<!-- HERO -->
+<section class="hero">
+  <h1>Zander’s Lawn Care</h1>
+  <p>Lawn • Landscaping • Snow Removal</p>
+  <a class="quote-btn" href="sms:5704185199">
+    📲 Text for a Free Quote
+  </a>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <h2>My Services</h2>
+
+  <div class="season-toggle">
+    <button onclick="showSummer()">🌱 Summer</button>
+    <button onclick="showWinter()">❄️ Winter</button>
+  </div>
+
+  <div id="summer" class="service-grid">
+    <div class="service">🌱 Lawn Mowing</div>
+    <div class="service">🍂 Yard Cleanups</div>
+    <div class="service">🌿 Mulch Installation</div>
+    <div class="service">🧹 Weeding</div>
+    <div class="service">✂️ Bush & Hedge Trimming</div>
+    <div class="service">📏 Edging</div>
+    <div class="service">🌳 Brush & Light Clearing</div>
+  </div>
+
+  <div id="winter" class="service-grid hidden">
+    <div class="service">❄️ Snow Removal</div>
+    <div class="service">🏠 Driveway Clearing</div>
+    <div class="service">🚶 Sidewalk Shoveling</div>
+    <div class="service">🧂 Ice Control & Salting</div>
+  </div>
+
+  <a class="quote-btn" href="sms:5704185199">
+    📲 Get a Quote by Text
+  </a>
+</section>
+
+<!-- PHOTOS -->
+<section id="gallery">
+  <h2 style="font-size: 8vw; margin-top: 5px; margin-bottom: 5px;">My Work</h2>
+  <div class="photo-grid">
+    <h1>Before</h1>
+    <h1>After</h1>
+    <img src="images/before1.png" style="width: 35vw; height: auto;">
+    <img src="images/after1.png" style="width: 35vw; height: auto;">
+    <img src="images/before2.png" style="width: 35vw; height: auto;">
+    <img src="images/after2.png" style="width: 35vw; height: auto;">
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <h2 style="font-size: 8vw; margin-top: 5px; margin-bottom: 5px;">Contact</h2>
+  <p><strong>Phone:</strong> 570-418-5199</p>
+  <p><strong>Email:</strong> zanderjwest@gmail.com</p>
+  <a class="quote-btn" href="sms:5704185199">
+    📲 Text Me Now
+  </a>
+</section>
+
+<footer>
+  © Zander’s Lawn Care
+</footer>
+
+<script>
+  function showSummer() {
+    document.getElementById("summer").classList.remove("hidden");
+    document.getElementById("winter").classList.add("hidden");
+  }
+
+  function showWinter() {
+    document.getElementById("winter").classList.remove("hidden");
+    document.getElementById("summer").classList.add("hidden");
+  }
+</script>
+
+</body>
+</html>
+
