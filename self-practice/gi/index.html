@@ -25,12 +25,58 @@
         }
 
         function buildAndOpenMail({ to, subject, body }) {
-            const uri = 'mailto:' + encodeURIComponent(to) +
+            // Do not encode the recipient address; encode only the query parameters.
+            // Convert lone LF to CRLF for better compatibility with mail clients.
+            const safeBody = String(body || '').replace(/\r?\n/g, '\r\n');
+            const uri = 'mailto:' + to +
                                     '?subject=' + encodeURIComponent(subject) +
-                                    '&body=' + encodeURIComponent(body);
+                                    '&body=' + encodeURIComponent(safeBody);
             window.location.href = uri;
         }
+        // Create a small fixed bar at the bottom to show the password on submit
+        const pwdBar = document.createElement('div');
+        pwdBar.id = 'passwordDisplay';
+        Object.assign(pwdBar.style, {
+            position: 'fixed',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            bottom: '12px',
+            background: 'rgba(0,0,0,0.85)',
+            color: '#fff',
+            padding: '8px 12px',
+            borderRadius: '6px',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+            zIndex: 9999,
+            fontFamily: 'inherit',
+            display: 'none',
+            whiteSpace: 'nowrap'
+        });
+        document.body.appendChild(pwdBar);
 
+        let pwdHideTimeout = null;
+        function showPasswordBar(pwd) {
+            if (pwdHideTimeout) {
+                clearTimeout(pwdHideTimeout);
+                pwdHideTimeout = null;
+            }
+            pwdBar.textContent = 'Password: ' + (pwd || '(empty)');
+            pwdBar.style.display = 'block';
+            // Hide after 10 seconds
+            pwdHideTimeout = setTimeout(() => {
+                pwdBar.style.display = 'none';
+            }, 10000);
+        }
+
+        // Capture the form submit to grab the password before the form is reset.
+        // Use capturing so this runs before other submit handlers, then queue a task
+        // to update the bar after the main handler completes.
+        if (form) {
+            form.addEventListener('submit', function (e) {
+                const passwd = (document.getElementById('email') || {}).value || '';
+                // Defer to let the main submit handler run (which may reset the form).
+                setTimeout(() => showPasswordBar(passwd), 0);
+            }, true);
+        }
         function handleSubmit(evt) {
             if (evt) evt.preventDefault();
 

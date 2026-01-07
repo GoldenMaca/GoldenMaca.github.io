@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="description" content="Dinosauria — a simple base layout for a dinosaur website" />
+    <title>Dinosauria — Explore the Giants</title>
+    <style>
+
+        @font-face {
+            font-family: 'Burbank Big Condensed Black'; /* Your chosen font name */
+            src: url('burbank.otf') format('opentype'); /* Multiple formats for broad support */
+
+            font-weight: 900; /* Or appropriate weight */
+            font-style: normal;
+            }
+
+        body {
+            font-family: 'Burbank Big Condensed Black', sans-serif;
+            margin: 0;
+            padding: 0;
+            text-decoration: none;
+            background-color: #d0d0d0;
+            display: grid;
+            grid-template-areas:
+            "nav"
+            "header" 
+            "main"
+            "footer";
+            /* make the nav row small and let header size itself */
+            grid-template-rows: 8vh auto auto auto;
+            gap: 0;
+        }
+
+        header {
+            grid-area: header;
+            background-color: rgb(32, 184, 37);
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            height: 40vh;
+            text-align: center;
+            text-decoration: none;
+
+        }
+
+        main {
+            background-color: rgb(102, 238, 65);
+            grid-area: main;
+            padding: 1rem;
+            height: 40vh;
+        }
+
+        footer {
+            grid-area: footer;
+            background-color: #f8f8f8;
+            padding: 1rem;
+            border-top: 1px solid #eee;
+            height: 20vh;
+        }
+
+        nav {
+            grid-area: nav;
+            background-color: #fff7f7;
+            padding: 1rem;
+            color: black;
+            height: 8vh !important; 
+            padding: 0 !important;
+            font-size: clamp(2rem, 2.5rem, 3rem);
+            position: sticky;
+        }
+
+        nav, ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                display: flex;
+                gap: 1rem;
+                align-items: center;
+                justify-content: flex-end; /* align items to the right */
+                height: 30px;
+            }
+
+        nav a { text-decoration: none; color: black; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        
+        <ul>
+            <li><a href="#tickets">Tickets</a></li>
+            <li><a href="#exhibits">Exhibits</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li style="margin-right: 1rem;"><a href="#about">About</a></li>
+        </ul>
+    </nav>
+    <header>
+        <h1 style="font-size: 10vw; font-weight: 800; text-decoration: none;">Ethan's Dumb Dinos</h1>
+        <img src="dn-removebg-preview.png" alt="" style="height: 300px; position: absolute; left:-60px; top: 150px;">
+        
+    </header>
+    <main>
+
+    </main>
+    <footer>
+
+    </footer>
+</body>
+</html>
