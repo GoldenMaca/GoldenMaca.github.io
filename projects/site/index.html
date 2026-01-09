@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Base + Scrolling Parallax</title>
+    <style>
+        /* Basic layout / reset */
+        * {box-sizing: border-box; margin:0; padding:0}
+        html,body {height:100%}
+        body {font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial; color:#111; line-height:1.5}
+
+        /* full-viewport section used for parallax layers */
+        .hero {
+            position:relative;
+            height:100vh;
+            overflow:hidden; /* keep parallax layers from affecting layout */
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:white;
+            text-align:center;
+        }
+
+        /* parallax layers (stacked) */
+        .parallax-layer {
+            position:absolute;
+            inset:0; /* top:0; right:0; bottom:0; left:0 */
+            background-position:center;
+            background-size:cover;
+            will-change:transform;
+            pointer-events:none; /* let content receive pointer events */
+        }
+
+        /* content that sits on top and scrolls normally */
+        .hero .content {
+            position:relative; /* above absolute layers */
+            z-index:10;
+            padding:2rem;
+            max-width:900px;
+        }
+
+        h1 {font-size: clamp(2rem, 5vw, 4rem); margin-bottom:.5rem}
+        p.lead {font-size:1.125rem; opacity:.9}
+
+        /* normal page content */
+        main {background:#fff}
+        section {
+            padding:6rem 1.5rem;
+            max-width:1000px;
+            margin:0 auto;
+        }
+        .muted {color:#666}
+
+        /* small styling for demonstration layers (semi-transparent overlays) */
+        .layer--tint { background:linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.35)); mix-blend-mode:normal; }
+    </style>
+</head>
+<body>
+
+    <!-- HERO with stacked parallax layers -->
+    <header class="hero" aria-label="Hero with parallax">
+        <!-- slow far background (replace URLs with your images) -->
+        <div class="parallax-layer" data-speed="0.15"
+                 style="background-image: url('https://images.unsplash.com/photo-1503264116251-35a269479413?q=80&w=1600&auto=format&fit=crop'); z-index:1;">
+        </div>
+
+        <!-- middle layer -->
+        <div class="parallax-layer" data-speed="0.35"
+                 style="background-image: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1600&auto=format&fit=crop'); z-index:2; mix-blend-mode:screen; opacity:0.85;">
+        </div>
+
+        <!-- subtle dark tint layer so text is readable -->
+        <div class="parallax-layer layer--tint" data-speed="0.05" style="z-index:3;"></div>
+
+        <!-- main content sits above layers and scrolls normally -->
+        <div class="content">
+            <h1>Simple Scrolling Parallax</h1>
+            <p class="lead">Layers move at different speeds as you scroll. Use data-speed to change depth.</p>
+        </div>
+    </header>
+
+    <!-- Normal flow content -->
+    <main>
+        <section>
+            <h2>What this is</h2>
+            <p class="muted">A minimal base page with a hero that uses layered parallax. The rest of the page scrolls normally so you can mix static and parallax content.</p>
+        </section>
+
+        <section>
+            <h2>How to tune it</h2>
+            <ul>
+                <li>Change data-speed on each .parallax-layer (smaller = farther, larger = moves more).</li>
+                <li>Replace background-image URLs with your own photos or gradients.</li>
+                <li>For better performance on heavy pages, use lower-res images and limit number of layers.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>More content</h2>
+            <p class="muted">Add more sections here to test scrolling persistence of the parallax effect.</p>
+        </section>
+    </main>
+
+    <script>
+        // Parallax: translateY each layer based on page scroll and its data-speed.
+        // Use requestAnimationFrame to batch updates for smoothness.
+        (function () {
+            const layers = Array.from(document.querySelectorAll('.parallax-layer'));
+            if (!layers.length) return;
+
+            let ticking = false;
+
+            function update() {
+                const scrollY = window.scrollY;
+                layers.forEach(layer => {
+                    const speed = parseFloat(layer.dataset.speed) || 0;
+                    // Negative translate (move up slower/faster depending on speed sign)
+                    // tweak sign if you want opposite direction
+                    const y = scrollY * speed;
+                    layer.style.transform = `translate3d(0, ${y}px, 0)`;
+                });
+                ticking = false;
+            }
+
+            function onScroll() {
+                if (!ticking) {
+                    requestAnimationFrame(update);
+                    ticking = true;
+                }
+            }
+
+            // initial position
+            update();
+            window.addEventListener('scroll', onScroll, {passive: true});
+            window.addEventListener('resize', update);
+        })();
+    </script>
+</body>
+</html>

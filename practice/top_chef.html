@@ -111,7 +111,7 @@
         }
 
         
-        @media (max-width: 70000px) {
+        @media (max-width: 700000px) {
             body {
                 grid-template-columns: 1fr;
                 grid-template-areas:
@@ -123,7 +123,37 @@
             }
             aside {
                 height: auto;
-                order: 3;
+                /* grid order is controlled by grid-template-areas above; clear any flex order */
+                order: unset;
+                grid-area: sidebar;
+            }
+
+            /* Use a fixed-position pseudo element for the background on small screens.
+               This simulates background-attachment: fixed on devices (including iOS/Android). */
+            main {
+                /* remove the inline background so the ::before can draw it */
+                background-image: none;
+                position: relative;
+                z-index: 0;
+            }
+
+            main::before {
+                content: "";
+                position: fixed;
+                inset: 0;
+                background-image: url(dinobg.png);
+                background-size: cover;
+                background-position: right center;
+                background-repeat: no-repeat;
+                z-index: -1;
+                pointer-events: none;
+                transform: translateZ(0);
+                will-change: transform;
+            }
+
+            /* small tweak for touch devices */
+            @supports (-webkit-overflow-scrolling: touch) {
+                main::before { background-position: center top; }
             }
         }
 
