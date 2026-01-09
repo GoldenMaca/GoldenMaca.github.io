@@ -23,12 +23,13 @@
             background-color: #d0d0d0;
             display: grid;
             grid-template-areas:
-            "nav"
-            "header" 
-            "main"
-            "footer";
+            
+            "header header"
+            "main sidebar"
+            "footer footer";
             /* make the nav row small and let header size itself */
-            grid-template-rows: 8vh auto auto auto;
+            grid-template-columns: 3fr 1fr;
+            grid-template-rows: auto 1fr auto;
             gap: 0;
         }
 
@@ -48,6 +49,10 @@
             grid-area: main;
             padding: 1rem;
             height: 40vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         footer {
@@ -58,49 +63,114 @@
             height: 20vh;
         }
 
-        nav {
-            grid-area: nav;
-            background-color: #fff7f7;
+        aside {
+            grid-area: sidebar;
+            background: linear-gradient(180deg, #eafce8, #dff6d9);
             padding: 1rem;
-            color: black;
-            height: 8vh !important; 
-            padding: 0 !important;
-            font-size: clamp(2rem, 2.5rem, 3rem);
-            position: sticky;
+            height: 44vh;
+            box-sizing: border-box;
+            border-left: 1px solid rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            align-items: stretch;
+            justify-content: flex-start;
+            overflow: auto;
         }
 
-        nav, ul {
-                list-style: none;
-                padding: 0;
-                margin: 0;
-                display: flex;
-                gap: 1rem;
-                align-items: center;
-                justify-content: flex-end; /* align items to the right */
-                height: 30px;
-            }
+        aside h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.25rem;
+            text-align: center;
+        }
 
-        nav a { text-decoration: none; color: black; }
+        aside nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        aside nav a {
+            display: block;
+            padding: 0.5rem 0.75rem;
+            color: #0b3b11;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+        aside nav a:hover,
+        aside nav a:focus {
+            background-color: rgba(0,0,0,0.05);
+        }
+
+        
+        @media (max-width: 700px) {
+            body {
+                grid-template-columns: 1fr;
+                grid-template-areas:
+                    "header"
+                    "main"
+                    "sidebar"
+                    "footer";
+            }
+            aside {
+                height: auto;
+                order: 3;
+            }
+        }
+
     </style>
 </head>
 <body>
 
-    <nav>
-        
-        <ul>
-            <li><a href="#tickets">Tickets</a></li>
-            <li><a href="#exhibits">Exhibits</a></li>
-            <li><a href="#contact">Contact</a></li>
-            <li style="margin-right: 1rem;"><a href="#about">About</a></li>
-        </ul>
-    </nav>
+    
     <header>
         <h1 style="font-size: 10vw; font-weight: 800; text-decoration: none;">Ethan's Dumb Dinos</h1>
-        <img src="dn-removebg-preview.png" alt="" style="height: 300px; position: absolute; left:-60px; top: 150px;">
+        <img src="dn-removebg-preview.png" alt="" style="height: 300px; position: absolute; left:-60px; top: 90px;">
         
     </header>
-    <main>
+    <aside>
+    <h3>Explore</h3>
 
+    <form role="search" aria-label="Search dinosaurs" style="margin-bottom:0.5rem;">
+        <input type="search" name="q" placeholder="Search dinos..." style="width:100%;padding:0.5rem;border-radius:6px;border:1px solid rgba(0,0,0,0.1);">
+    </form>
+
+    <nav aria-label="Sidebar">
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Exhibits</a></li>
+            <li><a href="#">T‑Rex</a></li>
+            <li><a href="#">Brachiosaurus</a></li>
+            <li><a href="#">Velociraptor</a></li>
+            <li><a href="#">Fossils</a></li>
+            <li><a href="#">Events</a></li>
+            <li><a href="#">Visit & Tickets</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </nav>
+
+    <div style="margin-top:0.75rem;">
+        <h3 style="font-size:1rem; margin:0 0 0.5rem 0; text-align:center;">Featured Dino</h3>
+        <figure style="margin:0;">
+            <img src="trex-thumb.png" alt="T-Rex" style="width:100%;border-radius:6px;display:block;">
+            <figcaption style="font-size:0.85rem;text-align:center;padding-top:0.5rem;color:#0b3b11;">Tyrannosaurus rex — the king</figcaption>
+        </figure>
+    </div>
+
+    <div style="margin-top:0.75rem;font-size:0.9rem;color:#0b3b11;">
+        <h3 style="font-size:1rem;margin:0 0 0.25rem 0;text-align:center;">Visit</h3>
+        <p style="margin:0.25rem 0;">Open daily: 9am – 3am<br>123 Fossily Lane, Ethan's Backyard</p>
+        <a href="#" style="display:block;margin-top:0.5rem;padding:0.5rem;text-align:center;background:#0b3b11;color:#fff;border-radius:6px;text-decoration:none;">Buy Tickets</a>
+    </div>
+    </aside>
+    <main>
+        <h2 style="font-size: 2.5rem;">Welcome to Ethan's Dumb Dinos Museum</h2>
+        <p>Discover the fascinating world of dinosaurs with us. From the mighty T-Rex to the gentle Brachiosaurus, explore their history, habitats, and more!</p>
     </main>
     <footer>
 
