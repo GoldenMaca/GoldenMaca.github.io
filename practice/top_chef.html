@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="description" content="Dinosauria — a simple base layout for a dinosaur website" />
-    <title>Dinosauria — Explore the Giants</title>
+    <title>Ethan dumbo dino</title>
     <style>
 
         @font-face {
@@ -26,10 +26,11 @@
             
             "header header"
             "main sidebar"
+            "exhibits sidebar"
             "footer footer";
             /* make the nav row small and let header size itself */
             grid-template-columns: 3fr 1fr;
-            grid-template-rows: auto 1fr auto;
+            grid-template-rows: auto 1fr auto auto;
             gap: 0;
         }
 
@@ -45,10 +46,13 @@
         }
 
         main {
-            background-color: rgb(102, 238, 65);
+            background-image: url(dinobg.png);
+            background-size: cover;
+            background-position: right;
+            background-attachment: fixed;
             grid-area: main;
             padding: 1rem;
-            height: 40vh;
+            height: 60vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -60,7 +64,7 @@
             background-color: #f8f8f8;
             padding: 1rem;
             border-top: 1px solid #eee;
-            height: 20vh;
+            height: 5vh;
         }
 
         aside {
@@ -107,19 +111,27 @@
         }
 
         
-        @media (max-width: 700px) {
+        @media (max-width: 70000px) {
             body {
                 grid-template-columns: 1fr;
                 grid-template-areas:
                     "header"
                     "main"
                     "sidebar"
+                    "exhibits"
                     "footer";
             }
             aside {
                 height: auto;
                 order: 3;
             }
+        }
+
+        exhibits{
+            align-content: center;
+            background-color: #46d158;
+            height: auto;
+            padding: 1rem;
         }
 
     </style>
@@ -157,7 +169,7 @@
     <div style="margin-top:0.75rem;">
         <h3 style="font-size:1rem; margin:0 0 0.5rem 0; text-align:center;">Featured Dino</h3>
         <figure style="margin:0;">
-            <img src="trex-thumb.png" alt="T-Rex" style="width:100%;border-radius:6px;display:block;">
+            <img src="trex.png" alt="T-Rex" style="width:100%;border-radius:6px;display:block;">
             <figcaption style="font-size:0.85rem;text-align:center;padding-top:0.5rem;color:#0b3b11;">Tyrannosaurus rex — the king</figcaption>
         </figure>
     </div>
@@ -169,11 +181,17 @@
     </div>
     </aside>
     <main>
-        <h2 style="font-size: 2.5rem;">Welcome to Ethan's Dumb Dinos Museum</h2>
-        <p>Discover the fascinating world of dinosaurs with us. From the mighty T-Rex to the gentle Brachiosaurus, explore their history, habitats, and more!</p>
+        <h2 style="font-size: 5vw;">Welcome to Ethan's Dumb Dinos Museum</h2>
+        <p style="font-size: 3vw; text-align: center;">Discover the fascinating world of dinosaurs with us. From the mighty T-Rex to the gentle Brachiosaurus, explore their history, habitats, and more!</p>
     </main>
+    <exhibits>
+        <h2 style="font-size: 2rem; text-align: center; margin: 1rem 0;">Exhibits</h2>
+        <p style="text-align: center;">Explore our amazing dinosaur exhibits, featuring life-sized models, interactive displays, and more!</p>
+        <img src="vcrap.png" alt="Velociraptor" style="align-self:center; width: 100%;border-radius:6px;display:block;">
+        <h2 style="font-size: clamp(2rem, 4vw, 6rem); text-align: center;">Visit our VELOCIRAPTOR!</h2>
+    </exhibits>
     <footer>
-
+        <p style="text-align: center; font-size: 0.9rem; color: #666;">&copy; 2024 Ethan's Dumb Dinos Museum. All rights reserved.</p>
     </footer>
 </body>
 </html>
