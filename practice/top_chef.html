@@ -23,11 +23,11 @@
             background-color: #d0d0d0;
             display: grid;
             grid-template-areas:
-            
-            "header header"
-            "main sidebar"
-            "exhibits sidebar"
-            "footer footer";
+                    "header"
+                    "main"
+                    "sidebar"
+                    "exhibits"
+                    "footer";
             /* make the nav row small and let header size itself */
             grid-template-columns: 3fr 1fr;
             grid-template-rows: auto 1fr auto auto;
@@ -47,7 +47,7 @@
 
         main {
             background-image: url(dinobg.png);
-            background-size: cover;
+            
             background-position: right;
             background-attachment: fixed;
             grid-area: main;
@@ -57,7 +57,6 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 1;
         }
 
         footer {
@@ -129,34 +128,9 @@
                 grid-area: sidebar;
             }
 
-            /* Use a fixed-position pseudo element for the background on small screens.
-               This simulates background-attachment: fixed on devices (including iOS/Android). */
-            main {
-                /* remove the inline background so the ::before can draw it */
-                background-image: none;
-                position: relative;
-                z-index: 0;
-            }
-
-            main::before {
-                content: "";
-                position: fixed;
-                inset: 0;
-                background-image: url(dinobg.png);
-                background-size: cover;
-                background-position: right center;
-                background-repeat: no-repeat;
-                z-index: -1;
-                pointer-events: none;
-                transform: translateZ(0);
-                will-change: transform;
-            }
-
-            /* small tweak for touch devices */
-            @supports (-webkit-overflow-scrolling: touch) {
-                main::before { background-position: center top; }
-            }
+            
         }
+        
 
         exhibits{
             align-content: center;
