@@ -1,0 +1,74 @@
+body{
+    margin:0;
+    padding:0;
+    font-family: 'Roboto', sans-serif; /*PICK A GOOGLE FONT */
+    line-height: 1.6;
+}
+
+#navbarlogo {
+    width: 40px;
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+nav {
+    display: flex;
+    height: 20px;
+    gap: clamp(7px, 2vw, 40px);
+    position: sticky;
+    top:0;
+    flex-direction: row;
+    
+    align-items: center;
+    padding: 20px;
+    background: linear-gradient(to right,#aa3b5e, #67103a);
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+#links {
+    margin-left: auto;
+    display: flex;
+    gap: 20px;
+}
+
+nav a{
+    display: inline-block;
+    padding: 3px 10px; /* reserve space so hover doesn't change layout */
+    border-radius: 10px;
+    box-sizing: border-box;
+    transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+    will-change: transform;
+}
+
+nav a:hover{
+    opacity: 100%;
+    background-color: white;
+    color: #67103a;
+    
+}
+
+#Mystory {
+    height: 800px;
+    background-color: #e98080;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: top;
+
+}
+
+#headerimg {
+    width: clamp(100px, 50%, 500px);
+    height: 300px;
+    border-radius: 10px;
+    margin: 20px;
+    padding: 0;
+}
