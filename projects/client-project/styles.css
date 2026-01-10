@@ -1,7 +1,9 @@
+
+
 body{
     margin:0;
     padding:0;
-    font-family: 'Roboto', sans-serif; /*PICK A GOOGLE FONT */
+    font-family: 'Funnel Sans', 'Google Sans', serif; /*PICK A GOOGLE FONT */
     line-height: 1.6;
     overflow-x: hidden;
     overflow-y: scroll;
@@ -66,21 +68,43 @@ nav a:hover{
 
 #main {
     height: 100vh;
-    background-image: url(images/head.png);
+
+    background-image: url(images/topp.png);
     background-size: cover;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
+    align-items: center;
+    text-align: center; 
     align-items: top;
     background-attachment: fixed;
+    color: white;
 }
 
-#headerimg {
-    width: clamp(100px, 50%, 500px);
-    height: 300px;
+#content {
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.5);
     border-radius: 10px;
-    margin: 20px;
-    padding: 0;
+}
+
+#topbtn {
+    margin-top: 20px;
+}
+
+#topbtn a {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #67103a;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background 0.3s ease;
+    transition: transform 0.3s ease;
+}
+
+#topbtn a:hover {
+    background: #aa3b5e;
+    transform: scale(1.05); 
 }
 
 /*#weave {
@@ -116,9 +140,29 @@ nav a:hover{
 }
 
 #Mystory {
-    height: 100vh;
+    height: auto;
     width: 100%;
-    background-color: #409250;
+    background-color: #638392;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 20px;
+}
+
+#btnmscont a {
+    display: inline-block;
+    padding: 10px 30px;
+    background: #67103a;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background 0.3s ease;
+    transition: transform 0.3s ease;
+}
+
+#btnmscont a:hover {
+    background: #aa3b5e;
+    transform: scale(1.05);
 }
 
 #footer {
