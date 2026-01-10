@@ -3,6 +3,14 @@ body{
     padding:0;
     font-family: 'Roboto', sans-serif; /*PICK A GOOGLE FONT */
     line-height: 1.6;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    perspective: 1px;
+}
+
+html {
+    scroll-behavior: smooth;
+    
 }
 
 #navbarlogo {
@@ -23,6 +31,7 @@ nav {
     align-items: center;
     padding: 20px;
     background: linear-gradient(to right,#aa3b5e, #67103a);
+    z-index: 999;
 }
 
 nav a {
@@ -55,14 +64,15 @@ nav a:hover{
     
 }
 
-#Mystory {
-    height: 800px;
-    background-color: #e98080;
+#main {
+    height: 100vh;
+    background-image: url(images/head.png);
+    background-size: cover;
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: top;
-
+    background-attachment: fixed;
 }
 
 #headerimg {
@@ -71,4 +81,48 @@ nav a:hover{
     border-radius: 10px;
     margin: 20px;
     padding: 0;
+}
+
+/*#weave {
+    width: 190vw;
+    height: 40vh;
+    background-color: #ffffff;
+    background-size: cover;
+    position: absolute;
+    bottom: 0;
+    right: -100;
+    rotate: -30deg;
+
+}
+*/
+
+#Gallery {
+    height: 100vh;
+    width: 100%;
+    background-color: #ec5f5f;
+    
+}
+
+#Contact {
+    height: 100vh;
+    width: 100%;
+    background-color: #40ac45;
+}
+
+#Socials {
+    height: 100vh;
+    width: 100%;
+    background-color: #4b82c4;
+}
+
+#Mystory {
+    height: 100vh;
+    width: 100%;
+    background-color: #409250;
+}
+
+#footer {
+    height: 10vh;
+    width: 100%;
+    background-color: #b49c43;
 }
