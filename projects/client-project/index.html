@@ -14,6 +14,31 @@
 <link href="https://fonts.googleapis.com/css2?family=Funnel+Sans:ital,wght@0,300..800;1,300..800&family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap" rel="stylesheet">
     <script>
 
+        
+  // Hard reset on load
+  slides.forEach(slide => slide.classList.remove("show"));
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("show");
+          observer.unobserve(entry.target); // optional: prevents retrigger
+        }
+      });
+    },
+    {
+      threshold: 0.25,
+      rootMargin: "0px 0px -100px 0px"
+    }
+  );
+
+  slides.forEach((el, i) => {
+    el.style.transitionDelay = `${i * 0.2}s`;
+    observer.observe(el);
+  });
+
+
     </script>
 </head>
 <body>
@@ -29,7 +54,7 @@
     </nav>
     <div id="main">
         <div id="content">
-            <h2 style="font-size: clamp(1.5rem, 5vw, 4rem); padding:0; margin:20px 20px 0 20px;">Welcome to My Weaving Studio</h2>
+            <h2 style="font-size: clamp(1.5rem, 5vw, 4rem); padding:0; margin:20px 20px 0 20px; text-wrap: nowrap;">Welcome to My Weaving Studio</h2>
             <p>Explore the art of weaving and discover unique handmade pieces...</p>
         </div>
         <div id="topbtn"><a href="#Mystory">Discover my creations</a></div>
@@ -37,15 +62,24 @@
     <div id="Mystory">
         <img style="width: 40vw; height:auto; margin: 20px;" src="images/portrait.png" alt="">
         <div id="mscont">
-            <h2 style="font-size: clamp(1.5rem, 5vw, 4rem);">Hi, I'm Lauren</h2>
-            <p style="width: 40vw; font-size: clamp(1rem, 2vw, 1.5rem);">I'm a passionate weaver with a love for creating unique, handmade pieces. Each item is crafted with care and attention to detail, reflecting my dedication to the art of weaving.</p>
+            <h2 style="font-size: clamp(1.5rem, 5vw, 4rem); text-wrap: nowrap;">Hi, I'm Lauren</h2>
+            <p style="width: 40vw; font-size: clamp(1rem, 2vw, 1.5rem); text-wrap: balance;">I'm a passionate weaver with a love for creating unique, handmade pieces. Each item is crafted with care and attention to detail, reflecting my dedication to the art of weaving.</p>
             <div id="btnmscont">
                 <a href="mystory.html">View My Story</a>
             </div>
         </div>
     </div>
-    <div id="Gallery"></div>
+    <div id="Gallery">
+        <h4 style="font-size: clamp(1.5rem, 4vw, 3.5rem); margin: 0 10vw 6vh 11vw; text-align: center; text-wrap: balance;">Bring Home the Beauty of Handwoven Textiles</h4>
+        <div id="imgs">
+            <img class="galimg galleft slide-in left" src="images/galleft.jpg" alt="">
+            <img class="galimg galright slide-in right" src="images/galright.jpg" alt="">
+        </div>
 
+        <div id="btnimgs">
+            <a href="gallery.html">View Gallery</a>
+        </div>
+    </div>
     <div id="Contact"></div>
 
     <div id="Socials"></div>

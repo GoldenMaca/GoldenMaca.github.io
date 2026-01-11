@@ -121,10 +121,40 @@ nav a:hover{
 */
 
 #Gallery {
-    height: 100vh;
+    padding-top: 5vh;
+    top: 0;
+    height: auto;
     width: 100%;
-    background-color: #ec5f5f;
-    
+    background-color: #c1417f;
+    margin: 0;
+    align-items: center;
+    justify-content: center;
+    justify-items: center;
+}
+
+#btnimgs a{
+    display: inline-block;
+    padding: 10px 6vw;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background: #67103a;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background 0.3s ease;
+    transition: transform 0.3s ease;
+}
+
+#btnimgs a:hover {
+    background: #aa3b5e;
+    transform: scale(1.05);
+}
+
+#imgs {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
 }
 
 #Contact {
@@ -149,6 +179,10 @@ nav a:hover{
     padding: 20px;
 }
 
+#mscont {
+    margin-left: clamp(10px, 3vw, 30px);
+}
+
 #btnmscont a {
     display: inline-block;
     padding: 10px 30px;
@@ -169,4 +203,71 @@ nav a:hover{
     height: 10vh;
     width: 100%;
     background-color: #b49c43;
+}
+
+.galimg {
+    width: clamp(100px, 45vw, 400px);
+    height: auto;
+    margin: 0;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 5px solid white;
+    transition: transform 400ms ease;
+}
+
+.galimg:hover {
+    transform: scale(1.1) rotate(7deg) translate3d(0, 0, 0.1px);
+    
+}
+
+
+
+
+/* Base hidden state */
+.slide {
+  opacity: 1; /* IMPORTANT: not 0 */
+  will-change: transform;
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Start OUTSIDE the viewport */
+.slide-left {
+  transform: translateX(-120%);
+}
+
+.slide-right {
+  transform: translateX(120%);
+}
+
+/* When revealed */
+.slide.show {
+  transform: translateX(0);
+}
+
+
+@media (max-width: 768px) {
+    .main {
+        background-size: contain;
+        background-position: center top;
+    }
+
+  nav a {
+    padding: 2px 5px;
+  }
+
+  #topbtn a {
+    padding: 8px 16px;
+  }
+
+  #btnimgs a {
+    padding: 8px 4vw;
+  }
+
+  #mscont {
+    margin-left: clamp(5px, 2vw, 15px);
+  }
+
+  .galimg {
+    width: clamp(80px, 40vw, 350px);
+  }
 }
