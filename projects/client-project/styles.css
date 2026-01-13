@@ -186,6 +186,7 @@ nav a:hover{
 #btnmscont a {
     display: inline-block;
     padding: 10px 30px;
+    margin-bottom: 20px;
     background: #67103a;
     color: white;
     border-radius: 5px;
@@ -253,6 +254,7 @@ nav a:hover{
 
   nav a {
     padding: 2px 5px;
+    text-wrap: nowrap;
   }
 
   #topbtn a {
