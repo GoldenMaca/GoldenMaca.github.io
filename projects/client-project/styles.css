@@ -98,13 +98,14 @@ nav a:hover{
     color: white;
     border-radius: 5px;
     text-decoration: none;
-    transition: background 0.3s ease;
-    transition: transform 0.3s ease;
+    transition: background 1s ease;
+    transition: transform 1s ease;
 }
 
 #topbtn a:hover {
-    background: #aa3b5e;
-    transform: scale(1.05); 
+    background-color: #8d40ac;
+    transition: background-color 2s ease, transform 1s ease;
+    transform: scale(1.05); transform: scale(1.05); 
 }
 
 /*#weave {
@@ -133,6 +134,7 @@ nav a:hover{
 }
 
 #btnimgs a{
+    align-self: center;
     display: inline-block;
     padding: 10px 6vw;
     margin-top: 20px;
@@ -224,26 +226,7 @@ nav a:hover{
 
 
 
-/* Base hidden state */
-.slide {
-  opacity: 1; /* IMPORTANT: not 0 */
-  will-change: transform;
-  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
-}
 
-/* Start OUTSIDE the viewport */
-.slide-left {
-  transform: translateX(-120%);
-}
-
-.slide-right {
-  transform: translateX(120%);
-}
-
-/* When revealed */
-.slide.show {
-  transform: translateX(0);
-}
 
 
 @media (max-width: 768px) {
