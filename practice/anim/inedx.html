@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="description" content="Brief description of this page" />
+    <title>Site — Page Title</title>
+
+    <!-- Fallback favicon -->
+    <link rel="icon" href="favicon.ico" />
+
+    <!-- Basic styles (move to styles.css in production) -->
+    <style>
+        #element {
+            width: 100px;
+            height: 100px;
+            background-color: red;
+            animation-name: jack;
+            animation-duration: 1s;
+            animation-iteration-count: infinite;
+            animation-timing-function: ease-in-out;
+        }
+
+        @keyframes jack {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        #jack{
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+            transition: transform 0.3s ease;
+        
+        }
+
+        #jack:hover {
+            transform: scale(1.2);
+            
+        }
+    </style>
+
+    <!-- Page script -->
+    <script defer src="script.js"></script>
+</head>
+<body>
+    <div id="element"></div>
+
+    <div id="jack"></div>
+</body>
+</html>
