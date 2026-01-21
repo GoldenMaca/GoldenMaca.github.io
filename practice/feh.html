@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Practice Timer - Day Checklist</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <style>
+        :root{
+            --bg1:#0f1724;
+            --bg2:#0b1220;
+            --accent:#60a5fa;
+            --card:#0b1228;
+            --muted:#94a3b8;
+            --glass: rgba(255,255,255,0.04);
+        }
+        *{box-sizing:border-box;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;}
+        html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#e6eef8;}
+        .wrap{max-width:980px;margin:40px auto;padding:28px;border-radius:14px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));box-shadow: 0 6px 30px rgba(2,6,23,0.7);}
+        header{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:22px}
+        h1{font-size:18px;margin:0;color:#eaf2ff}
+        .controls{display:flex;gap:12px;align-items:center}
+        select{background:var(--card);color:var(--accent);border:1px solid rgba(255,255,255,0.04);padding:8px 12px;border-radius:8px;font-weight:600}
+        /* layout */
+        .main{display:grid;grid-template-columns:380px 1fr;gap:22px}
+        .panel{background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+        .checklist{display:flex;flex-direction:column;gap:12px}
+        .task{display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;}
+        .task .meta{flex:1;display:flex;flex-direction:column}
+        .task .title{font-weight:700;color:#e6f3ff}
+        .task .time{font-size:13px;color:var(--muted)}
+        input[type=checkbox]{width:18px;height:18px;border-radius:4px;accent-color:var(--accent)}
+        .current{background:linear-gradient(90deg, rgba(96,165,250,0.08), rgba(96,165,250,0.02));box-shadow:0 6px 18px rgba(32,64,128,0.15);border:1px solid rgba(96,165,250,0.12)}
+        /* timer */
+        .timerBox{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;height:100%}
+        .bigTimer{font-size:56px;font-weight:800;letter-spacing:2px;background:linear-gradient(90deg,#b6e0ff,#6fb8ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+        .subtitle{color:var(--muted);font-size:14px}
+        .buttons{display:flex;gap:12px}
+        button{background:linear-gradient(90deg,var(--accent),#3b82f6);border:none;color:#021028;padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer}
+        button.secondary{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--accent);padding:9px 12px}
+        button[disabled]{opacity:0.45;cursor:default}
+        .almost{position:fixed;left:0;right:0;bottom:18px;margin:auto;max-width:980px;padding:10px 16px;border-radius:10px;background:linear-gradient(90deg,#1f2937,#111827);color:#ffd;box-shadow:0 8px 30px rgba(2,6,23,0.6);display:flex;align-items:center;gap:12px;border:1px solid rgba(255,255,255,0.03)}
+        .doneMsg{padding:14px;border-radius:10px;background:linear-gradient(90deg,#052b15,#02321a);color:#b9f6c8;font-weight:700;text-align:center}
+        @media (max-width:880px){
+            .main{grid-template-columns:1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <header>
+            <h1>Practice Checklist & Timer</h1>
+            <div class="controls">
+                <label style="color:var(--muted);font-size:13px;margin-right:6px">Choose Day</label>
+                <select id="daySelect" aria-label="Choose practice day"></select>
+            </div>
+        </header>
+
+        <div class="main">
+            <div class="panel">
+                <h3 style="margin-top:0;color:#dff1ff">Tasks</h3>
+                <div id="checklist" class="checklist" aria-live="polite"></div>
+            </div>
+
+            <div class="panel">
+                <div class="timerBox">
+                    <div style="text-align:center">
+                        <div id="currentTaskName" class="subtitle">Select a day to load tasks</div>
+                        <div id="timer" class="bigTimer">00:00</div>
+                        <div id="taskHint" class="subtitle">Timer will show the currently selected task duration</div>
+                    </div>
+
+                    <div class="buttons" aria-hidden="false">
+                        <button id="startBtn">Start</button>
+                        <button id="pauseBtn" class="secondary" disabled>Pause</button>
+                        <button id="completeBtn" class="secondary" disabled>Complete & Next</button>
+                        <button id="resetBtn" class="secondary" disabled>Reset</button>
+                    </div>
+
+                    <div id="statusLine" class="subtitle" style="margin-top:6px"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="almostBanner" class="almost" style="display:none">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="opacity:0.95">
+            <path d="M12 2v6" stroke="#ffd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 16v6" stroke="#ffd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4 8l8 8 8-8" stroke="#ffd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div>Almost done.</div>
+    </div>
+
+    <script>
+        // Data: days and tasks (seconds)
+        const DAYS = {
+            "Day 1": [
+                {name: "Aim Train", seconds: 10*60},
+                {name: "Freebuild", seconds: 5*60},
+                {name: "Piece control", seconds: 5*60},
+                {name: "Aggressive 1v1", seconds: 10*60},
+                {name: "Duo endgame", seconds: 15*60},
+                {name: "Ranked and endgames", seconds: 90*60, isLast:true}
+            ],
+            "Day 2": [
+                {name: "Aim Train", seconds: 10*60},
+                {name: "1v1", seconds: 10*60},
+                {name: "Piece control", seconds: 5*60},
+                {name: "Aggressive 2v2", seconds: 15*60},
+                {name: "Duo endgame", seconds: 15*60},
+                {name: "Ranked and endgames", seconds: 75*60, isLast:true}
+            ],
+            "Day 3": [
+                {name: "Aim Train", seconds: 10*60},
+                {name: "Freebuild -- Focus on ramp edits", seconds: 5*60},
+                {name: "Tunneling practice", seconds: 5*60},
+                {name: "Aggressive 1v1", seconds: 10*60},
+                {name: "Duo endgame", seconds: 15*60},
+                {name: "Ranked and endgames", seconds: 90*60, isLast:true}
+            ]
+            ,
+            "Day 4": [
+                {name: "Aim Train", seconds: 10*60},
+                {name: "Piece control", seconds: 15*60},
+                {name: "1v1 Realistics", seconds: 15*60},
+                {name: "2v2 Realistics", seconds: 15*60},
+                {name: "Duo endgame", seconds: 30*60},
+                {name: "Ranked and endgames", seconds: 50*60, isLast:true}
+            ],
+            "Day 5": [
+                {name: "Aim Train", seconds: 10*60},
+                {name: "Freebuild", seconds: 15*60},
+                {name: "Ranked Reload", seconds: 40*60},
+                {name: "Boxfighting 1v1", seconds: 10*60},
+                {name: "Duo endgame", seconds: 15*60},
+                {name: "Ranked and endgames", seconds: 45*60, isLast:true}
+            ],
+            
+            "Day 6": [
+                {name: "Tournament", seconds: 120*60, isLast:true}
+            ],
+            "Day 7": [
+                {name: "Tournament", seconds: 120*60, isLast:true}
+            ]
+            
+        };
+
+        // DOM
+        const daySelect = document.getElementById('daySelect');
+        const checklistEl = document.getElementById('checklist');
+        const timerEl = document.getElementById('timer');
+        const currentTaskNameEl = document.getElementById('currentTaskName');
+        const taskHintEl = document.getElementById('taskHint');
+        const startBtn = document.getElementById('startBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const completeBtn = document.getElementById('completeBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const statusLine = document.getElementById('statusLine');
+        const almostBanner = document.getElementById('almostBanner');
+
+        // state
+        let tasks = [];
+        let currentIndex = 0;
+        let timeLeft = 0;
+        let intervalId = null;
+        let running = false;
+        let extraAdded = false; // for last-task extra 15m
+        let dayName = null;
+
+        // init
+        function populateDays(){
+            Object.keys(DAYS).forEach((d,i)=>{
+                const opt = document.createElement('option');
+                opt.value = d;
+                opt.textContent = d;
+                daySelect.appendChild(opt);
+            });
+            daySelect.selectedIndex = 0;
+            loadDay(daySelect.value);
+        }
+
+        function loadDay(name){
+            dayName = name;
+            tasks = DAYS[name].map(t => Object.assign({}, t, {done:false}));
+            currentIndex = 0;
+            extraAdded = false;
+            stopTimer();
+            renderChecklist();
+            moveToFirstPending();
+        }
+
+        function renderChecklist(){
+            checklistEl.innerHTML = '';
+            tasks.forEach((t, i) => {
+                const row = document.createElement('div');
+                row.className = 'task' + (i===currentIndex ? ' current' : '');
+                row.dataset.index = i;
+                const chk = document.createElement('input');
+                chk.type = 'checkbox';
+                chk.checked = !!t.done;
+                chk.disabled = true;
+                chk.setAttribute('aria-label', t.name + ' checkbox');
+
+                const meta = document.createElement('div');
+                meta.className = 'meta';
+                const title = document.createElement('div');
+                title.className = 'title';
+                title.textContent = t.name;
+                const time = document.createElement('div');
+                time.className = 'time';
+                time.textContent = formatNiceDuration(t.seconds);
+                meta.appendChild(title);
+                meta.appendChild(time);
+
+                row.appendChild(chk);
+                row.appendChild(meta);
+                checklistEl.appendChild(row);
+            });
+        }
+
+        function formatNiceDuration(sec){
+            if (sec >= 3600) {
+                const h = Math.floor(sec/3600);
+                const m = Math.floor((sec%3600)/60);
+                return `${h}h ${m}m`;
+            }
+            if (sec >= 60) {
+                const m = Math.floor(sec/60);
+                const s = sec % 60;
+                return `${m}m ${s}s`;
+            }
+            return `${sec}s`;
+        }
+
+        function formatTimer(sec){
+            const h = Math.floor(sec/3600);
+            const m = Math.floor((sec%3600)/60);
+            const s = sec%60;
+            if (h>0) return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+            return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        }
+
+        function moveToFirstPending(){
+            const idx = tasks.findIndex(t=>!t.done);
+            currentIndex = idx === -1 ? tasks.length : idx;
+            if (currentIndex >= tasks.length){
+                // all done
+                currentTaskNameEl.textContent = "All tasks completed";
+                timerEl.textContent = "00:00";
+                taskHintEl.textContent = "";
+                statusLine.textContent = "";
+                startBtn.disabled = true;
+                pauseBtn.disabled = true;
+                completeBtn.disabled = true;
+                resetBtn.disabled = true;
+                renderChecklist();
+                showDoneMessage();
+                return;
+            }
+            extraAdded = false;
+            setCurrentTask(tasks[currentIndex]);
+            renderChecklist();
+        }
+
+        function setCurrentTask(task){
+            timeLeft = task.seconds;
+            updateUIForCurrent(task);
+        }
+
+        function updateUIForCurrent(task){
+            currentTaskNameEl.textContent = task ? task.name : "No task";
+            timerEl.textContent = formatTimer(timeLeft);
+            taskHintEl.textContent = task ? `Goal: ${formatNiceDuration(task.seconds)}` : '';
+            statusLine.textContent = `Task ${currentIndex+1} of ${tasks.length}`;
+            startBtn.disabled = false;
+            pauseBtn.disabled = true;
+            resetBtn.disabled = false;
+            completeBtn.disabled = true;
+        }
+
+        // timer controls
+        function startTimer(autoStart=false){
+            if (currentIndex >= tasks.length) return;
+            if (running) return;
+            running = true;
+            startBtn.disabled = true;
+            pauseBtn.disabled = false;
+            resetBtn.disabled = false;
+            intervalId = setInterval(() => {
+                tick();
+            }, 1000);
+        }
+
+        function pauseTimer(){
+            running = false;
+            startBtn.disabled = false;
+            pauseBtn.disabled = true;
+            if (intervalId) clearInterval(intervalId);
+            intervalId = null;
+        }
+
+        function stopTimer(){
+            running = false;
+            if (intervalId) clearInterval(intervalId);
+            intervalId = null;
+            startBtn.disabled = false;
+            pauseBtn.disabled = true;
+        }
+
+        function resetTimer(){
+            if (currentIndex >= tasks.length) return;
+            stopTimer();
+            const t = tasks[currentIndex];
+            timeLeft = t.seconds;
+            extraAdded = false;
+            almostBanner.style.display = 'none';
+            timerEl.textContent = formatTimer(timeLeft);
+            completeBtn.disabled = true;
+            statusLine.textContent = `Reset ${t.name}`;
+        }
+
+        function tick(){
+            if (timeLeft > 0){
+                timeLeft--;
+                timerEl.textContent = formatTimer(timeLeft);
+            }
+            if (timeLeft <= 0){
+                // reached zero
+                pauseTimer();
+                // special handling: if last item and not yet extended, add 15 minutes
+                const currentTask = tasks[currentIndex];
+                const isLast = currentTask && currentTask.isLast;
+                if (isLast && !extraAdded){
+                    // add extra 15 minutes automatically and show "Almost done."
+                    extraAdded = true;
+                    timeLeft = 15*60;
+                    almostBanner.style.display = 'flex';
+                    // start the extra countdown automatically
+                    statusLine.textContent = 'Extra 15 minutes added — Almost done';
+                    startTimer(true);
+                    return;
+                }
+                // enable the complete button so user can click to move on
+                completeBtn.disabled = false;
+                startBtn.disabled = true;
+                pauseBtn.disabled = true;
+                resetBtn.disabled = false;
+                statusLine.textContent = 'Time is up — click "Complete & Next" to check this item and move on';
+            }
+        }
+
+        function completeAndNext(){
+            if (currentIndex >= tasks.length) return;
+            // if there is still time left, do nothing
+            if (timeLeft > 0) return;
+            // mark done
+            tasks[currentIndex].done = true;
+            // un-show almost banner if was shown and this was last
+            almostBanner.style.display = 'none';
+            // move to next task
+            currentIndex++;
+            if (currentIndex >= tasks.length){
+                // finished all
+                renderChecklist();
+                moveToFirstPending();
+                return;
+            }
+            // set next task and auto-start it
+            setCurrentTask(tasks[currentIndex]);
+            renderChecklist();
+            startTimer();
+        }
+
+        // helpers UI
+        function showDoneMessage(){
+            const msg = document.createElement('div');
+            msg.className = 'doneMsg';
+            msg.textContent = 'All tasks completed — Great session!';
+            // replace timer panel content modestly
+            currentTaskNameEl.textContent = '';
+            timerEl.textContent = '';
+            taskHintEl.textContent = '';
+            statusLine.textContent = '';
+            // clear buttons
+            startBtn.disabled = true;
+            pauseBtn.disabled = true;
+            completeBtn.disabled = true;
+            resetBtn.disabled = true;
+            // append message to timer area
+            const box = document.querySelector('.timerBox');
+            // remove existing done message if any
+            const existing = document.querySelector('.doneMsg');
+            if (!existing) box.appendChild(msg);
+        }
+
+        // events
+        daySelect.addEventListener('change', ()=> loadDay(daySelect.value));
+        startBtn.addEventListener('click', ()=> {
+            if (currentIndex >= tasks.length) return;
+            startTimer();
+        });
+        pauseBtn.addEventListener('click', ()=> pauseTimer());
+        resetBtn.addEventListener('click', ()=> resetTimer());
+        completeBtn.addEventListener('click', ()=> completeAndNext());
+
+        // keyboard: space toggles start/pause
+        document.addEventListener('keydown', (e)=>{
+            if (e.code === 'Space') {
+                e.preventDefault();
+                if (running) pauseTimer();
+                else startTimer();
+            }
+        });
+
+        // init
+        populateDays();
+    </script>
+</body>
+</html>

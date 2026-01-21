@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Coin Minigames</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <style>
+        :root{
+            --bg:#0f1724; --panel:#0b1220; --accent:#ffd166; --muted:#9aa4b2;
+            --glass: rgba(255,255,255,0.03);
+            font-family: Inter, Roboto, Arial, sans-serif;
+        }
+        *{box-sizing:border-box}
+        body{
+            margin:0; min-height:100vh; background:
+            radial-gradient(ellipse at 10% 10%, rgba(255,209,102,0.06), transparent 6%),
+            linear-gradient(180deg,#061027 0%, #071229 100%); color:#e6eef6;
+            display:flex; align-items:flex-start; justify-content:center; padding:28px;
+        }
+        .app{
+            width:980px; max-width:100%; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+            border-radius:12px; padding:18px; box-shadow: 0 6px 30px rgba(2,6,23,0.6);
+            display:grid; grid-template-columns:320px 1fr; gap:18px;
+        }
+        .sidebar{background:var(--panel); padding:14px; border-radius:10px}
+        h1{font-size:18px;margin:0 0 8px 0;color:var(--accent)}
+        .balance{
+            background:var(--glass); padding:12px; border-radius:8px; display:flex; align-items:center; justify-content:space-between;
+            margin-bottom:12px;
+        }
+        .balance .amt{font-weight:700;font-size:20px}
+        label{display:block;font-size:13px;color:var(--muted);margin:8px 0 6px}
+        input[type="number"]{
+            width:100%; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.04);
+            background:transparent; color:inherit;
+        }
+        .games-list{display:flex; flex-direction:column; gap:8px; margin-top:10px}
+        .game-btn{
+            background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+            padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.03);
+            cursor:pointer; color:inherit; text-align:left; font-weight:600;
+        }
+        .game-btn.small{padding:8px; font-size:14px}
+        .controls-row{display:flex; gap:8px; margin-top:10px}
+        button.primary{
+            background:var(--accent); color:#062231; border:none; padding:10px 12px; border-radius:8px; cursor:pointer; font-weight:700;
+        }
+        button.ghost{background:transparent; color:var(--muted); border:1px solid rgba(255,255,255,0.03); padding:8px 10px; border-radius:8px; cursor:pointer}
+        .main{padding:14px; background:var(--panel); border-radius:10px; min-height:420px}
+        .game-area{min-height:300px}
+        .hidden{display:none}
+        .result{margin-top:12px;padding:10px;border-radius:8px;background:linear-gradient(90deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02)); color:var(--muted)}
+        /* Plinko board */
+        .plinko-board{position:relative;padding:12px;background:linear-gradient(180deg,#071428, #041226); border-radius:8px}
+        .peg{
+            width:8px;height:8px;border-radius:50%;background:#8fb6ff55; position:absolute; transform:translate(-50%,-50%);
+        }
+        .slot-row{display:flex; gap:6px; justify-content:center; margin-top:12px}
+        .slot{
+            width:40px;height:36px;background:#0b1524;border-radius:6px;border:1px solid rgba(255,255,255,0.03);
+            display:flex; align-items:center; justify-content:center; font-weight:700;
+        }
+        .ball{width:14px;height:14px;border-radius:50%; background:var(--accent); position:absolute; transform:translate(-50%,-50%); transition:all 220ms linear}
+        .boxes{display:flex; gap:12px}
+        .box{flex:1;height:90px;background:#061226;border-radius:8px;border:1px solid rgba(255,255,255,0.03); display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:800}
+        .box.locked{opacity:0.6;cursor:default}
+        .mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+        .dice{font-size:40px;font-weight:900}
+        .small-muted{font-size:13px;color:var(--muted)}
+        footer{margin-top:12px; font-size:12px; color:var(--muted)}
+    </style>
+</head>
+<body>
+    <div class="app" role="application" aria-label="Coin minigames">
+        <aside class="sidebar">
+            <h1>Coin Arcade</h1>
+            <div class="balance">
+                <div>
+                    <div class="small-muted">Balance</div>
+                    <div class="amt" id="balance">1,000</div>
+                </div>
+                <div style="text-align:right">
+                    <div class="small-muted">Coins</div>
+                    <div class="small-muted">v1.0</div>
+                </div>
+            </div>
+
+            <label for="bet">Bet amount</label>
+            <input id="bet" type="number" min="1" value="10" />
+
+            <div class="controls-row">
+                <button class="primary" id="setAll">Bet All</button>
+                <button class="ghost" id="reset">Reset</button>
+            </div>
+
+            <label style="margin-top:12px">Minigames</label>
+            <div class="games-list">
+                <button class="game-btn" data-game="plinko">Plinko (slot multipliers)</button>
+                <button class="game-btn" data-game="boxes">4 Boxes (risk high)</button>
+                <button class="game-btn" data-game="coinflip">Coin Flip (2x)</button>
+                <button class="game-btn" data-game="dice">Dice Roll</button>
+                <button class="game-btn" data-game="wheel">Wheel of Chance</button>
+            </div>
+
+            <footer>Games are simulated. Use responsibly.</footer>
+        </aside>
+
+        <main class="main">
+            <div id="gameTitle"><h2 style="margin:0">Welcome</h2><div class="small-muted">Choose a minigame to play</div></div>
+
+            <div class="game-area" id="gameArea">
+                <!-- Plinko -->
+                <div id="plinko" class="hidden">
+                    <div class="plinko-board" id="plinkoBoard" style="height:260px">
+                        <!-- pegs and ball injected by JS -->
+                    </div>
+                    <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
+                        <div class="small-muted">Payouts:</div>
+                        <div class="small-muted" id="plinkoPayouts"></div>
+                        <button class="primary" id="playPlinko" style="margin-left:auto">Play Plinko</button>
+                    </div>
+                    <div class="result" id="plinkoResult"></div>
+                </div>
+
+                <!-- Boxes -->
+                <div id="boxes" class="hidden">
+                    <div class="small-muted">Pick one box. Two boxes make you lose your entire balance.</div>
+                    <div class="boxes" style="margin-top:12px" id="boxesRow"></div>
+                    <div class="result" id="boxesResult"></div>
+                    <div style="margin-top:10px">
+                        <button class="ghost" id="shuffleBoxes">Shuffle</button>
+                    </div>
+                </div>
+
+                <!-- Coinflip -->
+                <div id="coinflip" class="hidden">
+                    <div class="small-muted">Pick heads or tails. Win doubles your bet (2x) on correct guess.</div>
+                    <div style="margin-top:12px;display:flex;gap:8px">
+                        <button class="game-btn small" id="heads">Heads</button>
+                        <button class="game-btn small" id="tails">Tails</button>
+                        <div style="margin-left:auto" class="small-muted" id="coinflipResult"></div>
+                    </div>
+                </div>
+
+                <!-- Dice -->
+                <div id="dice" class="hidden">
+                    <div class="small-muted">Roll a 6-sided die. Payouts: 5-6 → 3x, 3-4 → 1.5x, 1-2 → lose.</div>
+                    <div style="margin-top:12px; display:flex; align-items:center; gap:12px">
+                        <div class="dice" id="diceFace">—</div>
+                        <button class="primary" id="rollDice">Roll</button>
+                        <div class="small-muted" id="diceResult" style="margin-left:auto"></div>
+                    </div>
+                </div>
+
+                <!-- Wheel -->
+                <div id="wheel" class="hidden">
+                    <div class="small-muted">Spin the wheel for a random multiplier (0-5x)</div>
+                    <div style="margin-top:12px; display:flex; align-items:center; gap:12px">
+                        <div style="width:120px;height:120px;border-radius:50%;background:linear-gradient(45deg,#092036,#0b2842);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800" id="wheelDisplay">--x</div>
+                        <button class="primary" id="spinWheel">Spin</button>
+                        <div class="small-muted" id="wheelResult" style="margin-left:auto"></div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+<script>
+    // GitHub Copilot
+    (function(){
+        const DEFAULT_BAL = 1000;
+        const LS_KEY = 'coinGameBalance_v1';
+        let balance = loadBalance();
+        const el = id=>document.getElementById(id);
+        const balanceEl = el('balance');
+        const betInput = el('bet');
+
+        function loadBalance(){
+            const v = localStorage.getItem(LS_KEY);
+            const n = v !== null ? parseFloat(v) : DEFAULT_BAL;
+            return isFinite(n) ? n : DEFAULT_BAL;
+        }
+        function saveBalance(){
+            localStorage.setItem(LS_KEY, String(balance));
+        }
+        function setBalance(n){
+            balance = Math.max(0, Math.round(n*100)/100);
+            balanceEl.textContent = balance.toLocaleString();
+            saveBalance();
+        }
+        setBalance(balance);
+
+        // Quick controls
+        el('setAll').addEventListener('click', ()=> betInput.value = Math.max(1, Math.floor(balance)));
+        el('reset').addEventListener('click', ()=> {
+            if(!confirm('Reset balance to 1000?')) return;
+            setBalance(DEFAULT_BAL);
+        });
+
+        // Game nav
+        document.querySelectorAll('.game-btn[data-game]').forEach(b=>{
+            b.addEventListener('click', ()=> openGame(b.dataset.game));
+        });
+        function openGame(name){
+            document.querySelectorAll('#gameArea > div').forEach(d=>d.classList.add('hidden'));
+            const map = {plinko:'Plinko', boxes:'4 Boxes', coinflip:'Coin Flip', dice:'Dice Roll', wheel:'Wheel'};
+            el(name).classList.remove('hidden');
+            el('gameTitle').innerHTML = `<h2 style="margin:0">${map[name]}</h2><div class="small-muted">Balance: ${balance.toLocaleString()}</div>`;
+            if(name==='plinko') initPlinko();
+            if(name==='boxes') initBoxes();
+        }
+
+        function getBet(){
+            const b = Math.floor(parseFloat(betInput.value) || 0);
+            if(b <= 0) throw new Error('Bet must be at least 1');
+            if(b > balance) throw new Error('Insufficient balance');
+            return b;
+        }
+
+        function showResult(containerId, text){
+            el(containerId).textContent = text;
+        }
+
+        /* Plinko implementation */
+        let plinkoConfig = null;
+        function initPlinko(){
+            const board = el('plinkoBoard');
+            board.innerHTML = '';
+            const rows = 7;
+            const width = board.clientWidth || 580;
+            const height = board.clientHeight || 240;
+            const rowGap = height / (rows+2);
+            // build pegs
+            const pegs = [];
+            for(let r=0;r<rows;r++){
+                const cols = r+1;
+                for(let c=0;c<cols;c++){
+                    const left = ((c - 0.5* (cols-1)) / cols) * 0.86 + 0.5; // normalized
+                    const x = left * width;
+                    const y = (r+1) * rowGap;
+                    const d = document.createElement('div');
+                    d.className='peg';
+                    d.style.left = x + 'px';
+                    d.style.top = y + 'px';
+                    board.appendChild(d);
+                    pegs.push({x,y});
+                }
+            }
+            // slots and multipliers
+            const slotsCount = rows + 1;
+            const multipliers = [0,0.5,1,2,5,2,1,0.5].slice(0, slotsCount);
+            const slotRow = document.createElement('div');
+            slotRow.className='slot-row';
+            slotRow.style.marginTop='6px';
+            slotRow.style.position='relative';
+            slotRow.style.top='8px';
+            const slotEls = [];
+            for(let i=0;i<slotsCount;i++){
+                const s = document.createElement('div');
+                s.className='slot';
+                s.textContent = multipliers[i] + 'x';
+                slotRow.appendChild(s);
+                slotEls.push(s);
+            }
+            board.appendChild(slotRow);
+            // ball
+            const ball = document.createElement('div');
+            ball.className='ball';
+            board.appendChild(ball);
+            plinkoConfig = {rows, slotsCount, multipliers, board, ball, width, rowGap};
+            el('plinkoPayouts').textContent = multipliers.map((m,i)=>`[${i}:${m}x]`).join(' ');
+            showResult('plinkoResult','Ready');
+        }
+
+        function playPlinko(){
+            try{
+                if(!plinkoConfig) initPlinko();
+                const bet = getBet();
+                // deduct bet immediately
+                setBalance(balance - bet);
+                const cfg = plinkoConfig;
+                const {rows, multipliers, ball, board, rowGap, width} = cfg;
+                // simulate path
+                let pos = Math.floor(rows/2);
+                const path = [pos];
+                for(let r=0;r<rows;r++){
+                    const moveRight = Math.random() < 0.5;
+                    pos += moveRight ? 1 : 0;
+                    pos = Math.max(0, Math.min(cfg.slotsCount-1, pos));
+                    path.push(pos);
+                }
+                // animate ball
+                const rect = board.getBoundingClientRect();
+                ball.style.transition = 'none';
+                ball.style.left = (rect.width*0.5) + 'px';
+                ball.style.top = (rowGap*0.6) + 'px';
+                let step = 0;
+                function stepAnim(){
+                    if(step >= path.length){
+                        // finished
+                        const finalIdx = path[path.length-1];
+                        const mult = multipliers[finalIdx] || 0;
+                        const payout = Math.round(bet * mult * 100) / 100;
+                        setTimeout(()=>{
+                            // add payout
+                            setBalance(balance + payout);
+                            showResult('plinkoResult', `Landed in slot ${finalIdx}. Multiplier ${mult}x → Payout ${payout.toLocaleString()} coins`);
+                        }, 220);
+                        return;
+                    }
+                    ball.style.transition = 'all 220ms linear';
+                    const idx = path[step];
+                    const left = (rect.width * (0.12 + idx/(cfg.slotsCount-1)*0.76));
+                    const top = (rowGap*(0.8 + step*0.9));
+                    ball.style.left = left + 'px';
+                    ball.style.top = top + 'px';
+                    step++;
+                    setTimeout(stepAnim, 220);
+                }
+                stepAnim();
+                showResult('plinkoResult','Dropping...');
+            }catch(e){
+                alert(e.message);
+            }
+        }
+        el('playPlinko').addEventListener('click', playPlinko);
+
+        /* Boxes game */
+        let boxesState = null;
+        function initBoxes(){
+            const boxesRow = el('boxesRow');
+            boxesRow.innerHTML = '';
+            // create four boxes and assign outcomes
+            const outcomes = shuffleArray(['jackpot','oneX','wipe','wipe']);
+            boxesState = outcomes.map(o=>({state:'closed', outcome:o}));
+            boxesState.forEach((b,i)=>{
+                const box = document.createElement('div');
+                box.className='box';
+                box.textContent = '?';
+                box.dataset.i = i;
+                box.addEventListener('click', ()=> pickBox(i));
+                boxesRow.appendChild(box);
+            });
+            showResult('boxesResult','Pick a box');
+        }
+
+        function pickBox(i){
+            try{
+                const bet = getBet();
+                if(!boxesState) initBoxes();
+                const b = boxesState[i];
+                if(b.state !== 'closed') return;
+                // deduct bet
+                setBalance(balance - bet);
+                // reveal
+                const boxesRow = el('boxesRow');
+                const boxEl = boxesRow.children[i];
+                b.state = 'open';
+                const outcome = b.outcome;
+                if(outcome === 'jackpot'){
+                    const mult = 4; // 4x payout
+                    const payout = Math.round(bet * mult * 100)/100;
+                    setBalance(balance + payout);
+                    boxEl.style.background = '#14341d';
+                    boxEl.textContent = `${mult}x`;
+                    showResult('boxesResult', `Jackpot! You won ${payout} coins (${mult}x)`);
+                } else if(outcome === 'oneX'){
+                    const payout = Math.round(bet * 1 * 100)/100;
+                    setBalance(balance + payout);
+                    boxEl.style.background = '#2b2f3a';
+                    boxEl.textContent = '1x';
+                    showResult('boxesResult', `You got 1x. Returned ${payout} coins`);
+                } else {
+                    // wipe: lose entire balance
+                    boxEl.style.background = '#2b0a0a';
+                    boxEl.textContent = 'WIPE';
+                    setBalance(0);
+                    // reveal others
+                    for(let k=0;k<boxesState.length;k++){
+                        if(k===i) continue;
+                        const elBox = boxesRow.children[k];
+                        elBox.classList.add('locked');
+                        elBox.textContent = boxesState[k].outcome === 'jackpot' ? '4x' : (boxesState[k].outcome==='oneX'?'1x':'WIPE');
+                    }
+                    showResult('boxesResult', `Oh no — you hit a wipe. Balance reset to 0.`);
+                }
+                // lock opened box to prevent repeated pick
+                boxEl.classList.add('locked');
+            }catch(e){
+                alert(e.message);
+            }
+        }
+
+        el('shuffleBoxes').addEventListener('click', ()=> initBoxes());
+
+        /* Coinflip */
+        function coinflipPick(side){
+            try{
+                const bet = getBet();
+                setBalance(balance - bet);
+                const rng = Math.random() < 0.5 ? 'heads' : 'tails';
+                const win = (rng === side);
+                if(win){
+                    const payout = bet * 2;
+                    setBalance(balance + payout);
+                    el('coinflipResult').textContent = `Result: ${rng}. You win ${payout} coins`;
+                } else {
+                    el('coinflipResult').textContent = `Result: ${rng}. You lost ${bet} coins`;
+                }
+            }catch(e){ alert(e.message); }
+        }
+        el('heads').addEventListener('click', ()=> coinflipPick('heads'));
+        el('tails').addEventListener('click', ()=> coinflipPick('tails'));
+
+        /* Dice */
+        el('rollDice').addEventListener('click', ()=>{
+            try{
+                const bet = getBet();
+                setBalance(balance - bet);
+                const roll = Math.floor(Math.random()*6)+1;
+                el('diceFace').textContent = roll;
+                let mult=0;
+                if(roll>=5) mult = 3;
+                else if(roll>=3) mult = 1.5;
+                else mult = 0;
+                if(mult>0){
+                    const payout = Math.round(bet * mult * 100)/100;
+                    setBalance(balance + payout);
+                    el('diceResult').textContent = `Rolled ${roll}. You win ${payout} coins (${mult}x)`;
+                } else {
+                    el('diceResult').textContent = `Rolled ${roll}. You lost ${bet} coins`;
+                }
+            }catch(e){ alert(e.message); }
+        });
+
+        /* Wheel */
+        el('spinWheel').addEventListener('click', ()=>{
+            try{
+                const bet = getBet();
+                setBalance(balance - bet);
+                // random multiplier bias: small chance jackpot
+                const r = Math.random();
+                let mult;
+                if(r > 0.995) mult = 10;
+                else if(r > 0.95) mult = 5;
+                else if(r > 0.75) mult = 2;
+                else if(r > 0.35) mult = 1;
+                else mult = 0;
+                // animate display
+                const disp = el('wheelDisplay');
+                disp.textContent = '...';
+                setTimeout(()=>{
+                    disp.textContent = mult + 'x';
+                    if(mult > 0){
+                        const payout = Math.round(bet * mult * 100)/100;
+                        setBalance(balance + payout);
+                        el('wheelResult').textContent = `You got ${mult}x → ${payout} coins`;
+                    } else {
+                        el('wheelResult').textContent = `You got 0x — you lost ${bet} coins`;
+                    }
+                }, 700);
+            }catch(e){ alert(e.message); }
+        });
+
+        /* Utility */
+        function shuffleArray(a){
+            const arr = a.slice();
+            for(let i=arr.length-1;i>0;i--){
+                const j = Math.floor(Math.random()*(i+1));
+                [arr[i],arr[j]]=[arr[j],arr[i]];
+            }
+            return arr;
+        }
+
+        // Initialize UI defaults
+        openGame('plinko');
+
+        // expose for debugging (optional)
+        window.coinGame = {getBalance: ()=>balance, setBalance, reset: ()=>setBalance(DEFAULT_BAL)};
+    })();
+</script>
+</body>
+</html>
