@@ -334,7 +334,7 @@
             // create four boxes and assign outcomes
             const outcomes = shuffleArray(['jackpot','oneX','wipe','wipe']);
             boxesState = outcomes.map(o=>({state:'closed', outcome:o}));
-            boxesState.forEach((b,i)=>{
+            boxesStateforEach((b,i)=>{
                 const box = document.createElement('div');
                 box.className='box';
                 box.textContent = '?';
@@ -375,7 +375,7 @@
                     // wipe: lose entire balance
                     boxEl.style.background = '#2b0a0a';
                     boxEl.textContent = 'WIPE';
-                    setBalance(0);
+                   
                     // reveal others
                     for(let k=0;k<boxesState.length;k++){
                         if(k===i) continue;

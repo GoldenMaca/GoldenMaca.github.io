@@ -4,51 +4,29 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Woven by Night</title>
-    <meta name="description" content="Woven by Night" />
-    <link rel="icon" href="favicon.ico" />
+    <meta name="description" content="Woven by Night"/>
+    <link rel="icon" href="favicon.ico"/>
     <!-- Link your styles -->
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css"/>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Funnel+Sans:ital,wght@0,300..800;1,300..800&family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Funnel+Sans:ital,wght@0,300..800;1,300..800&family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap" rel="stylesheet">
     <script>
 
         
-  // Hard reset on load
-  slides.forEach(slide => slide.classList.remove("show"));
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("show");
-          observer.unobserve(entry.target); // optional: prevents retrigger
-        }
-      });
-    },
-    {
-      threshold: 0.25,
-      rootMargin: "0px 0px -100px 0px"
-    }
-  );
-
-  slides.forEach((el, i) => {
-    el.style.transitionDelay = `${i * 0.2}s`;
-    observer.observe(el);
-  });
-
-
+  
+ 
     </script>
 </head>
 <body>
     <nav>
-        <img id="navbarlogo" src="images/logo.png" alt="Woven by Night Logo">
+        <a href="#main"><img id="navbarlogo" src="images/logo.png" alt="Woven by Night Logo"></a>
         <div id="links">
-            <a href="#Mystory">My Story</a>
-            <a href="#Gallery">Gallery</a>
-            <a href="#Contact">Contact</a>
-            <a href="#Socials">Socials</a>
+            <a class="navlink" href="#Mystory">My Story</a>
+            <a class="navlink" href="#Gallery">Gallery</a>
+            <a class="navlink" href="#Contact">Contact</a>
+            <a class="navlink" href="#Socials">Socials</a>
         </div>
 
     </nav>
@@ -81,7 +59,21 @@
         </div>
     </div>
     <div id="Contact"></div>
+    <div style="display: flex;" id="topitems"><h2>Phone number:</h2>
+    <a href="tel:+11234567890"><h2>(123) 456-7890</h2></a></div>
+    
+      <form action="https://formspree.io/f/xnqvljqg" method="POST">
+          <label for="name">Name:</label>
+          <input type="text" id="name" name="name" required>
 
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" required>
+
+          <label for="message">Message:</label>
+          <textarea id="message" name="message" rows="4" required></textarea>
+
+          <button type="submit">Send</button>
+      </form>
     <div id="Socials"></div>
 
     <div id="footer"></div>
