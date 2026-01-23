@@ -180,9 +180,56 @@ nav .navlink:hover::after {
 }
 
 #Contact {
-    height: 100vh;
+    min-height: 100vh;
     width: 100%;
-    background-color: #40ac45;
+    background-color: #3b833e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    box-sizing: border-box;
+}
+
+.contact-container {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+}
+
+.contact-title {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    color: #67103a;
+    margin-bottom: 25px;
+    margin-top: 0;
+}
+
+.phone-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.phone-container h3 {
+    margin: 0;
+    color: #333;
+    font-size: 1.2rem;
+}
+
+.phone-container a {
+    color: #67103a;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.phone-container a:hover {
+    color: #aa3b5e;
 }
 
 #Socials {
@@ -275,4 +322,94 @@ nav .navlink:hover::after {
   .galimg {
     width: clamp(80px, 40vw, 350px);
   }
+
+  .contact-container {
+    padding: 25px 20px;
+    margin: 10px;
+  }
+
+  #contform {
+    gap: 15px;
+  }
+
+  #contform input[type="email"],
+  #contform textarea {
+    padding: 10px 12px;
+    font-size: 0.95rem;
+  }
+
+  #contform button {
+    padding: 12px 25px;
+    font-size: 1rem;
+  }
+
+  .phone-container {
+    flex-direction: column;
+    gap: 5px;
+  }
+}
+
+
+#contform {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: stretch;
+    width: 100%;
+}
+
+#contform label {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    font-weight: 500;
+    color: #333;
+    font-size: 1rem;
+}
+
+#contform input[type="email"],
+#contform textarea {
+    padding: 12px 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    margin-top: 8px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#contform input[type="email"]:focus,
+#contform textarea:focus {
+    outline: none;
+    border-color: #67103a;
+    box-shadow: 0 0 0 3px rgba(103, 16, 58, 0.1);
+}
+
+#contform textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+#contform button {
+    padding: 15px 30px;
+    background: #67103a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    margin-top: 10px;
+}
+
+#contform button:hover {
+    background: #aa3b5e;
+    transform: translateY(-2px);
+}
+
+#contform button:active {
+    transform: translateY(0);
 }
