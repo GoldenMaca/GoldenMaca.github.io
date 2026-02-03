@@ -441,7 +441,7 @@ nav .navlink:hover::after {
     border-radius: 5px;
     transition: background 0.3s ease;
     width: 25vw;
-    height: 5vw;
+    height: auto;
 }
 
 .btnsocials a {
