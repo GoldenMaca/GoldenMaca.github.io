@@ -89,7 +89,7 @@ nav .navlink:hover::after {
 #main {
     height: 100vh;
 
-    background-image: url(images/topp.png);
+    background-image: url(media/topp.png);
     background-size: cover;
     display: flex;
     flex-direction: column;
