@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <canvas style="border: 2px dashed black;" id="myCanvas" width="600" height="600"></canvas>
+    <title>Canvas Drawing</title>
+    <script>
+        const canvas = document.getElementById('myCanvas');
+        const ctx = canvas.getContext('2d');
+        //head
+        ctx.fillStyle = '#feef7c';
+        ctx.beginPath();
+        ctx.arc(300, 300, 100, 0, Math.PI * 2); 
+        ctx.fill();
+        //lips
+        ctx.fillStyle = '#ff3568'; 
+        ctx.beginPath(); 
+        ctx.ellipse(300, 350, 60, 15, 0, 0, Math.PI);
+        ctx.fill();
+
+        ctx.fillStyle = '#ff3568'; 
+        ctx.beginPath(); 
+        ctx.ellipse(275, 350, 35, 15, 0, Math.PI, true); 
+        ctx.fill();
+
+        ctx.fillStyle = '#ff3568'; 
+        ctx.beginPath(); 
+        ctx.ellipse(325, 350, 35, 15, 0, Math.PI, true); 
+        ctx.fill();
+        //outer eye
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.ellipse(270, 275, 20, 15, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.ellipse(325, 275, 20, 15, 0, 0, Math.PI * 2);
+        ctx.fill();
+        //inner eye
+        ctx.fillStyle = '#000';
+        ctx.beginPath();
+        ctx.ellipse(270, 275, 10, 15, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#000';
+        ctx.beginPath();
+        ctx.ellipse(325, 275, 10, 15, 0, 0, Math.PI * 2);
+        ctx.fill();
+    </script>
+    <style>
+        body {
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+    </style>
+</head>
+
+</html>
