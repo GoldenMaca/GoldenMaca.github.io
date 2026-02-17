@@ -123,6 +123,17 @@
         ctx.fill();
 
         //hands(just a circle)
+        ctx.fillStyle = '#feef7c';
+        ctx.beginPath();
+        ctx.arc(130, 517, 20, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#feef7c';
+        ctx.beginPath();
+        ctx.arc(470, 517, 20, 0, Math.PI *2);
+        ctx.fill();
+
+        
 
         //sleeves
         ctx.fillStyle = '#4000ff';
@@ -144,18 +155,93 @@
         ctx.closePath();
         ctx.fill();
 
-    
+        //gaming controller on shirt
+        ctx.fillStyle = 'grey';
+        ctx.beginPath();
+        ctx.moveTo(275, 450);
+        ctx.lineTo(325, 450);
+        ctx.lineTo(325, 475);
+        ctx.lineTo(275, 475);
+        ctx.closePath();
+        ctx.fill();
+
+        //handles of controller
+        ctx.fillStyle = 'grey';
+        ctx.beginPath();
+        ctx.moveTo(275, 450);
+        ctx.lineTo(265, 455);
+        ctx.lineTo(265, 500);
+        ctx.lineTo(275, 500);
+        ctx.lineTo(275, 450);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = 'grey';
+        ctx.beginPath();
+        ctx.moveTo(325, 450);
+        ctx.lineTo(335, 455);
+        ctx.lineTo(335, 500);
+        ctx.lineTo(325, 500);
+        ctx.lineTo(325, 450);
+        ctx.closePath();
+        ctx.fill();
+
+        //joysticks on controller
+        ctx.fillStyle = 'black';
+        ctx.beginPath();
+        ctx.arc(280, 460, 5, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = 'black';
+        ctx.beginPath();
+        ctx.arc(320, 470, 5, 0, Math.PI * 2);
+        ctx.fill();
+
+        //buttons on controller
+        ctx.fillStyle = 'red';
+        ctx.beginPath();
+        ctx.arc(320, 455, 2, 0, Math.PI *2);
+        ctx.fill();
+
+        ctx.fillStyle = 'blue';
+        ctx.beginPath();
+        ctx.arc(320, 461, 2, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = 'green';
+        ctx.beginPath();
+        ctx.arc(324, 458, 2, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = 'yellow';
+        ctx.beginPath();
+        ctx.arc(316, 458, 2, 0, Math.PI * 2);
+        ctx.fill();
+
+        //on/off button on controller
+        ctx.fillStyle = 'white';
+        ctx.beginPath();
+        ctx.arc(302, 457, 5, 0, Math.PI * 2);
+        ctx.fill();
+        
+        //black plus buttons below the left controller joystick
+        ctx.fillStyle = 'black';
+        ctx.beginPath();
+        ctx.moveTo(280, 465);
+        ctx.lineTo(280, 475);
+        ctx.moveTo(275, 470);
+        ctx.lineTo(285, 470);
+        ctx.stroke();
+
+        
+
 
 
     </script>
     <style>
-        body {
-            background-color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
+        canvas {
+            background-color: #3cd8ff;
+            
         }
     </style>
 </head>
