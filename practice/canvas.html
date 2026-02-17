@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas Practice</title>
+    <canvas style="border: 1px solid black;" width="800" height="600" id="myCanvas"></canvas>
+    <script>
+        const canvas = document.getElementById('myCanvas');
+        const ctx = canvas.getContext('2d');
+
+
+
+        
+
+
+        //input the shape you want, then the coords, color and size, and then the canvas code is outputted to copy and paste
+        let i = 0;
+        while (i < 1) {
+            let input = prompt("Enter a shape(circle, rect, square, triangle):");
+            if (input === "circle") {
+                let x = prompt("Enter the x coordinate of the center:");
+                let y = prompt("Enter the y coordinate of the center:");
+                let radius = prompt("Enter the radius:");
+                let color = prompt("Enter the color:");
+                alert(`ctx.fillStyle = '${color}'; ctx.beginPath(); ctx.arc(${x}, ${y}, ${radius}, 0, Math.PI * 2); ctx.fill();`);
+            } else if (input === "rect") {
+                let x = prompt("Enter the x coordinate of the top left corner:");
+                let y = prompt("Enter the y coordinate of the top left corner:");
+                let width = prompt("Enter the width:");
+                let height = prompt("Enter the height:");
+                let color = prompt("Enter the color:");
+                alert(`ctx.fillStyle = '${color}'; ctx.fillRect(${x}, ${y}, ${width}, ${height});`);
+            } else if (input === "square") {
+                let x = prompt("Enter the x coordinate of the top left corner:");
+                let y = prompt("Enter the y coordinate of the top left corner:");
+                let size = prompt("Enter the size:");
+                let color = prompt("Enter the color:");
+                alert(`ctx.fillStyle = '${color}'; ctx.fillRect(${x}, ${y}, ${size}, ${size});`);
+            } else if (input === "triangle") {
+                let x1 = prompt("Enter the x coordinate of the first point:");
+                let y1 = prompt("Enter the y coordinate of the first point:");
+                let x2 = prompt("Enter the x coordinate of the second point:");
+                let y2 = prompt("Enter the y coordinate of the second point:");
+                let x3 = prompt("Enter the x coordinate of the third point:");
+                let y3 = prompt("Enter the y coordinate of the third point:");
+                let color = prompt("Enter the color:");
+                alert(`ctx.fillStyle = '${color}'; ctx.beginPath(); ctx.moveTo(${x1}, ${y1}); ctx.lineTo(${x2}, ${y2}); ctx.lineTo(${x3}, ${y3}); ctx.closePath(); ctx.fill();`);
+
+            } else {
+                alert("Invalid shape. Please enter circle, rect, square, or triangle.");
+            }
+            i++;
+        }
+    </script>
+    
+
+    
+</html>
