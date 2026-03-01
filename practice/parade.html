@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Minimal Parade</title>
+    <style>body{margin:0;background:#fff}</style>
+</head>
+<body>
+    <canvas id="c"></canvas>
+    <script>
+document.getElementById('c').width=600
+document.getElementById('c').height=200
+
+let ctx = document.getElementById('c').getContext('2d')
+
+function person(x){
+    ctx.fillStyle='red'
+    ctx.fillRect(x,150,8,20) // body
+    ctx.fillStyle='peachpuff'
+    ctx.beginPath()
+    ctx.arc(x+4,145,5,0,Math.PI*2) // head
+    ctx.fill()
+}
+
+function balloon(x){
+    ctx.fillStyle='pink'
+    ctx.beginPath()
+    ctx.arc(x+30,120,10,0,Math.PI*2)
+    ctx.fill()
+    ctx.strokeStyle='black'
+    ctx.beginPath()
+    ctx.moveTo(x+30,130)
+    ctx.lineTo(x+30,145)
+    ctx.stroke()
+}
+
+function bear(x){
+    ctx.fillStyle='skyblue'
+    ctx.fillRect(0,0,600,200) 
+    ctx.fillStyle='green'
+    ctx.fillRect(0,170,600,30) 
+
+    ctx.fillStyle='saddlebrown'
+    ctx.fillRect(x,140,30,25) 
+    ctx.fillStyle='peru'
+    ctx.beginPath()
+    ctx.arc(x+15,130,10,0,Math.PI*2)
+    ctx.fill()
+
+    
+}
+
+function loop(){
+    bear(x)
+    person(x+50)
+    person(x+70)
+    person(x-30)
+    person(x-10)
+    balloon(x)
+    x+=1
+    if(x>600) x=-30
+    ;
+    if(x>600) x=-30;
+    for(let i=0;i<24;i++){
+        person(i*26 - 120 + (x%26));
+    }
+    for(let i=0;i<6;i++){
+        balloon(i*100 - 80 + (x%100));
+    }
+    requestAnimationFrame(loop)
+}
+let x=0
+loop()
+
+bear(0)
+    </script>
+</body>
+</html>

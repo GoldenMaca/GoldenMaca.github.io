@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Split or Steal — Pass & Play</title>
+<style>
+    :root{
+        --bg:#0f1724; --card:#0b1220; --accent:#7c3aed; --muted:#9aa4b2; --glass:rgba(255,255,255,0.03);
+        --glass2:rgba(255,255,255,0.02);
+        font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;background:linear-gradient(180deg,#071022 0%,#07162a 60%),var(--bg);color:#e6eef6;display:flex;align-items:center;justify-content:center;padding:30px}
+    .wrap{width:100%;max-width:1100px}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+    h1{font-size:20px;margin:0;color:var(--accent);letter-spacing:0.6px}
+    .sub{color:var(--muted);font-size:13px}
+    .board{display:grid;grid-template-columns:320px 1fr;gap:18px}
+    .panel{background:linear-gradient(180deg,var(--glass),var(--glass2));border-radius:12px;padding:16px;box-shadow:0 6px 24px rgba(2,6,23,0.6);border:1px solid rgba(255,255,255,0.02)}
+    .players{display:flex;flex-direction:column;gap:12px}
+    .player{display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border:1px solid rgba(255,255,255,0.02)}
+    .avatar{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#2dd4bf);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;color:#071022}
+    .info{flex:1}
+    .name{font-weight:600}
+    .score{font-size:12px;color:var(--muted)}
+    .coins{font-weight:700;color:#ffd480}
+    .center{display:flex;flex-direction:column;gap:12px}
+    .roundCard{display:flex;align-items:center;justify-content:space-between;padding:14px;border-radius:10px;background:linear-gradient(90deg,rgba(255,255,255,0.02),transparent);border:1px solid rgba(255,255,255,0.02)}
+    .pot{font-size:18px;font-weight:800;color:#fff}
+    .mini{font-size:12px;color:var(--muted)}
+    .shop{display:flex;gap:10px;flex-wrap:wrap}
+    .mod{width:calc(50% - 5px);background:#071827;border-radius:10px;padding:10px;border:1px solid rgba(255,255,255,0.03);font-size:13px}
+    .mod h4{margin:0 0 6px 0;font-size:13px;color:#fff}
+    .mod p{margin:0;color:var(--muted);font-size:12px}
+    button{background:linear-gradient(90deg,var(--accent),#06b6d4);border:0;color:#021026;padding:8px 12px;border-radius:8px;font-weight:700;cursor:pointer}
+    .ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+    .controls{display:flex;gap:10px;align-items:center}
+    .choiceArea{display:flex;gap:12px;align-items:center}
+    .choice{padding:18px 22px;border-radius:12px;font-weight:800;cursor:pointer;border:1px solid rgba(255,255,255,0.02);min-width:120px;text-align:center}
+    .split{background:linear-gradient(180deg,#0ea5a0,#06b6d4);color:#021026}
+    .steal{background:linear-gradient(180deg,#fb7185,#ef4444);color:#fff}
+    .overlay{position:fixed;inset:0;background:linear-gradient(0deg,rgba(2,6,23,0.85),rgba(2,6,23,0.95));display:flex;align-items:center;justify-content:center;z-index:60;backdrop-filter:blur(4px)}
+    .passCard{background:#071827;padding:22px;border-radius:12px;text-align:center;border:1px solid rgba(255,255,255,0.03)}
+    .tag{font-size:12px;padding:6px 8px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.02);color:var(--muted)}
+    footer{margin-top:14px;display:flex;gap:10px;align-items:center;justify-content:space-between;color:var(--muted);font-size:13px}
+    .leader{display:flex;flex-direction:column;gap:8px}
+    .list{display:flex;flex-direction:column;gap:8px}
+    .entry{display:flex;align-items:center;justify-content:space-between;padding:8px;border-radius:8px;background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent);border:1px solid rgba(255,255,255,0.02)}
+    .small{font-size:12px;color:var(--muted)}
+    .badge{background:rgba(255,255,255,0.04);padding:6px 8px;border-radius:8px}
+    .hidden{display:none}
+    @media (max-width:900px){.board{grid-template-columns:1fr;}.mod{width:100%}}
+</style>
+</head>
+<body>
+<div class="wrap">
+    <header>
+        <div>
+            <h1>Split or Steal — Pass & Play</h1>
+            <div class="sub">10 rounds • Buy modifiers between rounds • Pass device for secret choices</div>
+        </div>
+        <div class="tag">Stylish Casual • Local Play</div>
+    </header>
+
+    <div class="board">
+        <aside class="panel">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+                <div><div class="mini">Round</div><div id="roundLabel" style="font-weight:800;font-size:18px">1 / 10</div></div>
+                <div style="text-align:right"><div class="mini">Pot</div><div id="potLabel" class="pot">100</div></div>
+            </div>
+
+            <div class="players">
+                <div class="player" id="p1Card">
+                    <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start;margin-right:8px">
+                        <div class="small">Quick Buy</div>
+                        <button id="p1BuyMult" class="ghost" onclick="(function(){
+                            if(typeof state === 'undefined') return;
+                            if(state.turnPhase !== 'choosing' || state.activePlayer !== 'p1'){
+                                alert('You can only buy multipliers during your turn while choosing.');
+                                return;
+                            }
+                            if(state.players.p1.mods && state.players.p1.mods.mult){
+                                alert('Multiplier already active for this round.');
+                                return;
+                            }
+                            if(state.players.p1.coins < COSTS.mult){
+                                alert('Not enough coins.');
+                                (function(){
+                                    if(typeof state === 'undefined') return;
+                                    const current = state.activePlayer;
+                                    if(state.turnPhase !== 'choosing' || (current !== 'p1' && current !== 'p2')){
+                                        alert('You can only buy multipliers during your turn while choosing.');
+                                        return;
+                                    }
+                                    const player = state.players[current];
+                                    if(player.mods && player.mods.mult){
+                                        alert('Multiplier already active for this round.');
+                                        return;
+                                    }
+                                    if(player.coins < COSTS.mult){
+                                        alert('Not enough coins.');
+                                        return;
+                                    }
+                                    player.coins -= COSTS.mult;
+                                    player.mods = player.mods || {};
+                                    player.mods.mult = true;
+                                    if(typeof updateUI === 'function') updateUI();
+                                    if(typeof log === 'function') log(`${player.name} bought Multiplier (x2) for next payout.`);
+                                })()
+                            }
+                            state.players.p1.coins -= COSTS.mult;
+                            state.players.p1.mods = state.players.p1.mods || {};
+                            state.players.p1.mods.mult = true;
+                            if(typeof updateUI === 'function') updateUI();
+                            if(typeof log === 'function') log('Player 1 bought Multiplier (x2) for next payout.');
+                        })()">Buy x2 (30)</button>
+                    </div>
+                    <div class="avatar">P1</div>
+                    <div class="info">
+                        <div class="name">Player 1</div>
+                        <div class="score">Score: <span id="p1Score">0</span> • Coins: <span id="p1Coins">50</span></div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+                        <div class="badge" id="p1Mods">None</div>
+                        <button id="p1ShopBtn" class="ghost">Open Shop</button>
+                    </div>
+                </div>
+
+                <div class="player" id="p2Card">
+                    <div class="avatar">P2</div>
+                    <div class="info">
+                        <div class="name">Player 2</div>
+                        <div class="score">Score: <span id="p2Score">0</span> • Coins: <span id="p2Coins">50</span></div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+                        <div class="badge" id="p2Mods">None</div>
+                        <button id="p2ShopBtn" class="ghost">Open Shop</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top:12px" class="mini">Modifiers cost coins; bought modifiers last one round.</div>
+            <div class="mini" style="margin-top:8px">Coins convert from earnings (10% of round payout).</div>
+        </aside>
+
+        <main class="panel center">
+            <div class="roundCard">
+                <div>
+                    <div class="mini">Upcoming Round</div>
+                    <div style="font-weight:800;font-size:16px" id="roundTitle">Round 1</div>
+                </div>
+                <div class="controls">
+                    <div class="mini">Turn: <span id="turnLabel">Shop</span></div>
+                    <button id="startRound" class="ghost" disabled>Start Choices</button>
+                </div>
+            </div>
+
+            <div style="display:flex;gap:12px;margin-top:12px;align-items:flex-start">
+                <div class="panel" style="flex:1">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                        <div style="font-weight:700">Shop (Between rounds)</div>
+                        <div class="small">Available modifiers</div>
+                    </div>
+                    <div class="shop" id="shopList">
+                        <div class="mod">
+                            <h4>Multiplier</h4>
+                            <p>Cost: 30 • Double your payout next round.</p>
+                            <div style="margin-top:8px"><button data-id="mult" class="buy">Buy</button></div>
+                        </div>
+                        <div class="mod">
+                            <h4>Shield</h4>
+                            <p>Cost: 20 • If opponent steals, you still keep half the pot.</p>
+                            <div style="margin-top:8px"><button data-id="shield" class="buy">Buy</button></div>
+                        </div>
+                        <div class="mod">
+                            <h4>Steal Boost</h4>
+                            <p>Cost: 25 • If you steal vs split, gain +25% of pot extra.</p>
+                            <div style="margin-top:8px"><button data-id="boost" class="buy">Buy</button></div>
+                        </div>
+                        <div class="mod">
+                            <h4>Quick Peek</h4>
+                            <p>Cost: 35 • Briefly reveal opponent's choice after both picks (fun).</p>
+                            <div style="margin-top:8px"><button data-id="peek" class="buy">Buy</button></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel" style="width:340px">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+                        <div style="font-weight:700">Make your choice</div>
+                        <div class="small">Pass-and-play secret</div>
+                    </div>
+
+                    <div id="choiceSection">
+                        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+                            <div class="tag">Active: <span id="activePlayer">Player 1</span></div>
+                            <div class="small">Round <span id="rnum">1</span></div>
+                        </div>
+
+                        <div class="choiceArea" id="choiceBtns">
+                            <div class="choice split" data-choice="split">Split</div>
+                            <div class="choice steal" data-choice="steal">Steal</div>
+                        </div>
+
+                        <div style="margin-top:12px" class="small">Choices are hidden to the other player — click then pass the device.</div>
+                    </div>
+
+                    <div style="margin-top:12px">
+                        <div style="font-weight:700">Round Log</div>
+                        <div id="log" class="small" style="max-height:160px;overflow:auto;margin-top:8px;padding:8px;border-radius:8px;background:#071827;border:1px solid rgba(255,255,255,0.01)"></div>
+                    </div>
+
+                </div>
+            </div>
+
+            <footer>
+                <div class="small">Pot increases each round. 10 rounds total.</div>
+                <div>
+                    <button id="resetBtn" class="ghost">Reset Game</button>
+                </div>
+            </footer>
+        </main>
+    </div>
+</div>
+
+<!-- Pass overlay -->
+<div id="overlay" class="overlay hidden">
+    <div class="passCard">
+        <div style="font-weight:800;font-size:18px" id="overlayTitle">Pass device</div>
+        <div style="margin-top:8px" class="small" id="overlaySub">Player 1: make your choice</div>
+        <div style="margin-top:12px"><button id="overlayOk">Continue</button></div>
+    </div>
+</div>
+
+<!-- End leaderboard -->
+<div id="endModal" class="overlay hidden">
+    <div class="passCard" style="min-width:320px">
+        <div style="font-weight:800;font-size:20px">Game Over — Leaderboard</div>
+        <div style="margin-top:10px" id="leaderboard"></div>
+        <div style="margin-top:14px;display:flex;gap:8px;justify-content:center">
+            <button id="playAgain">Play Again</button>
+            <button id="closeEnd" class="ghost">Close</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* Pass & Play Split-or-Steal with shop modifiers. Single-file. */
+
+const MAX_ROUNDS = 10;
+let state = {
+    round: 1,
+    basePot: 100,
+    step: 50,
+    players: {
+        p1: {name:'Player 1', score:0, coins:50, mods: {}},
+        p2: {name:'Player 2', score:0, coins:50, mods: {}}
+    },
+    turnPhase: 'shop', // shop, choosing
+    activePlayer: 'p1',
+    choices: {p1:null, p2:null},
+    shopOpenFor: null
+};
+
+const el = id => document.getElementById(id);
+const qsAll = sel => Array.from(document.querySelectorAll(sel));
+
+function potForRound(n){ return state.basePot + (n-1)*state.step; }
+function updateUI(){
+    el('roundLabel').textContent = `${state.round} / ${MAX_ROUNDS}`;
+    el('potLabel').textContent = potForRound(state.round);
+    el('roundTitle').textContent = `Round ${state.round}`;
+    el('rnum').textContent = state.round;
+    el('p1Score').textContent = state.players.p1.score;
+    el('p2Score').textContent = state.players.p2.score;
+    el('p1Coins').textContent = state.players.p1.coins;
+    el('p2Coins').textContent = state.players.p2.coins;
+    el('turnLabel').textContent = state.turnPhase === 'shop' ? 'Shop' : 'Choosing';
+    el('activePlayer').textContent = state.activePlayer === 'p1' ? 'Player 1' : 'Player 2';
+    el('p1Mods').textContent = formatMods(state.players.p1.mods);
+    el('p2Mods').textContent = formatMods(state.players.p2.mods);
+    el('startRound').disabled = !(state.turnPhase==='shop' && !state.shopOpenFor);
+}
+function formatMods(m){
+    const keys = Object.keys(m);
+    if(!keys.length) return 'None';
+    return keys.map(k => {
+        if(k==='mult') return 'x2';
+        if(k==='shield') return 'Shield';
+        if(k==='boost') return 'Boost';
+        if(k==='peek') return 'Peek';
+        return k;
+    }).join(', ');
+}
+
+/* Shop actions */
+const COSTS = {mult:30, shield:20, boost:25, peek:35};
+qsAll('.buy').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+        const id = e.target.dataset.id;
+        const forPlayer = state.shopOpenFor;
+        if(!forPlayer) return alert('Open shop for a player first.');
+        const p = state.players[forPlayer];
+        if(p.coins < COSTS[id]) return alert('Not enough coins.');
+        // apply modifier (single-use)
+        p.coins -= COSTS[id];
+        p.mods[id] = true;
+        updateUI();
+    });
+});
+
+el('p1ShopBtn').addEventListener('click', ()=>openShop('p1'));
+el('p2ShopBtn').addEventListener('click', ()=>openShop('p2'));
+
+function openShop(player){
+    state.shopOpenFor = player;
+    el('overlayTitle').textContent = 'Shop — ' + (player==='p1'?'Player 1':'Player 2');
+    el('overlaySub').textContent = `Coins: ${state.players[player].coins} — buy modifiers then press Done`;
+    el('overlayOk').textContent = 'Done';
+    showOverlay();
+}
+el('overlayOk').addEventListener('click', ()=>{
+    hideOverlay();
+    state.shopOpenFor = null;
+    updateUI();
+});
+
+/* Start choices */
+el('startRound').addEventListener('click', ()=>{
+    if(state.round > MAX_ROUNDS) return;
+    state.turnPhase = 'choosing';
+    state.activePlayer = 'p1';
+    state.choices = {p1:null,p2:null};
+    updateUI();
+    showPass(`Player 1's turn — make your choice`);
+});
+
+/* Choice buttons */
+qsAll('.choice').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+        if(state.turnPhase !== 'choosing') return;
+        const choice = e.currentTarget.dataset.choice;
+        const ap = state.activePlayer;
+        // record and hide choices, instruct pass
+        state.choices[ap] = choice;
+        log(`${state.players[ap].name} locked a choice.`);
+        // after choice, pass to other player or resolve
+        if(ap==='p1'){
+            // switch to p2
+            state.activePlayer = 'p2';
+            updateUI();
+            showPass("Pass device to Player 2");
+        } else {
+            // both chosen
+            hideOverlay();
+            resolveRound();
+        }
+    });
+});
+
+/* Pass overlay to keep choices secret */
+function showPass(text){
+    el('overlayTitle').textContent = 'Pass & Play';
+    el('overlaySub').textContent = text;
+    el('overlayOk').textContent = 'Ready';
+    showOverlay();
+}
+function showOverlay(){ el('overlay').classList.remove('hidden'); }
+function hideOverlay(){ el('overlay').classList.add('hidden'); }
+
+/* Round resolution logic */
+function resolveRound(){
+    const pot = potForRound(state.round);
+    const p1 = state.players.p1;
+    const p2 = state.players.p2;
+    const c1 = state.choices.p1;
+    const c2 = state.choices.p2;
+
+    // compute payouts
+    let payout1 = 0, payout2 = 0;
+    // both split
+    if(c1==='split' && c2==='split'){
+        payout1 = payout2 = pot/2;
+    } else if(c1==='steal' && c2==='split'){
+        // check shield on p2
+        const shield2 = p2.mods.shield ? true : false;
+        const boost1 = p1.mods.boost ? 0.25 : 0;
+        const mult1 = p1.mods.mult ? 2 : 1;
+        const mult2 = p2.mods.mult ? 2 : 1;
+        let preserve2 = shield2 ? pot/2 : 0;
+        payout2 = preserve2 * mult2;
+        payout1 = (pot - preserve2) * (1 + boost1) * mult1;
+    } else if(c1==='split' && c2==='steal'){
+        const shield1 = p1.mods.shield ? true : false;
+        const boost2 = p2.mods.boost ? 0.25 : 0;
+        const mult1 = p1.mods.mult ? 2 : 1;
+        const mult2 = p2.mods.mult ? 2 : 1;
+        let preserve1 = shield1 ? pot/2 : 0;
+        payout1 = preserve1 * mult1;
+        payout2 = (pot - preserve1) * (1 + boost2) * mult2;
+    } else { // both steal
+        payout1 = payout2 = 0;
+    }
+
+    // apply payouts to scores and convert coins (10% rounded)
+    p1.score += Math.round(payout1);
+    p2.score += Math.round(payout2);
+    p1.coins += Math.round(payout1/10);
+    p2.coins += Math.round(payout2/10);
+
+    // optional peek modifier: if somebody bought peek, show opponent choice briefly
+    const peekP1 = p1.mods.peek;
+    const peekP2 = p2.mods.peek;
+
+    // log
+    let summary = `Round ${state.round}: P1 chose ${c1.toUpperCase()}, P2 chose ${c2.toUpperCase()}.`;
+    summary += ` P1 +${Math.round(payout1)}, P2 +${Math.round(payout2)}.`;
+    log(summary);
+
+    // reveal peek if purchased
+    if(peekP1 || peekP2){
+        log('Peek activated: revealing choices for 2s...');
+        setTimeout(()=>{
+            log(`Reveal — P1: ${c1.toUpperCase()}, P2: ${c2.toUpperCase()}`);
+        }, 700);
+    }
+
+    // clear one-use modifiers
+    ['mult','shield','boost','peek'].forEach(k=>{
+        if(p1.mods[k]) delete p1.mods[k];
+        if(p2.mods[k]) delete p2.mods[k];
+    });
+
+    // next round
+    state.round++;
+    state.turnPhase = 'shop';
+    state.activePlayer = 'p1';
+    updateUI();
+
+    // if finished
+    if(state.round > MAX_ROUNDS){
+        setTimeout(showLeaderboard, 700);
+    }
+}
+
+/* Logging helper */
+function log(text){
+    const node = document.createElement('div');
+    node.textContent = text;
+    el('log').prepend(node);
+}
+
+/* Leaderboard */
+function showLeaderboard(){
+    const arr = [
+        {id:'p1', ...state.players.p1},
+        {id:'p2', ...state.players.p2}
+    ].sort((a,b)=>b.score - a.score);
+    let html = '<div style="margin-top:8px" class="list">';
+    arr.forEach((p,i)=>{
+        html += `<div class="entry"><div style="display:flex;gap:10px;align-items:center"><div style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#7c3aed,#06b6d4);display:flex;align-items:center;justify-content:center;font-weight:800">${i+1}</div><div><div style="font-weight:700">${p.name}</div><div class="small">Coins: ${p.coins}</div></div></div><div style="text-align:right"><div style="font-weight:800">${p.score}</div><div class="small">Score</div></div></div>`;
+    });
+    html += '</div>';
+    el('leaderboard').innerHTML = html;
+    el('endModal').classList.remove('hidden');
+}
+
+/* Reset */
+el('resetBtn').addEventListener('click', ()=>{
+    if(!confirm('Reset game?')) return;
+    resetGame();
+});
+el('playAgain').addEventListener('click', ()=>{ resetGame(); el('endModal').classList.add('hidden'); });
+el('closeEnd').addEventListener('click', ()=> el('endModal').classList.add('hidden'));
+
+function resetGame(){
+    state = {
+        round: 1,
+        basePot: 100,
+        step: 50,
+        players: {
+            p1: {name:'Player 1', score:0, coins:50, mods: {}},
+            p2: {name:'Player 2', score:0, coins:50, mods: {}}
+        },
+        turnPhase: 'shop',
+        activePlayer: 'p1',
+        choices: {p1:null,p2:null},
+        shopOpenFor: null
+    };
+    el('log').innerHTML = '';
+    updateUI();
+    el('endModal').classList.add('hidden');
+    hideOverlay();
+}
+
+/* Initialization */
+updateUI();
+</script>
+</body>
+</html>
