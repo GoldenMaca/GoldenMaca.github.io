@@ -5,7 +5,7 @@ import shutil
 
 def main():
     # === Settings ===
-    num_folders = 10000  # number of folders to make
+    num_folders = 1000  # number of folders to make
     base_dir = os.path.expanduser("~/Desktop")  # your Desktop directory
 
     # === Step 1: Create sample folders one by one ===
