@@ -791,6 +791,13 @@
 
             document.getElementById('results-screen').style.display = 'flex';
 
+            // Save score to localStorage (works even if parent page is closed)
+            const storageKey = 'aimtrainer_hard_glider';
+            const currentBest = localStorage.getItem(storageKey);
+            if (!currentBest || score > parseInt(currentBest)) {
+                localStorage.setItem(storageKey, score);
+            }
+
             // Send score to parent window (index page)
             if (window.opener) {
                 window.opener.postMessage({ type: 'gameScore', gameId: 'glider', score: score, difficulty: selectedDifficulty }, '*');

@@ -949,9 +949,17 @@
             
             document.getElementById('results-screen').style.display = 'flex';
 
+            // Save score to localStorage (works even if parent page is closed)
+            const storageKey = 'aimtrainer_hard_jumppeek';
+            const currentBest = localStorage.getItem(storageKey);
+            const finalScore = hits * 100;
+            if (!currentBest || finalScore > parseInt(currentBest)) {
+                localStorage.setItem(storageKey, finalScore);
+            }
+
             // Send score to parent window (index page) - use hits as score
             if (window.opener) {
-                window.opener.postMessage({ type: 'gameScore', gameId: 'jumppeek', score: hits * 100, difficulty: selectedDifficulty }, '*');
+                window.opener.postMessage({ type: 'gameScore', gameId: 'jumppeek', score: finalScore, difficulty: selectedDifficulty }, '*');
             }
         }
 

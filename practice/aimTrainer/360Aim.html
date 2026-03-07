@@ -731,7 +731,14 @@
 
             document.getElementById('results-screen').style.display = 'flex';
             
-            // Send score to parent window (index page)
+            // Save score to localStorage (works even if parent page is closed)
+            const storageKey = 'aimtrainer_hard_360Aim';
+            const currentBest = localStorage.getItem(storageKey);
+            if (!currentBest || score > parseInt(currentBest)) {
+                localStorage.setItem(storageKey, score);
+            }
+            
+            // Also try to send score to parent window (index page)
             if (window.opener) {
                 window.opener.postMessage({ type: 'gameScore', gameId: '360Aim', score: score, difficulty: selectedDifficulty }, '*');
             }
