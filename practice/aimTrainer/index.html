@@ -678,6 +678,42 @@
                     </div>
                 </a>
                 
+                <!-- Bounce Tracker -->
+                <a href="bounceTracker.html" class="game-card hard" target="_blank">
+                    <div class="shine"></div>
+                    <div class="preview">
+                        <div class="preview-overlay"></div>
+                        <div class="preview-icon">🏀</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="badges">
+                            <span class="badge easy">Easy</span>
+                            <span class="badge medium">Medium</span>
+                            <span class="badge hard">Hard</span>
+                        </div>
+                        <div class="card-title">Bounce Tracker</div>
+                        <div class="card-desc">Hold your crosshair on bouncing targets for 1 second to destroy them. Track xyz movement.</div>
+                    </div>
+                </a>
+                
+                <!-- Reaction Trainer -->
+                <a href="reactionTrainer.html" class="game-card medium" target="_blank">
+                    <div class="shine"></div>
+                    <div class="preview">
+                        <div class="preview-overlay"></div>
+                        <div class="preview-icon">⚡</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="badges">
+                            <span class="badge easy">Easy</span>
+                            <span class="badge medium">Medium</span>
+                            <span class="badge hard">Hard</span>
+                        </div>
+                        <div class="card-title">Reaction Trainer</div>
+                        <div class="card-desc">Shoot the humanoid when the window is OPEN. Test your reaction speed!</div>
+                    </div>
+                </a>
+                
                 <!-- Micro Flick Trainer -->
                 <a href="microflick.html" class="game-card special" target="_blank">
                     <div class="shine"></div>
@@ -771,6 +807,20 @@
                     <div class="pb-score">-</div>
                     <div class="pb-label">Personal Best</div>
                     <a href="flick.html" class="play-btn" target="_blank">PLAY HARD MODE</a>
+                </div>
+                <div class="pb-card" id="pb-bounceTracker">
+                    <span class="hard-badge">Hard Mode</span>
+                    <div class="game-name">Bounce Tracker</div>
+                    <div class="pb-score">-</div>
+                    <div class="pb-label">Personal Best</div>
+                    <a href="bounceTracker.html" class="play-btn" target="_blank">PLAY HARD MODE</a>
+                </div>
+                <div class="pb-card" id="pb-reactionTrainer">
+                    <span class="hard-badge">Hard Mode</span>
+                    <div class="game-name">Reaction Trainer</div>
+                    <div class="pb-score">-</div>
+                    <div class="pb-label">Personal Best</div>
+                    <a href="reactionTrainer.html" class="play-btn" target="_blank">PLAY HARD MODE</a>
                 </div>
                 <div class="pb-card" id="pb-microflick">
                     <span class="hard-badge">Hard Mode</span>
@@ -910,6 +960,8 @@
         const gameNames = {
             '360Aim': '360° Aim Tracker',
             'flick': '360° Flick Trainer',
+            'bounceTracker': 'Bounce Tracker',
+            'reactionTrainer': 'Reaction Trainer',
             'microflick': 'Micro Flick Trainer',
             'glider': 'Glider Trainer',
             'staticPrecision': 'Static Precision',
@@ -923,7 +975,7 @@
 
         // Initialize personal bests on load
         function initPersonalBests() {
-            const games = ['360Aim', 'flick', 'microflick', 'glider', 'staticPrecision', 'jumppeek'];
+            const games = ['360Aim', 'flick', 'bounceTracker', 'reactionTrainer', 'microflick', 'glider', 'staticPrecision', 'jumppeek'];
             games.forEach(gameId => {
                 const pb = localStorage.getItem('aimtrainer_hard_' + gameId);
                 const card = document.getElementById('pb-' + gameId);
@@ -935,7 +987,7 @@
 
         // Initialize stats display
         function initStats() {
-            const games = ['360Aim', 'flick', 'microflick', 'glider', 'staticPrecision', 'jumppeek'];
+            const games = ['360Aim', 'flick', 'bounceTracker', 'reactionTrainer', 'microflick', 'glider', 'staticPrecision', 'jumppeek'];
             
             // Calculate total PBs
             let pbCount = 0;
@@ -1006,8 +1058,8 @@
                 document.getElementById('ach-firstpb').classList.add('unlocked');
             }
             
-            // Master - all PBs
-            if (pbCount >= 6) {
+            // Master - all PBs (now 8 games)
+            if (pbCount >= 8) {
                 document.getElementById('ach-allpb').classList.add('unlocked');
             }
             
@@ -1046,7 +1098,7 @@
         // Clear all data
         function clearAllData() {
             if (confirm('Are you sure you want to clear all your progress? This cannot be undone!')) {
-                const games = ['360Aim', 'flick', 'microflick', 'glider', 'staticPrecision', 'jumppeek'];
+                const games = ['360Aim', 'flick', 'bounceTracker', 'reactionTrainer', 'microflick', 'glider', 'staticPrecision', 'jumppeek'];
                 games.forEach(gameId => {
                     localStorage.removeItem('aimtrainer_hard_' + gameId);
                 });

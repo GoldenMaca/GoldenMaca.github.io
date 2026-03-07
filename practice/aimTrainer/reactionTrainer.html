@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bounce Tracker</title>
+    <title>Reaction Trainer</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { overflow: hidden; font-family: 'Segoe UI', Arial, sans-serif; background: #000; }
@@ -44,12 +44,22 @@
         }
         #hud div { background: rgba(0,0,0,0.7); padding: 12px 25px; border-radius: 8px; border: 1px solid #00ff88; }
 
-        #hold-progress {
+        #window-timer {
             position: fixed; top: 80px; left: 50%; transform: translateX(-50%);
-            width: 200px; height: 10px; background: rgba(0,0,0,0.7); border-radius: 5px;
+            width: 300px; height: 20px; background: rgba(0,0,0,0.7); border-radius: 10px;
             border: 1px solid #333; display: none; z-index: 50; overflow: hidden;
         }
-        #hold-progress .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #00ff88, #ffaa00, #ff4444); border-radius: 5px; }
+        #window-timer .timer-fill { height: 100%; width: 100%; background: #00ff88; transition: width 0.05s linear; }
+        #window-timer .timer-fill.closing { background: #ffaa00; }
+        #window-timer .timer-fill.danger { background: #ff4444; }
+
+        #status-display {
+            position: fixed; top: 120px; left: 50%; transform: translateX(-50%);
+            font-size: 24px; font-weight: bold; display: none; z-index: 50;
+        }
+        #status-display.waiting { color: #ffaa00; }
+        #status-display.open { color: #00ff88; }
+        #status-display.closed { color: #ff4444; }
 
         #crosshair {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -61,7 +71,7 @@
         #crosshair .line.bottom { width: 2px; height: 15px; left: 50%; transform: translateX(-50%); top: 50%; }
         #crosshair .line.left { height: 2px; width: 15px; top: 50%; transform: translateY(-50%); right: 50%; }
         #crosshair .line.right { height: 2px; width: 15px; top: 50%; transform: translateY(-50%); left: 50%; }
-        #crosshair.holding .dot, #crosshair.holding .line { background: #ff4444; box-shadow: 0 0 15px #ff4444; }
+        #crosshair.hit .dot, #crosshair.hit .line { background: #00ff88; box-shadow: 0 0 15px #00ff88; }
 
         #start-prompt {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -90,20 +100,20 @@
     <div id="canvas-container"></div>
 
     <div id="menu-screen">
-        <h1>BOUNCE TRACKER</h1>
-        <p class="subtitle">Hold your crosshair on the bouncing capsule</p>
+        <h1>REACTION TRAINER</h1>
+        <p class="subtitle">Shoot the humanoid when the window is OPEN</p>
         <div id="difficulty-grid">
             <div class="diff-btn easy" data-diff="easy" onclick="selectDifficulty('easy')">
                 <div class="diff-name">EASY</div>
-                <div class="diff-desc">Large capsule<br>Slow bounce<br>60 seconds</div>
+                <div class="diff-desc">2s window<br>2s cooldown<br>45 seconds</div>
             </div>
             <div class="diff-btn medium" data-diff="medium" onclick="selectDifficulty('medium')">
                 <div class="diff-name">MEDIUM</div>
-                <div class="diff-desc">Medium capsule<br>Medium bounce<br>45 seconds</div>
+                <div class="diff-desc">1.5s window<br>1.5s cooldown<br>35 seconds</div>
             </div>
             <div class="diff-btn hard" data-diff="hard" onclick="selectDifficulty('hard')">
                 <div class="diff-name">HARD</div>
-                <div class="diff-desc">Small capsule<br>Fast bounce<br>30 seconds</div>
+                <div class="diff-desc">1s window<br>1s cooldown<br>25 seconds</div>
             </div>
         </div>
         <button id="start-btn" onclick="startGame()">START TRAINING</button>
@@ -116,11 +126,13 @@
 
     <div id="hud">
         <div>SCORE: <span id="score">0</span></div>
-        <div>TIME: <span id="timer">60</span></div>
+        <div>TIME: <span id="timer">45</span></div>
         <div>HITS: <span id="hits">0</span></div>
     </div>
 
-    <div id="hold-progress"><div class="progress-fill" id="progress-fill"></div></div>
+    <div id="window-timer"><div class="timer-fill" id="timer-fill"></div></div>
+
+    <div id="status-display" class="waiting">WAITING...</div>
 
     <div id="crosshair">
         <div class="dot"></div>
@@ -130,13 +142,14 @@
         <div class="line right"></div>
     </div>
 
-    <div id="instructions"><strong>Controls:</strong> Mouse to aim • Hold crosshair on capsule for 1 second to destroy it</div>
+    <div id="instructions"><strong>Controls:</strong> Mouse to aim • Click to shoot • Only shoot when window is OPEN (green)</div>
 
     <div id="results-screen">
         <h2>ROUND COMPLETE</h2>
         <div class="stats">
             <div class="stat"><div class="stat-value" id="final-score">0</div><div class="stat-label">Score</div></div>
-            <div class="stat"><div class="stat-value" id="final-hits">0</div><div class="stat-label">Capsules Destroyed</div></div>
+            <div class="stat"><div class="stat-value" id="final-hits">0</div><div class="stat-label">Hits</div></div>
+            <div class="stat"><div class="stat-value" id="final-misses">0</div><div class="stat-label">Misses</div></div>
             <div class="stat"><div class="stat-value" id="final-time">0s</div><div class="stat-label">Time</div></div>
         </div>
         <button onclick="returnToMenu()">RETURN TO MENU</button>
@@ -145,22 +158,23 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
         const DIFFICULTY = {
-            easy: { size: 0.8, duration: 60, points: 100, bounceSpeed: 3 },
-            medium: { size: 0.5, duration: 45, points: 200, bounceSpeed: 5 },
-            hard: { size: 0.3, duration: 30, points: 400, bounceSpeed: 8 }
+            easy: { windowTime: 2000, cooldownTime: 2000, duration: 45, points: 100 },
+            medium: { windowTime: 1500, cooldownTime: 1500, duration: 35, points: 200 },
+            hard: { windowTime: 1000, cooldownTime: 1000, duration: 25, points: 400 }
         };
 
-        let scene, camera, renderer, capsule;
+        let scene, camera, renderer;
+        let humanoid = null;
         let selectedDifficulty = null;
         let gameState = 'menu';
-        let score = 0, timeRemaining = 0, hits = 0;
+        let score = 0, timeRemaining = 0, hits = 0, misses = 0;
         let gameStartTime = 0, timerInterval = null;
         let isPointerLocked = false;
         let camRotX = 0, camRotY = 0;
         
-        let velocity = new THREE.Vector3();
-        let isHolding = false, holdStartTime = 0;
-        const HOLD_DURATION = 1000;
+        let windowOpen = false;
+        let windowStartTime = 0;
+        let windowTimerInterval = null;
 
         function init() {
             scene = new THREE.Scene();
@@ -186,44 +200,93 @@
             // Grid
             scene.add(new THREE.GridHelper(80, 40, 0x444466, 0x333355));
 
-            // Walls (no ceiling!)
+            // Walls
             const wallMat = new THREE.MeshStandardMaterial({ color: 0x3a3a5a, transparent: true, opacity: 0.5 });
             
-            const backWall = new THREE.Mesh(new THREE.PlaneGeometry(80, 20), wallMat);
-            backWall.position.set(0, 10, -40);
+            const backWall = new THREE.Mesh(new THREE.PlaneGeometry(80, 15), wallMat);
+            backWall.position.set(0, 7.5, -40);
             scene.add(backWall);
 
-            const leftWall = new THREE.Mesh(new THREE.PlaneGeometry(80, 20), wallMat);
-            leftWall.position.set(-40, 10, 0);
+            const leftWall = new THREE.Mesh(new THREE.PlaneGeometry(80, 15), wallMat);
+            leftWall.position.set(-40, 7.5, 0);
             leftWall.rotation.y = Math.PI / 2;
             scene.add(leftWall);
 
-            const rightWall = new THREE.Mesh(new THREE.PlaneGeometry(80, 20), wallMat);
-            rightWall.position.set(40, 10, 0);
+            const rightWall = new THREE.Mesh(new THREE.PlaneGeometry(80, 15), wallMat);
+            rightWall.position.set(40, 7.5, 0);
             rightWall.rotation.y = -Math.PI / 2;
             scene.add(rightWall);
 
             // Lights
-            scene.add(new THREE.AmbientLight(0x404060, 0.8));
+            scene.add(new THREE.AmbientLight(0x404060, 0.7));
             
             const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
             dirLight.position.set(10, 20, 10);
             scene.add(dirLight);
 
-            const pl1 = new THREE.PointLight(0x00ff88, 0.6, 60);
-            pl1.position.set(-15, 10, -15);
+            const pl1 = new THREE.PointLight(0x00ff88, 0.5, 50);
+            pl1.position.set(-15, 8, -15);
             scene.add(pl1);
             
-            const pl2 = new THREE.PointLight(0xff44ff, 0.5, 60);
-            pl2.position.set(15, 10, -15);
+            const pl2 = new THREE.PointLight(0xff4488, 0.4, 50);
+            pl2.position.set(15, 8, -15);
             scene.add(pl2);
 
             document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mousedown', onMouseDown);
             document.addEventListener('pointerlockchange', onPointerLockChange);
             window.addEventListener('resize', onResize);
 
             animate();
             renderer.render(scene, camera);
+        }
+
+        function createHumanoid() {
+            const group = new THREE.Group();
+            
+            const bodyMat = new THREE.MeshStandardMaterial({ color: 0x4488ff, roughness: 0.5 });
+            
+            // Body
+            const body = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 1.2, 8), bodyMat);
+            body.position.y = 1.1;
+            group.add(body);
+            
+            // Head
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.25, 16, 16), bodyMat);
+            head.position.y = 2;
+            group.add(head);
+            
+            // Arms
+            const armGeo = new THREE.CylinderGeometry(0.08, 0.08, 0.8, 8);
+            const leftArm = new THREE.Mesh(armGeo, bodyMat);
+            leftArm.position.set(-0.5, 1.3, 0);
+            leftArm.rotation.z = Math.PI / 6;
+            group.add(leftArm);
+            
+            const rightArm = new THREE.Mesh(armGeo, bodyMat);
+            rightArm.position.set(0.5, 1.3, 0);
+            rightArm.rotation.z = -Math.PI / 6;
+            group.add(rightArm);
+            
+            // Legs
+            const legGeo = new THREE.CylinderGeometry(0.1, 0.1, 0.8, 8);
+            const leftLeg = new THREE.Mesh(legGeo, bodyMat);
+            leftLeg.position.set(-0.2, 0.4, 0);
+            group.add(leftLeg);
+            
+            const rightLeg = new THREE.Mesh(legGeo, bodyMat);
+            rightLeg.position.set(0.2, 0.4, 0);
+            group.add(rightLeg);
+            
+            // Target indicator (glow)
+            const glowGeo = new THREE.SphereGeometry(0.6, 16, 16);
+            const glowMat = new THREE.MeshBasicMaterial({ color: 0x00ff88, transparent: true, opacity: 0.3 });
+            const glow = new THREE.Mesh(glowGeo, glowMat);
+            glow.position.y = 1.3;
+            glow.name = 'glow';
+            group.add(glow);
+            
+            return group;
         }
 
         function selectDifficulty(diff) {
@@ -235,17 +298,18 @@
 
         function startGame() {
             if (!selectedDifficulty) return;
-            if (capsule) { scene.remove(capsule); capsule = null; }
+            if (humanoid) { scene.remove(humanoid); humanoid = null; }
 
             document.getElementById('menu-screen').style.display = 'none';
             document.getElementById('start-prompt').style.display = 'flex';
             document.getElementById('hud').style.display = 'flex';
-            document.getElementById('hold-progress').style.display = 'block';
+            document.getElementById('window-timer').style.display = 'block';
+            document.getElementById('status-display').style.display = 'block';
             document.getElementById('instructions').style.display = 'block';
             document.getElementById('crosshair').style.display = 'none';
 
             const cfg = DIFFICULTY[selectedDifficulty];
-            score = 0; timeRemaining = cfg.duration; hits = 0;
+            score = 0; timeRemaining = cfg.duration; hits = 0; misses = 0;
             updateHUD();
 
             gameState = 'waiting';
@@ -256,7 +320,8 @@
         function beginGame() {
             document.getElementById('start-prompt').style.display = 'none';
             document.getElementById('crosshair').style.display = 'block';
-            spawnCapsule();
+
+            spawnHumanoid();
 
             gameStartTime = Date.now();
             timerInterval = setInterval(() => {
@@ -266,57 +331,105 @@
             }, 1000);
 
             gameState = 'playing';
-            isHolding = false;
-            holdStartTime = 0;
-            document.getElementById('progress-fill').style.width = '0%';
         }
 
-        function spawnCapsule() {
-            if (capsule) scene.remove(capsule);
+        function spawnHumanoid() {
+            if (humanoid) scene.remove(humanoid);
             
-            const cfg = DIFFICULTY[selectedDifficulty];
+            humanoid = createHumanoid();
             
-            // Create capsule manually (Cylinder + 2 spheres) since CapsuleGeometry not in r128
-            capsule = new THREE.Group();
-            
-            // Cylinder body
-            const cylinderGeo = new THREE.CylinderGeometry(cfg.size, cfg.size, cfg.size * 2, 16);
-            const capsuleMat = new THREE.MeshStandardMaterial({
-                color: 0xff44ff,
-                emissive: 0xff22ff,
-                emissiveIntensity: 0.9,
-                roughness: 0.2,
-                metalness: 0.8
-            });
-            const cylinder = new THREE.Mesh(cylinderGeo, capsuleMat);
-            capsule.add(cylinder);
-            
-            // Top sphere
-            const sphereGeo = new THREE.SphereGeometry(cfg.size, 16, 16);
-            const topSphere = new THREE.Mesh(sphereGeo, capsuleMat);
-            topSphere.position.y = cfg.size;
-            capsule.add(topSphere);
-            
-            // Bottom sphere
-            const bottomSphere = new THREE.Mesh(sphereGeo, capsuleMat);
-            bottomSphere.position.y = -cfg.size;
-            capsule.add(bottomSphere);
-            
-            // Position in air - start high
-            capsule.position.set(
+            // Random position
+            humanoid.position.set(
                 (Math.random() - 0.5) * 20,
-                8 + Math.random() * 3, // Start higher
+                0,
                 -Math.random() * 15 - 5
             );
             
-            // Random velocity - faster horizontal movement
-            velocity.set(
-                (Math.random() - 0.5) * cfg.bounceSpeed * 3,
-                Math.random() * 2, // Slight upward to start
-                (Math.random() - 0.5) * cfg.bounceSpeed * 3
-            );
+            scene.add(humanoid);
             
-            scene.add(capsule);
+            // Start window cycle
+            startWindowCycle();
+        }
+
+        function startWindowCycle() {
+            const cfg = DIFFICULTY[selectedDifficulty];
+            
+            // Open window
+            windowOpen = true;
+            windowStartTime = Date.now();
+            
+            // Update visual state
+            updateWindowVisual(cfg.windowTime);
+            
+            // Set timer to close window
+            windowTimerInterval = setTimeout(() => {
+                if (gameState !== 'playing') return;
+                
+                // Close window
+                windowOpen = false;
+                document.getElementById('status-display').textContent = 'CLOSED!';
+                document.getElementById('status-display').className = 'closed';
+                
+                // Change humanoid color to red when closed
+                if (humanoid) {
+                    humanoid.traverse((child) => {
+                        if (child.isMesh && child.material) {
+                            child.material.color.setHex(0xff4444);
+                            child.material.emissive = new THREE.Color(0x440000);
+                        }
+                    });
+                }
+                
+                // Start cooldown
+                setTimeout(() => {
+                    if (gameState !== 'playing') return;
+                    
+                    // Reset humanoid color
+                    if (humanoid) {
+                        humanoid.traverse((child) => {
+                            if (child.isMesh && child.material) {
+                                child.material.color.setHex(0x4488ff);
+                                child.material.emissive = new THREE.Color(0x000000);
+                            }
+                        });
+                    }
+                    
+                    // Open again
+                    spawnHumanoid();
+                }, cfg.cooldownTime);
+                
+            }, cfg.windowTime);
+        }
+
+        function updateWindowVisual(windowTime) {
+            const status = document.getElementById('status-display');
+            const timerFill = document.getElementById('timer-fill');
+            
+            status.textContent = 'OPEN!';
+            status.className = 'open';
+            
+            // Animate timer bar
+            let remaining = windowTime;
+            const interval = setInterval(() => {
+                if (gameState !== 'playing' || remaining <= 0) {
+                    clearInterval(interval);
+                    return;
+                }
+                
+                const pct = (remaining / windowTime) * 100;
+                timerFill.style.width = pct + '%';
+                
+                // Color changes
+                if (pct < 30) {
+                    timerFill.className = 'timer-fill danger';
+                } else if (pct < 60) {
+                    timerFill.className = 'timer-fill closing';
+                } else {
+                    timerFill.className = 'timer-fill';
+                }
+                
+                remaining -= 50;
+            }, 50);
         }
 
         function onMouseMove(e) {
@@ -330,6 +443,46 @@
             camera.rotation.x = camRotX;
         }
 
+        function onMouseDown(e) {
+            if (e.button !== 0 || gameState !== 'playing') return;
+            
+            // Check if hit humanoid
+            const ray = new THREE.Raycaster();
+            ray.setFromCamera(new THREE.Vector2(0, 0), camera);
+            
+            if (humanoid) {
+                const hitsArr = ray.intersectObject(humanoid, true);
+                
+                if (hitsArr.length > 0) {
+                    if (windowOpen) {
+                        // Good hit!
+                        const cfg = DIFFICULTY[selectedDifficulty];
+                        score += cfg.points;
+                        hits++;
+                        
+                        // Visual feedback
+                        document.getElementById('crosshair').classList.add('hit');
+                        setTimeout(() => document.getElementById('crosshair').classList.remove('hit'), 100);
+                        
+                        // Clear current cycle and spawn new
+                        clearTimeout(windowTimerInterval);
+                        spawnHumanoid();
+                        updateHUD();
+                    } else {
+                        // Shot when closed - penalty
+                        misses++;
+                        updateHUD();
+                    }
+                } else {
+                    // Missed shot
+                    if (windowOpen) {
+                        misses++;
+                        updateHUD();
+                    }
+                }
+            }
+        }
+
         function onPointerLockChange() {
             isPointerLocked = document.pointerLockElement === renderer.domElement;
             if (isPointerLocked) {
@@ -337,8 +490,6 @@
                 document.getElementById('crosshair').style.display = 'block';
             } else {
                 document.getElementById('crosshair').style.display = 'none';
-                isHolding = false;
-                document.getElementById('crosshair').classList.remove('holding');
             }
         }
 
@@ -354,123 +505,39 @@
             document.getElementById('hits').textContent = hits;
         }
 
-        function updatePhysics(deltaTime) {
-            if (!capsule || gameState !== 'playing') return;
-            
-            const cfg = DIFFICULTY[selectedDifficulty];
-            const gravity = -3; // Very low gravity for high bounces
-            const bounce = 0.95; // High bounce - loses very little energy
-            
-            // Apply gravity
-            velocity.y += gravity * deltaTime;
-            
-            // Update position
-            capsule.position.add(velocity.clone().multiplyScalar(deltaTime));
-            
-            // Floor bounce - with guaranteed minimum upward velocity for consistent bounce height
-            if (capsule.position.y < cfg.size) {
-                capsule.position.y = cfg.size;
-                // Ensure minimum bounce height regardless of incoming velocity
-                velocity.y = Math.max(velocity.y * bounce, 6); // Minimum bounce velocity
-            }
-            
-            // Wall bounces
-            if (Math.abs(capsule.position.x) > 20 - cfg.size) {
-                capsule.position.x = Math.sign(capsule.position.x) * (20 - cfg.size);
-                velocity.x = -velocity.x * bounce;
-            }
-            
-            if (capsule.position.z < -5 - cfg.size) {
-                capsule.position.z = -5 - cfg.size;
-                velocity.z = -velocity.z * bounce;
-            }
-            if (capsule.position.z > 35) {
-                capsule.position.z = 35;
-                velocity.z = -velocity.z * bounce;
-            }
-        }
-
-        function checkHit() {
-            if (!capsule || gameState !== 'playing') return;
-            
-            const ray = new THREE.Raycaster();
-            ray.setFromCamera(new THREE.Vector2(0, 0), camera);
-            const hitsArr = ray.intersectObject(capsule, true);
-            
-            const crosshair = document.getElementById('crosshair');
-            
-            if (hitsArr.length > 0) {
-                if (!isHolding) {
-                    isHolding = true;
-                    holdStartTime = Date.now();
-                    crosshair.classList.add('holding');
-                } else {
-                    const holdDuration = Date.now() - holdStartTime;
-                    const progress = Math.min(holdDuration / HOLD_DURATION, 1);
-                    document.getElementById('progress-fill').style.width = (progress * 100) + '%';
-                    
-                    if (holdDuration >= HOLD_DURATION) {
-                        const cfg = DIFFICULTY[selectedDifficulty];
-                        score += cfg.points;
-                        hits++;
-                        
-                        isHolding = false;
-                        holdStartTime = 0;
-                        crosshair.classList.remove('holding');
-                        document.getElementById('progress-fill').style.width = '0%';
-                        
-                        spawnCapsule();
-                        updateHUD();
-                    }
-                }
-            } else {
-                isHolding = false;
-                holdStartTime = 0;
-                crosshair.classList.remove('holding');
-                document.getElementById('progress-fill').style.width = '0%';
-            }
-        }
-
         function endGame() {
             gameState = 'results';
             clearInterval(timerInterval);
+            clearTimeout(windowTimerInterval);
             document.exitPointerLock();
 
             document.getElementById('hud').style.display = 'none';
-            document.getElementById('hold-progress').style.display = 'none';
+            document.getElementById('window-timer').style.display = 'none';
+            document.getElementById('status-display').style.display = 'none';
             document.getElementById('crosshair').style.display = 'none';
             document.getElementById('instructions').style.display = 'none';
             document.getElementById('final-score').textContent = score;
             document.getElementById('final-hits').textContent = hits;
+            document.getElementById('final-misses').textContent = misses;
             document.getElementById('final-time').textContent = Math.round((Date.now() - gameStartTime) / 1000) + 's';
             document.getElementById('results-screen').style.display = 'flex';
 
             if (window.opener) {
-                window.opener.postMessage({ type: 'gameScore', gameId: 'bounceTracker', score: score, difficulty: selectedDifficulty }, '*');
+                window.opener.postMessage({ type: 'gameScore', gameId: 'reactionTrainer', score: score, difficulty: selectedDifficulty }, '*');
             }
         }
 
         function returnToMenu() {
             document.getElementById('results-screen').style.display = 'none';
             document.getElementById('menu-screen').style.display = 'flex';
-            if (capsule) { scene.remove(capsule); capsule = null; }
+            if (humanoid) { scene.remove(humanoid); humanoid = null; }
             camRotX = camRotY = 0;
             camera.rotation.set(0,0,0);
             gameState = 'menu';
         }
 
-        let lastTime = 0;
-        function animate(currentTime) {
+        function animate() {
             requestAnimationFrame(animate);
-            
-            const deltaTime = lastTime ? (currentTime - lastTime) / 1000 : 0.016;
-            lastTime = currentTime;
-            
-            if (gameState === 'playing') {
-                updatePhysics(deltaTime);
-                checkHit();
-            }
-            
             renderer.render(scene, camera);
         }
 
