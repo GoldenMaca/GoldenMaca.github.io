@@ -920,6 +920,11 @@
             document.getElementById('final-avg').textContent = avgReaction + 'ms';
             
             document.getElementById('results-screen').style.display = 'flex';
+
+            // Send score to parent window (index page)
+            if (window.opener) {
+                window.opener.postMessage({ type: 'gameScore', gameId: 'staticPrecision', score: score, difficulty: selectedDifficulty }, '*');
+            }
         }
 
         function returnToMenu() {

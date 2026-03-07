@@ -948,6 +948,11 @@
             document.getElementById('final-accuracy').textContent = acc + '%';
             
             document.getElementById('results-screen').style.display = 'flex';
+
+            // Send score to parent window (index page) - use hits as score
+            if (window.opener) {
+                window.opener.postMessage({ type: 'gameScore', gameId: 'jumppeek', score: hits * 100, difficulty: selectedDifficulty }, '*');
+            }
         }
 
         function returnToMenu() {

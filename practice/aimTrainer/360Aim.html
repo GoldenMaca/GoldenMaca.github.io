@@ -730,6 +730,11 @@
             document.getElementById('final-time').textContent = finalTime + 's';
 
             document.getElementById('results-screen').style.display = 'flex';
+            
+            // Send score to parent window (index page)
+            if (window.opener) {
+                window.opener.postMessage({ type: 'gameScore', gameId: '360Aim', score: score, difficulty: selectedDifficulty }, '*');
+            }
         }
 
         function returnToMenu() {

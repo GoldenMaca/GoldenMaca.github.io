@@ -847,6 +847,11 @@ function respawnTarget(target) {
             document.getElementById('final-avg').textContent = avgHold + 'ms';
 
             document.getElementById('results-screen').style.display = 'flex';
+
+            // Send score to parent window (index page)
+            if (window.opener) {
+                window.opener.postMessage({ type: 'gameScore', gameId: 'microflick', score: score, difficulty: selectedDifficulty }, '*');
+            }
         }
 
         function returnToMenu() {
