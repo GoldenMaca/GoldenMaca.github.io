@@ -1096,8 +1096,30 @@
        }
 
        .quest-card.completed {
-           border-color: #00ff88;
-           opacity: 0.7;
+           border-color: #333;
+           opacity: 0.4;
+           background: linear-gradient(145deg, rgba(10, 10, 15, 0.9), rgba(5, 5, 10, 0.9));
+       }
+
+       .quest-card.completed .quest-icon {
+           filter: grayscale(100%);
+           opacity: 0.3;
+       }
+
+       .quest-card.completed .quest-name {
+           color: #444;
+       }
+
+       .quest-card.completed .quest-desc {
+           color: #333;
+       }
+
+       .quest-card.completed .quest-reward {
+           color: #444;
+       }
+
+       .quest-card.completed .quest-progress {
+           display: none;
        }
 
        .quest-card .quest-icon {
@@ -2161,6 +2183,10 @@
            
            if (quest && !quest.claimed) {
                quest.claimed = true;
+               // Save claimed status to localStorage so it can't be claimed again
+               const claimedQuests = JSON.parse(localStorage.getItem('aimtrainer_claimed_quests') || '{}');
+               claimedQuests[type + '_' + questId] = true;
+               localStorage.setItem('aimtrainer_claimed_quests', JSON.stringify(claimedQuests));
                await addCoins(quest.reward);
                sessionCoins += quest.reward;
                

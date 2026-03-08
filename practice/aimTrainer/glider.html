@@ -394,6 +394,10 @@
             background: #00ff88;
             color: #000;
         }
+        #pause-menu .restart-btn {
+            background: #ffaa00;
+            color: #000;
+        }
         #pause-menu .menu-btn {
             background: #4488ff;
             color: #fff;
@@ -443,6 +447,7 @@
     <div id="pause-menu">
         <h2>PAUSED</h2>
         <button class="resume-btn" onclick="resumeGame()">▶ RESUME</button>
+        <button class="restart-btn" onclick="restartGame()">🔄 RESTART</button>
         <button class="menu-btn" onclick="returnToMenu()">📋 MENU</button>
         <button class="home-btn-pause" onclick="goHome()">🏠 HOME</button>
     </div>
@@ -934,6 +939,9 @@ function returnToMenu() {
                 document.exitPointerLock();
                 gameState = 'paused';
             }
+            // Stop the timer when paused
+            clearInterval(timerInterval);
+            timerInterval = null;
             document.getElementById('pause-menu').style.display = 'flex';
             document.getElementById('pause-btn').style.display = 'none';
         }
@@ -943,11 +951,26 @@ function returnToMenu() {
             document.getElementById('pause-btn').style.display = 'block';
             if (gameState === 'paused') {
                 gameState = 'waiting';
+                // Restart the timer
+                timerInterval = setInterval(() => {
+                    timeRemaining--;
+                    updateHUD();
+                    if (timeRemaining <= 0) {
+                        endGame();
+                    }
+                }, 1000);
                 renderer.domElement.requestPointerLock();
             }
         }
 
-function goHome() {
+        function restartGame() {
+            // Restart with the same difficulty
+            document.getElementById('pause-menu').style.display = 'none';
+            document.getElementById('pause-btn').style.display = 'block';
+            startGame();
+        }
+
+        function goHome() {
            window.location.href = 'index.html';
        }
 
