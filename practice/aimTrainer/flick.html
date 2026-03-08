@@ -290,9 +290,115 @@
             font-weight: bold;
             cursor: pointer;
         }
+
+        /* Home Button */
+        .home-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            background: linear-gradient(145deg, #1a1a2e, #0f0f1a);
+            border: 2px solid #ff4444;
+            border-radius: 8px;
+            color: #ff4444;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 300;
+            transition: all 0.3s ease;
+        }
+        .home-btn:hover {
+            background: #ff4444;
+            color: #000;
+            box-shadow: 0 0 20px rgba(255, 68, 68, 0.5);
+        }
+
+        /* Pause Button */
+        .pause-btn {
+            position: fixed;
+            top: 20px;
+            right: 140px;
+            padding: 12px 24px;
+            background: linear-gradient(145deg, #1a1a2e, #0f0f1a);
+            border: 2px solid #ffaa00;
+            border-radius: 8px;
+            color: #ffaa00;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 300;
+            transition: all 0.3s ease;
+            display: none;
+        }
+        .pause-btn:hover {
+            background: #ffaa00;
+            color: #000;
+            box-shadow: 0 0 20px rgba(255, 170, 0, 0.5);
+        }
+
+        /* Pause Menu */
+        #pause-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 250;
+        }
+        #pause-menu h2 {
+            font-size: 48px;
+            color: #ffaa00;
+            text-shadow: 0 0 20px #ffaa00;
+            margin-bottom: 40px;
+        }
+        #pause-menu button {
+            padding: 15px 50px;
+            font-size: 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        #pause-menu .resume-btn {
+            background: #00ff88;
+            color: #000;
+        }
+        #pause-menu .menu-btn {
+            background: #4488ff;
+            color: #fff;
+        }
+        #pause-menu .home-btn-pause {
+            background: #ff4444;
+            color: #fff;
+        }
+        #pause-menu button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
     </style>
 </head>
 <body>
+    <!-- Home Button -->
+    <button class="home-btn" onclick="goHome()">🏠 HOME</button>
+    
+    <!-- Pause Button -->
+    <button class="pause-btn" id="pause-btn" onclick="showPauseMenu()">⏸ PAUSE</button>
+    
+    <!-- Pause Menu -->
+    <div id="pause-menu">
+        <h2>PAUSED</h2>
+        <button class="resume-btn" onclick="resumeGame()">▶ RESUME</button>
+        <button class="menu-btn" onclick="returnToMenu()">📋 MENU</button>
+        <button class="home-btn-pause" onclick="goHome()">🏠 HOME</button>
+    </div>
+    
     <!-- Canvas Container -->
     <div id="canvas-container"></div>
 
@@ -504,6 +610,7 @@
             document.getElementById('hud').style.display = 'flex';
             document.getElementById('instructions').style.display = 'block';
             document.getElementById('crosshair').style.display = 'none';
+            document.getElementById('pause-btn').style.display = 'block';
 
             // Reset
             const cfg = DIFFICULTY[selectedDifficulty];
@@ -658,6 +765,7 @@
             document.getElementById('hud').style.display = 'none';
             document.getElementById('crosshair').style.display = 'none';
             document.getElementById('instructions').style.display = 'none';
+            document.getElementById('pause-btn').style.display = 'none';
             document.getElementById('final-score').textContent = score;
             document.getElementById('final-accuracy').textContent = acc + '%';
             document.getElementById('final-time').textContent = Math.round(time) + 's';
@@ -764,11 +872,48 @@
         function returnToMenu() {
             document.getElementById('results-screen').style.display = 'none';
             document.getElementById('menu-screen').style.display = 'flex';
+            document.getElementById('pause-menu').style.display = 'none';
+            document.getElementById('pause-btn').style.display = 'none';
             if (targetMesh) { scene.remove(targetMesh); targetMesh = null; }
             camRotX = camRotY = 0;
             camera.rotation.set(0,0,0);
             gameState = 'menu';
         }
+
+        // ==================== PAUSE MENU ====================
+        function showPauseMenu() {
+            if (gameState !== 'playing' && gameState !== 'waiting') return;
+            
+            // Pause the game
+            if (gameState === 'playing') {
+                document.exitPointerLock();
+                gameState = 'paused';
+            }
+            
+            document.getElementById('pause-menu').style.display = 'flex';
+            document.getElementById('pause-btn').style.display = 'none';
+        }
+
+        function resumeGame() {
+            document.getElementById('pause-menu').style.display = 'none';
+            document.getElementById('pause-btn').style.display = 'block';
+            
+            if (gameState === 'paused') {
+                gameState = 'waiting';
+                renderer.domElement.requestPointerLock();
+            }
+        }
+
+function goHome() {
+            window.location.href = 'index.html';
+        }
+
+        // Handle ESC key for pause
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && (gameState === 'playing' || gameState === 'waiting')) {
+                showPauseMenu();
+            }
+        });
 
         // ==================== LOOP ====================
         function animate() {

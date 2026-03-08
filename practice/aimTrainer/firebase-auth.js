@@ -218,10 +218,14 @@ async function loadUserProfile(uid) {
         if (doc.exists) {
             userProfile = doc.data();
         } else {
+            // Get photoURL from Firebase Auth if available
+            const photoURL = currentUser?.photoURL || null;
+            
             userProfile = {
                 uid: uid,
                 username: currentUser.displayName || currentUser.email.split('@')[0],
                 email: currentUser.email,
+                photoURL: photoURL,
                 coins: 50,
                 skins: ['default'],
                 equippedSkin: 'default'
@@ -232,6 +236,9 @@ async function loadUserProfile(uid) {
         localStorage.setItem('aimtrainer_skins', JSON.stringify(userProfile.skins));
         localStorage.setItem('aimtrainer_equipped_skin', userProfile.equippedSkin);
         localStorage.setItem('aimtrainer_username', userProfile.username);
+        if (userProfile.photoURL) {
+            localStorage.setItem('aimtrainer_photoURL', userProfile.photoURL);
+        }
         return userProfile;
     } catch (e) {
         console.log('Error loading profile:', e);
@@ -350,6 +357,8 @@ function showProfileCard() {
     const coins = parseInt(localStorage.getItem('aimtrainer_coins') || '0');
     const username = localStorage.getItem('aimtrainer_username') || 'Player';
     const totalRuns = parseInt(localStorage.getItem('aimtrainer_total_runs') || '0');
+    const photoURL = localStorage.getItem('aimtrainer_photoURL');
+    const displayName = userProfile?.username || username;
     
     // Calculate rank
     let rank = 'Bronze';
@@ -358,15 +367,27 @@ function showProfileCard() {
     else if (totalRuns >= 25) rank = 'Gold';
     else if (totalRuns >= 10) rank = 'Silver';
     
-    // Update modal content
-    const avatarEl = profileModal.querySelector('.profile-avatar');
-    const usernameEl = profileModal.querySelector('.profile-username');
-    const rankEl = profileModal.querySelector('.profile-rank');
-    const coinsEl = profileModal.querySelectorAll('.profile-stat-value')[0];
-    const gamesEl = profileModal.querySelectorAll('.profile-stat-value')[1];
+    // Get modal elements by ID
+    const avatarDisplay = document.getElementById('profile-avatar-display');
+    const usernameEl = document.getElementById('profile-username');
+    const rankEl = document.getElementById('profile-rank');
+    const coinsEl = document.getElementById('profile-coins');
+    const gamesEl = document.getElementById('profile-games');
     
-    if (avatarEl) avatarEl.textContent = (userProfile?.username || username).charAt(0).toUpperCase();
-    if (usernameEl) usernameEl.textContent = userProfile?.username || username;
+    // Set avatar - show photo if available, otherwise show letter
+    if (photoURL || userProfile?.photoURL) {
+        const url = photoURL || userProfile.photoURL;
+        if (avatarDisplay) {
+            avatarDisplay.innerHTML = '<img src="' + url + '" alt="' + displayName + '" id="profile-avatar-img" onerror="this.style.display=\'none\'; document.getElementById(\'profile-avatar-letter\').style.display=\'block\';">' +
+                '<span class="avatar-letter" id="profile-avatar-letter" style="display:none;">' + displayName.charAt(0).toUpperCase() + '</span>';
+        }
+    } else {
+        if (avatarDisplay) {
+            avatarDisplay.innerHTML = '<span class="avatar-letter" id="profile-avatar-letter">' + displayName.charAt(0).toUpperCase() + '</span>';
+        }
+    }
+    
+    if (usernameEl) usernameEl.textContent = displayName;
     if (rankEl) rankEl.textContent = rank;
     if (coinsEl) coinsEl.textContent = coins;
     if (gamesEl) gamesEl.textContent = totalRuns;
@@ -388,14 +409,26 @@ function updateAuthUI(isLoggedIn) {
     
     const coins = parseInt(localStorage.getItem('aimtrainer_coins') || '0');
     const username = localStorage.getItem('aimtrainer_username') || 'Player';
+    const photoURL = localStorage.getItem('aimtrainer_photoURL');
     
     if (isLoggedIn && userProfile) {
+        // Build avatar HTML - show photo if available, otherwise show first letter
+        let avatarHTML = '';
+        const displayName = userProfile.username || username;
+        
+        if (photoURL || userProfile.photoURL) {
+            const url = photoURL || userProfile.photoURL;
+            avatarHTML = `<img src="${url}" alt="${displayName}" onerror="this.parentElement.innerHTML='<span class=\\'avatar-letter\\'>${displayName.charAt(0).toUpperCase()}</span>'">`;
+        } else {
+            avatarHTML = `<span class="avatar-letter">${displayName.charAt(0).toUpperCase()}</span>`;
+        }
+        
         authSection.innerHTML = `
-            <div class="user-avatar" onclick="showProfileCard()" style="cursor:pointer;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#00ff88,#00cc66);display:flex;align-items:center;justify-content:center;font-weight:bold;color:#000;font-size:18px;">
-                ${(userProfile.username || username).charAt(0).toUpperCase()}
+            <div class="user-avatar" onclick="showProfileCard()" title="Click to view profile">
+                ${avatarHTML}
             </div>
             <div class="user-info">
-                <span class="username">${userProfile.username || username}</span>
+                <span class="username">${displayName}</span>
                 <span class="coins">🪙 ${coins}</span>
             </div>
             <button class="auth-btn logout" onclick="handleLogout()">Sign Out</button>
