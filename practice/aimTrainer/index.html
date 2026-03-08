@@ -2091,6 +2091,8 @@
            if (result.success) {
                closeAuthModal();
                alert(authMode === 'register' ? 'Account created! Welcome!' : 'Welcome back!');
+               // Reload page to update auth UI
+               window.location.reload();
            } else {
                alert('Error: ' + result.error);
            }
@@ -2101,6 +2103,8 @@
            if (result.success) {
                closeAuthModal();
                alert('Welcome!');
+               // Reload page to update auth UI
+               window.location.reload();
            } else {
                alert('Error: ' + result.error);
            }
@@ -2109,6 +2113,8 @@
        async function handleLogout() {
            await logOut();
            alert('Signed out successfully');
+           // Reload page to update auth UI
+           window.location.reload();
        }
 
        // Update coins display

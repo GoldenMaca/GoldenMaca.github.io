@@ -431,7 +431,6 @@ function updateAuthUI(isLoggedIn) {
                 <span class="username">${displayName}</span>
                 <span class="coins">🪙 ${coins}</span>
             </div>
-            <button class="auth-btn logout" onclick="handleLogout()">Sign Out</button>
         `;
     } else {
         authSection.innerHTML = `<button class="auth-btn" onclick="showAuthModal()">Sign In</button>`;
