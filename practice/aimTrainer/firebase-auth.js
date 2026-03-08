@@ -273,6 +273,9 @@ async function signUp(email, password, username) {
         localStorage.setItem('aimtrainer_username', username);
         localStorage.setItem('aimtrainer_referral_code', userReferralCode);
         
+        // Clear the explicit logout flag so user stays logged in on reload
+        localStorage.removeItem('aimtrainer_logged_out');
+        
         return { success: true, user: cred.user };
     } catch (e) {
         return { success: false, error: e.message };
@@ -285,6 +288,8 @@ async function signIn(email, password) {
     }
     try {
         const cred = await firebase.auth().signInWithEmailAndPassword(email, password);
+        // Clear the explicit logout flag so user stays logged in on reload
+        localStorage.removeItem('aimtrainer_logged_out');
         return { success: true, user: cred.user };
     } catch (e) {
         return { success: false, error: e.message };
@@ -298,6 +303,8 @@ async function signInWithGoogle() {
     try {
         const provider = new firebase.auth.GoogleAuthProvider();
         const cred = await firebase.auth().signInWithPopup(provider);
+        // Clear the explicit logout flag so user stays logged in on reload
+        localStorage.removeItem('aimtrainer_logged_out');
         return { success: true, user: cred.user };
     } catch (e) {
         return { success: false, error: e.message };
@@ -322,10 +329,27 @@ async function logOut() {
 
 // Show profile modal
 function showProfileCard() {
+    const profileModal = document.getElementById('profile-modal');
+    if (!profileModal) {
+        // Fallback to alert if modal doesn't exist
+        const coins = parseInt(localStorage.getItem('aimtrainer_coins') || '0');
+        const username = localStorage.getItem('aimtrainer_username') || 'Player';
+        const totalRuns = parseInt(localStorage.getItem('aimtrainer_total_runs') || '0');
+        const skins = JSON.parse(localStorage.getItem('aimtrainer_skins') || '["default"]');
+        
+        let rank = 'Bronze';
+        if (totalRuns >= 100) rank = 'Diamond';
+        else if (totalRuns >= 50) rank = 'Platinum';
+        else if (totalRuns >= 25) rank = 'Gold';
+        else if (totalRuns >= 10) rank = 'Silver';
+        
+        alert(`👤 Profile\n\nUsername: ${username}\n🪙 Coins: ${coins}\n🎮 Total Games: ${totalRuns}\n👑 Rank: ${rank}\n🎨 Skins Owned: ${skins.length}\n\nClick OK to sign out`);
+        return;
+    }
+    
     const coins = parseInt(localStorage.getItem('aimtrainer_coins') || '0');
     const username = localStorage.getItem('aimtrainer_username') || 'Player';
     const totalRuns = parseInt(localStorage.getItem('aimtrainer_total_runs') || '0');
-    const skins = JSON.parse(localStorage.getItem('aimtrainer_skins') || '["default"]');
     
     // Calculate rank
     let rank = 'Bronze';
@@ -334,7 +358,28 @@ function showProfileCard() {
     else if (totalRuns >= 25) rank = 'Gold';
     else if (totalRuns >= 10) rank = 'Silver';
     
-    alert(`👤 Profile\n\nUsername: ${username}\n🪙 Coins: ${coins}\n🎮 Total Games: ${totalRuns}\n👑 Rank: ${rank}\n🎨 Skins Owned: ${skins.length}`);
+    // Update modal content
+    const avatarEl = profileModal.querySelector('.profile-avatar');
+    const usernameEl = profileModal.querySelector('.profile-username');
+    const rankEl = profileModal.querySelector('.profile-rank');
+    const coinsEl = profileModal.querySelectorAll('.profile-stat-value')[0];
+    const gamesEl = profileModal.querySelectorAll('.profile-stat-value')[1];
+    
+    if (avatarEl) avatarEl.textContent = (userProfile?.username || username).charAt(0).toUpperCase();
+    if (usernameEl) usernameEl.textContent = userProfile?.username || username;
+    if (rankEl) rankEl.textContent = rank;
+    if (coinsEl) coinsEl.textContent = coins;
+    if (gamesEl) gamesEl.textContent = totalRuns;
+    
+    // Show modal
+    profileModal.classList.add('active');
+}
+
+function closeProfileCard() {
+    const profileModal = document.getElementById('profile-modal');
+    if (profileModal) {
+        profileModal.classList.remove('active');
+    }
 }
 
 function updateAuthUI(isLoggedIn) {
@@ -549,6 +594,7 @@ window.getReferralCode = getReferralCode;
 window.reportBug = reportBug;
 window.shareReferral = shareReferral;
 window.showProfileCard = showProfileCard;
+window.closeProfileCard = closeProfileCard;
 window.syncUserData = syncUserData;
 window.startLeaderboardRefresh = startLeaderboardRefresh;
 window.SKINS = SKINS;
