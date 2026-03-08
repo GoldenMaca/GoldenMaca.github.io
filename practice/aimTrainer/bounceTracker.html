@@ -142,6 +142,8 @@
         <button onclick="returnToMenu()">RETURN TO MENU</button>
     </div>
 
+    <script src="firebase-auth.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
         const DIFFICULTY = {
@@ -276,14 +278,17 @@
             
             const cfg = DIFFICULTY[selectedDifficulty];
             
+            // Get skin colors
+            const skin = getCurrentSkin();
+            
             // Create capsule manually (Cylinder + 2 spheres) since CapsuleGeometry not in r128
             capsule = new THREE.Group();
             
             // Cylinder body
             const cylinderGeo = new THREE.CylinderGeometry(cfg.size, cfg.size, cfg.size * 2, 16);
             const capsuleMat = new THREE.MeshStandardMaterial({
-                color: 0xff44ff,
-                emissive: 0xff22ff,
+                color: skin.color,
+                emissive: skin.emissive,
                 emissiveIntensity: 0.9,
                 roughness: 0.2,
                 metalness: 0.8
@@ -445,16 +450,91 @@
             document.getElementById('final-time').textContent = Math.round((Date.now() - gameStartTime) / 1000) + 's';
             document.getElementById('results-screen').style.display = 'flex';
 
-            // Save score to localStorage (works even if parent page is closed)
+            // Save score to localStorage
             const storageKey = 'aimtrainer_hard_bounceTracker';
             const currentBest = localStorage.getItem(storageKey);
             if (!currentBest || score > parseInt(currentBest)) {
                 localStorage.setItem(storageKey, score);
             }
+            
+            // Save play to history for graphs
+            addPlayToHistory('bounceTracker', score);
+            
+            // Add coins for playing
+            const coinsEarned = selectedDifficulty === 'hard' ? 10 : 5;
+            let totalCoins = parseInt(localStorage.getItem('aimtrainer_coins') || '0');
+            totalCoins += coinsEarned;
+            localStorage.setItem('aimtrainer_coins', totalCoins);
+            
+            // Update quest progress
+            updateQuestProgress('play_3', 'daily', 1);
+            updateQuestProgress('score_1000', 'daily', score);
+            updateQuestProgress('play_20', 'weekly', 1);
+            updateQuestProgress('score_5000', 'weekly', score);
+            
+            // Submit to global leaderboard
+            if (selectedDifficulty === 'hard') {
+                submitGlobalScore('bounceTracker', score, 'hard');
+            }
+            
+            // Show graph
+            setTimeout(() => showPerformanceGraph('bounceTracker'), 500);
 
             if (window.opener) {
                 window.opener.postMessage({ type: 'gameScore', gameId: 'bounceTracker', score: score, difficulty: selectedDifficulty }, '*');
             }
+        }
+        
+        // Show performance graph
+        function showPerformanceGraph(gameId) {
+            const history = JSON.parse(localStorage.getItem('aimtrainer_play_history') || '[]');
+            const gameHistory = history.filter(h => h.gameId === gameId).slice(-10);
+            
+            if (gameHistory.length < 2) return;
+            
+            const resultsScreen = document.getElementById('results-screen');
+            let graphContainer = document.getElementById('performance-graph');
+            
+            if (!graphContainer) {
+                graphContainer = document.createElement('div');
+                graphContainer.id = 'performance-graph';
+                graphContainer.style.cssText = 'width: 100%; max-width: 400px; margin: 20px auto;';
+                resultsScreen.querySelector('.stats').appendChild(graphContainer);
+            }
+            
+            const ctx = document.createElement('canvas');
+            ctx.style.cssText = 'width: 100%; height: 150px;';
+            graphContainer.innerHTML = '';
+            graphContainer.appendChild(ctx);
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: gameHistory.map((_, i) => `Game ${i + 1}`),
+                    datasets: [{
+                        label: 'Score',
+                        data: gameHistory.map(h => h.score),
+                        borderColor: '#00ff88',
+                        backgroundColor: 'rgba(0, 255, 136, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { display: false },
+                        y: { beginAtZero: true, grid: { color: '#333' }, ticks: { color: '#666' } }
+                    }
+                }
+            });
+        }
+        
+        function updateQuestProgress(questId, type, value) {
+            const key = `quest_${type}_${questId}`;
+            const current = parseInt(localStorage.getItem(key) || '0');
+            localStorage.setItem(key, current + value);
         }
 
         function returnToMenu() {
