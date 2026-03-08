@@ -105,29 +105,45 @@ async function initFirebaseAuth() {
         auth = firebase.auth();
         db = firebase.firestore();
         
-        // Test Firestore connection - try a simple query
+        // Enable offline persistence for data syncing
+        db.enablePersistence({ synchronizeTabs: true }).catch(err => {
+            console.log('Persistence error:', err.code);
+        });
+        
+        // Test Firestore connection
         try {
             await db.collection('leaderboard').limit(1).get();
             firebaseReady = true;
             console.log('✅ Firebase connected successfully!');
         } catch (connErr) {
-            // If error is "not-found", database doesn't exist
             if (connErr.message && connErr.message.includes('not-found')) {
                 console.log('⚠️ Firestore database not found. Using offline mode.');
                 firebaseReady = false;
             } else {
-                // Other errors (permissions etc) - database exists!
                 firebaseReady = true;
                 console.log('✅ Firebase connected!');
             }
         }
         
+        // Listen for auth changes - handles auto-login
         firebase.auth().onAuthStateChanged(async (user) => {
+            console.log('Auth state changed:', user ? user.email : 'logged out');
             if (user) {
                 currentUser = user;
                 await loadUserProfile(user.uid);
                 updateAuthUI(true);
+                
+                // Sync local data with Firebase
+                await syncUserData();
+                
+                // Start leaderboard refresh interval
+                startLeaderboardRefresh();
             } else {
+                // Check if user explicitly logged out
+                const explicitlyLoggedOut = localStorage.getItem('aimtrainer_logged_out') === 'true';
+                if (!explicitlyLoggedOut) {
+                    console.log('No user, but not explicitly logged out');
+                }
                 currentUser = null;
                 userProfile = null;
                 updateAuthUI(false);
@@ -141,6 +157,59 @@ async function initFirebaseAuth() {
         console.log('Using offline mode');
         return false;
     }
+}
+
+// Sync local data with Firebase after login
+async function syncUserData() {
+    if (!currentUser || !firebaseReady) return;
+    
+    try {
+        const userDoc = await db.collection('users').doc(currentUser.uid).get();
+        if (userDoc.exists) {
+            const fbData = userDoc.data();
+            
+            // Merge local coins with Firebase (use higher)
+            const localCoins = parseInt(localStorage.getItem('aimtrainer_coins') || '0');
+            const fbCoins = fbData.coins || 0;
+            const mergedCoins = Math.max(localCoins, fbCoins);
+            
+            // Merge skins
+            const localSkins = JSON.parse(localStorage.getItem('aimtrainer_skins') || '["default"]');
+            const fbSkins = fbData.skins || ['default'];
+            const mergedSkins = [...new Set([...localSkins, ...fbSkins])];
+            
+            // Update Firebase with merged data
+            await db.collection('users').doc(currentUser.uid).update({
+                coins: mergedCoins,
+                skins: mergedSkins,
+                equippedSkin: fbData.equippedSkin || 'default'
+            });
+            
+            // Update local storage
+            localStorage.setItem('aimtrainer_coins', mergedCoins);
+            localStorage.setItem('aimtrainer_skins', JSON.stringify(mergedSkins));
+            localStorage.setItem('aimtrainer_equipped_skin', fbData.equippedSkin || 'default');
+            localStorage.setItem('aimtrainer_username', fbData.username);
+            
+            console.log('Data synced:', { coins: mergedCoins, skins: mergedSkins.length });
+        }
+    } catch (e) {
+        console.log('Sync error:', e);
+    }
+}
+
+// Start periodic leaderboard refresh (every 5 minutes)
+let leaderboardInterval = null;
+function startLeaderboardRefresh() {
+    if (leaderboardInterval) clearInterval(leaderboardInterval);
+    
+    // Refresh every 5 minutes (300000 ms)
+    leaderboardInterval = setInterval(() => {
+        if (typeof loadLeaderboardForGame === 'function') {
+            console.log('🔄 Refreshing leaderboard...');
+            loadLeaderboardForGame();
+        }
+    }, 300000);
 }
 
 async function loadUserProfile(uid) {
@@ -236,6 +305,9 @@ async function signInWithGoogle() {
 }
 
 async function logOut() {
+    // Mark as explicitly logged out so we don't try to auto-restore
+    localStorage.setItem('aimtrainer_logged_out', 'true');
+    
     if (firebaseReady && auth) {
         try {
             await firebase.auth().signOut();
@@ -477,6 +549,8 @@ window.getReferralCode = getReferralCode;
 window.reportBug = reportBug;
 window.shareReferral = shareReferral;
 window.showProfileCard = showProfileCard;
+window.syncUserData = syncUserData;
+window.startLeaderboardRefresh = startLeaderboardRefresh;
 window.SKINS = SKINS;
 window.escapeHtml = escapeHtml;
 
