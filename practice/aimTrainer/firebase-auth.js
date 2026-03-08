@@ -105,6 +105,23 @@ async function initFirebaseAuth() {
         auth = firebase.auth();
         db = firebase.firestore();
         
+        // Test Firestore connection - try a simple query
+        try {
+            await db.collection('leaderboard').limit(1).get();
+            firebaseReady = true;
+            console.log('✅ Firebase connected successfully!');
+        } catch (connErr) {
+            // If error is "not-found", database doesn't exist
+            if (connErr.message && connErr.message.includes('not-found')) {
+                console.log('⚠️ Firestore database not found. Using offline mode.');
+                firebaseReady = false;
+            } else {
+                // Other errors (permissions etc) - database exists!
+                firebaseReady = true;
+                console.log('✅ Firebase connected!');
+            }
+        }
+        
         firebase.auth().onAuthStateChanged(async (user) => {
             if (user) {
                 currentUser = user;
@@ -117,12 +134,11 @@ async function initFirebaseAuth() {
             }
         });
         
-        firebaseReady = true;
-        console.log('Firebase connected!');
         return true;
     } catch (e) {
-        console.log('Firebase not available, using local-only mode:', e);
+        console.log('Firebase error:', e.message);
         firebaseReady = false;
+        console.log('Using offline mode');
         return false;
     }
 }
