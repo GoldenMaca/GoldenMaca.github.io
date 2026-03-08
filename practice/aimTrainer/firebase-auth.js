@@ -218,12 +218,21 @@ async function loadUserProfile(uid) {
         if (doc.exists) {
             userProfile = doc.data();
         } else {
-            // Get photoURL from Firebase Auth if available
-            const photoURL = currentUser?.photoURL || null;
+            // Get photoURL from Firebase Auth if available (for Google sign-in)
+            const photoURL = currentUser?.photoURL || 
+                            currentUser?.providerData?.[0]?.photoURL || 
+                            currentUser?.providerData?.[0]?.providerId === 'google.com' 
+                                ? `https://www.gravatar.com/avatar/${currentUser.uid}?d=mp` 
+                                : null;
+            
+            // Get display name from Google or email
+            const displayName = currentUser?.displayName || 
+                              currentUser?.email?.split('@')[0] || 
+                              'Player';
             
             userProfile = {
                 uid: uid,
-                username: currentUser.displayName || currentUser.email.split('@')[0],
+                username: displayName,
                 email: currentUser.email,
                 photoURL: photoURL,
                 coins: 50,
@@ -232,13 +241,25 @@ async function loadUserProfile(uid) {
             };
             await db.collection('users').doc(uid).set(userProfile);
         }
+        
+        // Save to localStorage for persistence
         localStorage.setItem('aimtrainer_coins', userProfile.coins);
         localStorage.setItem('aimtrainer_skins', JSON.stringify(userProfile.skins));
         localStorage.setItem('aimtrainer_equipped_skin', userProfile.equippedSkin);
         localStorage.setItem('aimtrainer_username', userProfile.username);
+        
+        // Save photoURL if available
         if (userProfile.photoURL) {
             localStorage.setItem('aimtrainer_photoURL', userProfile.photoURL);
+        } else {
+            // Try to get from current Firebase user
+            const authPhotoURL = currentUser?.photoURL || 
+                               currentUser?.providerData?.[0]?.photoURL;
+            if (authPhotoURL) {
+                localStorage.setItem('aimtrainer_photoURL', authPhotoURL);
+            }
         }
+        
         return userProfile;
     } catch (e) {
         console.log('Error loading profile:', e);
@@ -251,25 +272,43 @@ async function signUp(email, password, username) {
         return { success: false, error: 'Firebase not loaded. Try refreshing.' };
     }
     try {
+        // FIRST: Check if username is available (before creating account)
         const usernameCheck = await db.collection('users')
             .where('usernameLower', '==', username.toLowerCase())
             .limit(1).get();
         
         if (!usernameCheck.empty) {
-            return { success: false, error: 'Username already taken. Choose a different one.' };
+            return { success: false, error: 'username-already-taken' };
         }
         
+        // SECOND: Check if email is already registered
+        // We do this by trying to create the account and catching the error
+        // But first, let's check if there's a user with this email in our users collection
+        const emailCheck = await db.collection('users')
+            .where('emailLower', '==', email.toLowerCase())
+            .limit(1).get();
+        
+        if (!emailCheck.empty) {
+            return { success: false, error: 'email-already-in-use' };
+        }
+        
+        // NOW create the account
         const cred = await firebase.auth().createUserWithEmailAndPassword(email, password);
         
         const urlParams = new URLSearchParams(window.location.search);
         const refCode = urlParams.get('ref');
         const userReferralCode = 'OCTO' + Math.random().toString(36).substr(2, 6).toUpperCase();
         
+        // Get Google photo if signed in with Google
+        const photoURL = cred.additionalUserInfo?.profile?.picture || null;
+        
         await db.collection('users').doc(cred.user.uid).set({
             uid: cred.user.uid,
             username: username,
             usernameLower: username.toLowerCase(),
             email: email,
+            emailLower: email.toLowerCase(),
+            photoURL: photoURL,
             coins: 50,
             skins: ['default'],
             equippedSkin: 'default',
@@ -277,14 +316,23 @@ async function signUp(email, password, username) {
             referrals: 0
         });
         
+        // Save to localStorage
         localStorage.setItem('aimtrainer_username', username);
         localStorage.setItem('aimtrainer_referral_code', userReferralCode);
+        if (photoURL) {
+            localStorage.setItem('aimtrainer_photoURL', photoURL);
+        }
         
         // Clear the explicit logout flag so user stays logged in on reload
         localStorage.removeItem('aimtrainer_logged_out');
         
         return { success: true, user: cred.user };
     } catch (e) {
+        console.error('Sign up error:', e);
+        // Handle specific Firebase auth errors
+        if (e.code === 'auth/email-already-in-use') {
+            return { success: false, error: 'email-already-in-use' };
+        }
         return { success: false, error: e.message };
     }
 }
@@ -310,8 +358,19 @@ async function signInWithGoogle() {
     try {
         const provider = new firebase.auth.GoogleAuthProvider();
         const cred = await firebase.auth().signInWithPopup(provider);
+        
+        // Get the Google profile photo
+        const googlePhotoURL = cred.additionalUserInfo?.profile?.picture || null;
+        
         // Clear the explicit logout flag so user stays logged in on reload
         localStorage.removeItem('aimtrainer_logged_out');
+        
+        // If this is a new user (no profile yet), the onAuthStateChanged will handle it
+        // But let's save the photo URL immediately if we have it
+        if (googlePhotoURL) {
+            localStorage.setItem('aimtrainer_photoURL', googlePhotoURL);
+        }
+        
         return { success: true, user: cred.user };
     } catch (e) {
         return { success: false, error: e.message };
@@ -416,15 +475,17 @@ function updateAuthUI(isLoggedIn) {
         let avatarHTML = '';
         const displayName = userProfile.username || username;
         
-        if (photoURL || userProfile.photoURL) {
-            const url = photoURL || userProfile.photoURL;
-            avatarHTML = `<img src="${url}" alt="${displayName}" onerror="this.parentElement.innerHTML='<span class=\\'avatar-letter\\'>${displayName.charAt(0).toUpperCase()}</span>'">`;
+        // Check for photoURL from multiple sources
+        const userPhotoURL = userProfile?.photoURL || photoURL || currentUser?.photoURL || currentUser?.providerData?.[0]?.photoURL;
+        
+        if (userPhotoURL) {
+            avatarHTML = `<img src="${userPhotoURL}" alt="${displayName}" onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\\'avatar-letter\\'>${displayName.charAt(0).toUpperCase()}</span>'">`;
         } else {
             avatarHTML = `<span class="avatar-letter">${displayName.charAt(0).toUpperCase()}</span>`;
         }
         
         authSection.innerHTML = `
-            <div class="user-avatar" onclick="showProfileCard()" title="Click to view profile">
+            <div class="user-avatar" onclick="showProfileCard()" title="Click to view profile: ${displayName}">
                 ${avatarHTML}
             </div>
             <div class="user-info">
