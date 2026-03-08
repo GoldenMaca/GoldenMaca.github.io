@@ -56,21 +56,23 @@ const QUESTS = {
 // Initialize Firebase
 async function initFirebaseAuth() {
     try {
+        // Load Firebase compat version (provides global firebase object)
         const script1 = document.createElement('script');
-        script1.src = 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+        script1.src = 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js';
         document.head.appendChild(script1);
         await new Promise(resolve => script1.onload = resolve);
         
         const script2 = document.createElement('script');
-        script2.src = 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+        script2.src = 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js';
         document.head.appendChild(script2);
         await new Promise(resolve => script2.onload = resolve);
         
         const script3 = document.createElement('script');
-        script3.src = 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+        script3.src = 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js';
         document.head.appendChild(script3);
         await new Promise(resolve => script3.onload = resolve);
         
+        // Initialize Firebase
         const app = firebase.initializeApp(firebaseAuthConfig);
         auth = firebase.auth();
         db = firebase.firestore();
@@ -88,10 +90,10 @@ async function initFirebaseAuth() {
         });
         
         firebaseReady = true;
-        console.log('🔥 Firebase connected!');
+        console.log('Firebase connected!');
         return true;
     } catch (e) {
-        console.log('Firebase not available, using local-only mode');
+        console.log('Firebase not available, using local-only mode:', e);
         firebaseReady = false;
         return false;
     }
@@ -369,7 +371,7 @@ function reportBug() {
     const body = encodeURIComponent(
         'Describe the bug:\n\n\nSteps to reproduce:\n1. \n2. \n3. \n\nExpected behavior:\n\n\nActual behavior:\n\n\nBrowser/Device:\n'
     );
-    window.location.href = `mailto:goldenmacaroni12@gmail.com?subject=${subject}&body=${body}`;
+    window.location.href = 'mailto:goldenmacaroni12@gmail.com?subject=' + subject + '&body=' + body;
 }
 
 function shareReferral() {
@@ -377,7 +379,7 @@ function shareReferral() {
     const link = 'https://octoaim.gamer.gd.site?ref=' + code;
     
     navigator.clipboard.writeText(link).then(function() {
-        alert('📋 Referral link copied to clipboard!\n\n' + link + '\n\nShare it with friends to earn 50 coins per sign-up!');
+        alert('Referral link copied to clipboard!\n\n' + link + '\n\nShare it with friends to earn 50 coins per sign-up!');
     }).catch(function() {
         prompt('Copy this referral link:', link);
     });
@@ -412,5 +414,4 @@ window.shareReferral = shareReferral;
 window.SKINS = SKINS;
 window.escapeHtml = escapeHtml;
 
-console.log('🎮 Firebase Auth System loaded!');
-
+console.log('Firebase Auth System loaded!');
