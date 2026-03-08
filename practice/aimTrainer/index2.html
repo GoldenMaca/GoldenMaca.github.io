@@ -4,6 +4,7 @@
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Aim Trainer Collection</title>
+   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
    <style>
        * {
            margin: 0;
@@ -11,14 +12,179 @@
            box-sizing: border-box;
        }
 
-
-
-
        body {
            min-height: 100vh;
            font-family: 'Segoe UI', Arial, sans-serif;
            background: #0a0a0f;
            overflow-x: hidden;
+       }
+
+       /* Auth Modal */
+       .auth-modal {
+           position: fixed;
+           top: 0;
+           left: 0;
+           width: 100%;
+           height: 100%;
+           background: rgba(0,0,0,0.9);
+           display: none;
+           align-items: center;
+           justify-content: center;
+           z-index: 2000;
+       }
+
+       .auth-modal.active {
+           display: flex;
+       }
+
+       .auth-box {
+           background: linear-gradient(145deg, #1a1a2e, #0f0f1a);
+           border: 2px solid #00ff88;
+           border-radius: 16px;
+           padding: 40px;
+           width: 400px;
+           max-width: 90%;
+           text-align: center;
+       }
+
+       .auth-box h2 {
+           color: #00ff88;
+           font-size: 28px;
+           margin-bottom: 20px;
+       }
+
+       .auth-box input {
+           width: 100%;
+           padding: 12px;
+           margin-bottom: 15px;
+           background: #0a0a15;
+           border: 1px solid #333;
+           border-radius: 8px;
+           color: #fff;
+           font-size: 14px;
+       }
+
+       .auth-box input:focus {
+           outline: none;
+           border-color: #00ff88;
+       }
+
+       .auth-box .btn-group {
+           display: flex;
+           gap: 10px;
+           margin-top: 20px;
+       }
+
+       .auth-box button {
+           flex: 1;
+           padding: 12px;
+           border: none;
+           border-radius: 8px;
+           font-size: 14px;
+           cursor: pointer;
+           transition: all 0.3s;
+       }
+
+       .auth-box .btn-primary {
+           background: #00ff88;
+           color: #000;
+           font-weight: bold;
+       }
+
+       .auth-box .btn-secondary {
+           background: #333;
+           color: #fff;
+       }
+
+       .auth-box .btn-google {
+           background: #fff;
+           color: #333;
+           margin-top: 10px;
+       }
+
+       .auth-box .close-auth {
+           position: absolute;
+           top: 20px;
+           right: 20px;
+           background: none;
+           border: none;
+           color: #666;
+           font-size: 24px;
+           cursor: pointer;
+       }
+
+       .auth-tabs {
+           display: flex;
+           gap: 10px;
+           margin-bottom: 20px;
+       }
+
+       .auth-tab {
+           flex: 1;
+           padding: 10px;
+           background: transparent;
+           border: 1px solid #333;
+           border-radius: 8px;
+           color: #666;
+           cursor: pointer;
+       }
+
+       .auth-tab.active {
+           background: #00ff88;
+           border-color: #00ff88;
+           color: #000;
+       }
+
+       /* Auth Section in Header */
+       .header-auth {
+           position: absolute;
+           top: 20px;
+           right: 20px;
+           display: flex;
+           align-items: center;
+           gap: 15px;
+           z-index: 100;
+       }
+
+       .header-auth .user-info {
+           display: flex;
+           align-items: center;
+           gap: 10px;
+           background: rgba(0,0,0,0.7);
+           padding: 8px 15px;
+           border-radius: 20px;
+           border: 1px solid #333;
+       }
+
+       .header-auth .username {
+           color: #fff;
+           font-weight: bold;
+       }
+
+       .header-auth .coins {
+           color: #ffaa00;
+           font-weight: bold;
+       }
+
+       .header-auth .auth-btn {
+           padding: 8px 20px;
+           background: #00ff88;
+           border: none;
+           border-radius: 20px;
+           color: #000;
+           font-weight: bold;
+           cursor: pointer;
+           transition: all 0.3s;
+       }
+
+       .header-auth .auth-btn:hover {
+           transform: scale(1.05);
+           box-shadow: 0 0 15px #00ff88;
+       }
+
+       .header-auth .logout {
+           background: #ff4444;
+           color: #fff;
        }
 
 
@@ -424,16 +590,18 @@
        /* Tabs */
        .tabs {
            display: flex;
-           gap: 10px;
+           gap: 8px;
            margin-bottom: 40px;
+           flex-wrap: wrap;
+           justify-content: center;
        }
 
 
 
 
        .tab-btn {
-           padding: 12px 30px;
-           font-size: 16px;
+           padding: 10px 20px;
+           font-size: 14px;
            background: transparent;
            border: 2px solid #333;
            border-radius: 8px;
@@ -442,6 +610,20 @@
            transition: all 0.3s;
            font-weight: bold;
            letter-spacing: 1px;
+           white-space: nowrap;
+       }
+
+
+
+
+       @media (max-width: 768px) {
+           .tabs {
+               gap: 5px;
+           }
+           .tab-btn {
+               padding: 8px 12px;
+               font-size: 12px;
+           }
        }
 
 
@@ -858,23 +1040,366 @@
            background: #ff4444;
            color: #fff;
        }
+
+       /* Challenges Tab */
+       .challenges-header, .skins-header {
+           display: flex;
+           justify-content: center;
+           margin-bottom: 30px;
+       }
+
+       .coins-display {
+           display: flex;
+           align-items: center;
+           gap: 10px;
+           background: rgba(0,0,0,0.7);
+           padding: 15px 30px;
+           border-radius: 30px;
+           border: 2px solid #ffaa00;
+       }
+
+       .coins-icon {
+           font-size: 28px;
+       }
+
+       .coins-amount {
+           font-size: 32px;
+           font-weight: bold;
+           color: #ffaa00;
+           text-shadow: 0 0 15px rgba(255,170,0,0.5);
+       }
+
+       .coins-label {
+           color: #888;
+           font-size: 14px;
+       }
+
+       .quests-grid, .skins-grid, .store-grid {
+           display: grid;
+           grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+           gap: 20px;
+           width: 100%;
+           max-width: 1200px;
+       }
+
+       .quest-card {
+           background: linear-gradient(145deg, rgba(26, 26, 46, 0.9), rgba(15, 15, 26, 0.9));
+           border: 2px solid #333;
+           border-radius: 12px;
+           padding: 20px;
+           transition: all 0.3s;
+       }
+
+       .quest-card:hover {
+           border-color: #00ff88;
+           transform: translateY(-5px);
+       }
+
+       .quest-card.completed {
+           border-color: #00ff88;
+           opacity: 0.7;
+       }
+
+       .quest-card .quest-icon {
+           font-size: 32px;
+           margin-bottom: 10px;
+       }
+
+       .quest-card .quest-name {
+           font-size: 18px;
+           font-weight: bold;
+           color: #fff;
+           margin-bottom: 5px;
+       }
+
+       .quest-card .quest-desc {
+           font-size: 13px;
+           color: #888;
+           margin-bottom: 15px;
+       }
+
+       .quest-card .quest-progress {
+           background: #222;
+           border-radius: 10px;
+           height: 8px;
+           margin-bottom: 10px;
+           overflow: hidden;
+       }
+
+       .quest-card .quest-progress-fill {
+           height: 100%;
+           background: linear-gradient(90deg, #00ff88, #00cc66);
+           border-radius: 10px;
+           transition: width 0.3s;
+       }
+
+       .quest-card .quest-reward {
+           display: flex;
+           align-items: center;
+           gap: 5px;
+           color: #ffaa00;
+           font-weight: bold;
+       }
+
+       .quest-card .claim-btn {
+           margin-top: 15px;
+           width: 100%;
+           padding: 10px;
+           background: #00ff88;
+           border: none;
+           border-radius: 8px;
+           color: #000;
+           font-weight: bold;
+           cursor: pointer;
+           transition: all 0.3s;
+       }
+
+       .quest-card .claim-btn:hover {
+           transform: scale(1.02);
+           box-shadow: 0 0 15px #00ff88;
+       }
+
+       .quest-card .claim-btn:disabled {
+           background: #333;
+           color: #666;
+           cursor: not-allowed;
+           transform: none;
+           box-shadow: none;
+       }
+
+       /* Leaderboard Tab */
+       .leaderboard-header {
+           display: flex;
+           justify-content: center;
+           margin-bottom: 30px;
+       }
+
+       .leaderboard-header select {
+           padding: 12px 20px;
+           background: #1a1a2e;
+           border: 2px solid #333;
+           border-radius: 8px;
+           color: #fff;
+           font-size: 16px;
+           cursor: pointer;
+       }
+
+       .leaderboard-header select:focus {
+           outline: none;
+           border-color: #00ff88;
+       }
+
+       .global-leaderboard {
+           background: linear-gradient(145deg, rgba(26, 26, 46, 0.9), rgba(15, 15, 26, 0.9));
+           border: 2px solid #333;
+           border-radius: 12px;
+           padding: 20px;
+           max-width: 800px;
+           margin: 0 auto;
+       }
+
+       .global-leaderboard h3 {
+           color: #888;
+           font-size: 14px;
+           text-transform: uppercase;
+           letter-spacing: 2px;
+           margin-bottom: 20px;
+           text-align: center;
+       }
+
+       .leaderboard-row {
+           display: flex;
+           align-items: center;
+           padding: 15px;
+           border-bottom: 1px solid #333;
+           transition: all 0.2s;
+       }
+
+       .leaderboard-row:last-child {
+           border-bottom: none;
+       }
+
+       .leaderboard-row:hover {
+           background: rgba(0,255,136,0.1);
+       }
+
+       .leaderboard-row.top-3 {
+           background: rgba(255,170,0,0.1);
+       }
+
+       .leaderboard-row .rank {
+           width: 50px;
+           font-size: 20px;
+           font-weight: bold;
+       }
+
+       .leaderboard-row .rank.gold { color: #ffd700; }
+       .leaderboard-row .rank.silver { color: #c0c0c0; }
+       .leaderboard-row .rank.bronze { color: #cd7f32; }
+
+       .leaderboard-row .username {
+           flex: 1;
+           font-size: 16px;
+           color: #fff;
+       }
+
+       .leaderboard-row .score {
+           font-size: 20px;
+           font-weight: bold;
+           color: #00ff88;
+       }
+
+       .leaderboard-row .score.high {
+           color: #ffaa00;
+       }
+
+       .your-rank {
+           text-align: center;
+           margin-top: 30px;
+           padding: 20px;
+           background: rgba(0,0,0,0.5);
+           border-radius: 12px;
+           max-width: 800px;
+           margin-left: auto;
+           margin-right: auto;
+       }
+
+       .your-rank .rank-value {
+           font-size: 36px;
+           font-weight: bold;
+           color: #00ff88;
+       }
+
+       .your-rank .percentile {
+           color: #ffaa00;
+           font-size: 18px;
+       }
+
+       /* Skins Tab */
+       .skin-card {
+           background: linear-gradient(145deg, rgba(26, 26, 46, 0.9), rgba(15, 15, 26, 0.9));
+           border: 2px solid #333;
+           border-radius: 12px;
+           padding: 20px;
+           text-align: center;
+           transition: all 0.3s;
+       }
+
+       .skin-card:hover {
+           transform: translateY(-5px);
+       }
+
+       .skin-card.equipped {
+           border-color: #00ff88;
+           box-shadow: 0 0 20px rgba(0,255,136,0.3);
+       }
+
+       .skin-card .skin-preview {
+           width: 60px;
+           height: 60px;
+           border-radius: 50%;
+           margin: 0 auto 15px;
+           box-shadow: 0 0 20px currentColor;
+       }
+
+       .skin-card .skin-name {
+           font-size: 16px;
+           font-weight: bold;
+           color: #fff;
+           margin-bottom: 10px;
+       }
+
+       .skin-card .skin-price {
+           display: flex;
+           align-items: center;
+           justify-content: center;
+           gap: 5px;
+           color: #ffaa00;
+           font-weight: bold;
+           margin-bottom: 15px;
+       }
+
+       .skin-card .equip-btn, .skin-card .buy-btn {
+           width: 100%;
+           padding: 10px;
+           border: none;
+           border-radius: 8px;
+           font-weight: bold;
+           cursor: pointer;
+           transition: all 0.3s;
+       }
+
+       .skin-card .equip-btn {
+           background: #00ff88;
+           color: #000;
+       }
+
+       .skin-card .buy-btn {
+           background: #ffaa00;
+           color: #000;
+       }
+
+       .skin-card .equipped-badge {
+           padding: 10px;
+           background: #333;
+           color: #00ff88;
+           border-radius: 8px;
+           font-weight: bold;
+       }
+
+       .no-leaderboard {
+           text-align: center;
+           color: #666;
+           padding: 40px;
+       }
    </style>
 </head>
 <body>
-   <div class="bg">
-       <div class="grid"></div>
-   </div>
+    <!-- Auth Modal -->
+    <div class="auth-modal" id="auth-modal">
+        <div class="auth-box">
+            <button class="close-auth" onclick="closeAuthModal()">×</button>
+            <h2 id="auth-title">Sign In</h2>
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="switchAuthTab('login')">Sign In</button>
+                <button class="auth-tab" onclick="switchAuthTab('register')">Sign Up</button>
+            </div>
+            
+            <div id="auth-form">
+                <input type="text" id="auth-username" placeholder="Username" style="display:none;">
+                <input type="email" id="auth-email" placeholder="Email">
+                <input type="password" id="auth-password" placeholder="Password">
+                <div class="btn-group">
+                    <button class="btn-primary" onclick="handleAuth()">Submit</button>
+                    <button class="btn-secondary" onclick="closeAuthModal()">Cancel</button>
+                </div>
+                <button class="btn-google" onclick="handleGoogleAuth()">Sign in with Google</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header Auth Section -->
+    <div class="header-auth" id="auth-section">
+        <button class="auth-btn" onclick="showAuthModal()">Sign In</button>
+    </div>
+
+    <div class="bg">
+        <div class="grid"></div>
+    </div>
   
-   <div class="container">
-       <h1>AIM TRAINER</h1>
-       <p class="subtitle">Choose your training module</p>
+    <div class="container">
+        <h1>AIM TRAINER</h1>
+        <p class="subtitle">Choose your training module</p>
       
-       <!-- Tabs -->
-       <div class="tabs">
-           <button class="tab-btn active" onclick="switchTab('scenarios')">SCENARIOS</button>
-           <button class="tab-btn" onclick="switchTab('bests')">PERSONAL BESTS</button>
-           <button class="tab-btn" onclick="switchTab('stats')">STATS</button>
-       </div>
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('scenarios')">SCENARIOS</button>
+            <button class="tab-btn" onclick="switchTab('bests')">PERSONAL BESTS</button>
+            <button class="tab-btn" onclick="switchTab('challenges')">CHALLENGES</button>
+            <button class="tab-btn" onclick="switchTab('leaderboard')">LEADERBOARD</button>
+            <button class="tab-btn" onclick="switchTab('skins')">SKINS</button>
+            <button class="tab-btn" onclick="switchTab('stats')">STATS</button>
+        </div>
       
        <!-- Scenarios Tab -->
        <div id="scenarios" class="tab-content active">
@@ -1090,6 +1615,73 @@
            </div>
        </div>
       
+       <!-- Challenges Tab -->
+       <div id="challenges" class="tab-content">
+           <div class="challenges-header">
+               <div class="coins-display">
+                   <span class="coins-icon">🪙</span>
+                   <span class="coins-amount" id="display-coins">0</span>
+                   <span class="coins-label">Coins</span>
+               </div>
+           </div>
+           
+           <h3 style="color: #888; text-align: center; margin: 20px 0 15px; font-size: 14px; text-transform: uppercase; letter-spacing: 2px;">Daily Challenges</h3>
+           <div class="quests-grid" id="daily-quests">
+               <!-- Daily quests will be populated by JS -->
+           </div>
+           
+           <h3 style="color: #888; text-align: center; margin: 30px 0 15px; font-size: 14px; text-transform: uppercase; letter-spacing: 2px;">Weekly Challenges</h3>
+           <div class="quests-grid" id="weekly-quests">
+               <!-- Weekly quests will be populated by JS -->
+           </div>
+       </div>
+       
+       <!-- Leaderboard Tab -->
+       <div id="leaderboard" class="tab-content">
+           <div class="leaderboard-header">
+               <select id="leaderboard-game-select" onchange="loadLeaderboardForGame()">
+                   <option value="all">All Games</option>
+                   <option value="360Aim">360° Aim Tracker</option>
+                   <option value="flick">360° Flick Trainer</option>
+                   <option value="bounceTracker">Bounce Tracker</option>
+                   <option value="reactionTrainer">Reaction Trainer</option>
+                   <option value="microflick">Micro Flick Trainer</option>
+                   <option value="glider">Glider Trainer</option>
+                   <option value="staticPrecision">Static Precision</option>
+                   <option value="jumppeek">Jump Peek Trainer</option>
+               </select>
+           </div>
+           
+           <div class="global-leaderboard" id="global-leaderboard">
+               <!-- Global leaderboard will be populated by JS -->
+           </div>
+           
+           <div class="your-rank" id="your-rank">
+               <!-- User's rank will be shown here -->
+           </div>
+       </div>
+       
+       <!-- Skins Tab -->
+       <div id="skins" class="tab-content">
+           <div class="skins-header">
+               <div class="coins-display">
+                   <span class="coins-icon">🪙</span>
+                   <span class="coins-amount" id="skins-coins">0</span>
+                   <span class="coins-label">Coins</span>
+               </div>
+           </div>
+           
+           <h3 style="color: #888; text-align: center; margin: 20px 0 15px; font-size: 14px; text-transform: uppercase; letter-spacing: 2px;">Your Skins</h3>
+           <div class="skins-grid" id="skins-grid">
+               <!-- Skins will be populated by JS -->
+           </div>
+           
+           <h3 style="color: #888; text-align: center; margin: 30px 0 15px; font-size: 14px; text-transform: uppercase; letter-spacing: 2px;">Skin Store</h3>
+           <div class="store-grid" id="store-grid">
+               <!-- Store items will be populated by JS -->
+           </div>
+       </div>
+       
        <!-- Stats Tab -->
        <div id="stats" class="tab-content">
            <!-- Session Stats -->
@@ -1113,6 +1705,13 @@
                    <div>
                        <div class="session-value" id="session-records">0</div>
                        <div class="session-label">New Records</div>
+                   </div>
+               </div>
+               <div class="session-stat">
+                   <span class="session-icon">🪙</span>
+                   <div>
+                       <div class="session-value" id="session-coins">0</div>
+                       <div class="session-label">Coins Earned</div>
                    </div>
                </div>
            </div>
@@ -1181,6 +1780,9 @@
       
        <div class="footer">
            Click on any card to open the trainer in a new tab
+           <br><br>
+           <button onclick="reportBug()" style="background: transparent; border: 1px solid #444; color: #666; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-right: 10px;">🐛 Report a Bug</button>
+           <button onclick="shareReferral()" style="background: transparent; border: 1px solid #00ff88; color: #00ff88; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 12px;">📤 Share & Earn Coins</button>
        </div>
    </div>
 
@@ -1198,29 +1800,325 @@
 
 
 
+   <script src="firebase-auth.js"></script>
+   <script src="firebase-leaderboard.js"></script>
    <script>
-       // Game names mapping for display
-       const gameNames = {
-           '360Aim': '360° Aim Tracker',
-           'flick': '360° Flick Trainer',
-           'bounceTracker': 'Bounce Tracker',
-           'reactionTrainer': 'Reaction Trainer',
-           'microflick': 'Micro Flick Trainer',
-           'glider': 'Glider Trainer',
-           'staticPrecision': 'Static Precision',
-           'jumppeek': 'Jump Peek Trainer'
-       };
-
-
-
-
        // Session state
        let sessionGames = 0;
        let sessionHardRuns = 0;
        let sessionRecords = 0;
+       let sessionCoins = 0;
 
+       // Auth tab state
+       let authMode = 'login';
 
+       // Initialize on load
+       document.addEventListener('DOMContentLoaded', async () => {
+           // Initialize Firebase Auth
+           await initFirebaseAuth();
+           
+           // Load local coins
+           const localCoins = parseInt(localStorage.getItem('aimtrainer_coins') || '0');
+           updateCoinsDisplay(localCoins);
+           
+           // Initialize quests
+           initQuests();
+           
+           // Initialize skins
+           initSkins();
+           
+           // Initialize leaderboard
+           initLeaderboard();
+       });
 
+       // Auth functions
+       function showAuthModal() {
+           document.getElementById('auth-modal').classList.add('active');
+       }
+
+       function closeAuthModal() {
+           document.getElementById('auth-modal').classList.remove('active');
+       }
+
+       function switchAuthTab(mode) {
+           authMode = mode;
+           document.querySelectorAll('.auth-tab').forEach(tab => tab.classList.remove('active'));
+           event.target.classList.add('active');
+           
+           const usernameInput = document.getElementById('auth-username');
+           const title = document.getElementById('auth-title');
+           
+           if (mode === 'register') {
+               usernameInput.style.display = 'block';
+               title.textContent = 'Sign Up';
+           } else {
+               usernameInput.style.display = 'none';
+               title.textContent = 'Sign In';
+           }
+       }
+
+       async function handleAuth() {
+           const email = document.getElementById('auth-email').value;
+           const password = document.getElementById('auth-password').value;
+           const username = document.getElementById('auth-username').value;
+           
+           if (!email || !password) {
+               alert('Please fill in all fields');
+               return;
+           }
+           
+           let result;
+           if (authMode === 'register') {
+               if (!username) {
+                   alert('Please enter a username');
+                   return;
+               }
+               result = await signUp(email, password, username);
+           } else {
+               result = await signIn(email, password);
+           }
+           
+           if (result.success) {
+               closeAuthModal();
+               alert(authMode === 'register' ? 'Account created! Welcome!' : 'Welcome back!');
+           } else {
+               alert('Error: ' + result.error);
+           }
+       }
+
+       async function handleGoogleAuth() {
+           const result = await signInWithGoogle();
+           if (result.success) {
+               closeAuthModal();
+               alert('Welcome!');
+           } else {
+               alert('Error: ' + result.error);
+           }
+       }
+
+       async function handleLogout() {
+           await logOut();
+           alert('Signed out successfully');
+       }
+
+       // Update coins display
+       function updateCoinsDisplay(coins) {
+           const displayCoins = document.getElementById('display-coins');
+           const skinsCoins = document.getElementById('skins-coins');
+           const sessionCoinsEl = document.getElementById('session-coins');
+           
+           if (displayCoins) displayCoins.textContent = coins;
+           if (skinsCoins) skinsCoins.textContent = coins;
+           if (sessionCoinsEl) sessionCoinsEl.textContent = sessionCoins;
+       }
+
+       // Quests/Challenegs system
+       function initQuests() {
+           renderQuests();
+       }
+
+       function renderQuests() {
+           const quests = getQuests();
+           const dailyContainer = document.getElementById('daily-quests');
+           const weeklyContainer = document.getElementById('weekly-quests');
+           
+           // Render daily quests
+           dailyContainer.innerHTML = quests.daily.map(q => createQuestCard(q, 'daily')).join('');
+           
+           // Render weekly quests
+           weeklyContainer.innerHTML = quests.weekly.map(q => createQuestCard(q, 'weekly')).join('');
+       }
+
+       function createQuestCard(quest, type) {
+           const progress = getQuestProgress(quest.id, type);
+           const progressPercent = Math.min((progress / quest.target) * 100, 100);
+           const isComplete = progress >= quest.target;
+           const isClaimed = quest.claimed;
+           
+           return `
+               <div class="quest-card ${isComplete && !isClaimed ? '' : isClaimed ? 'completed' : ''}">
+                   <div class="quest-icon">🎯</div>
+                   <div class="quest-name">${quest.name}</div>
+                   <div class="quest-desc">${quest.desc}</div>
+                   <div class="quest-progress">
+                       <div class="quest-progress-fill" style="width: ${progressPercent}%"></div>
+                   </div>
+                   <div class="quest-reward">🪙 +${quest.reward}</div>
+                   ${isComplete && !isClaimed ? 
+                       `<button class="claim-btn" onclick="claimQuestReward('${quest.id}', '${type}')">Claim Reward</button>` :
+                       isClaimed ?
+                       `<button class="claim-btn" disabled>Claimed ✓</button>` :
+                       `<button class="claim-btn" disabled>In Progress</button>`
+                   }
+               </div>
+           `;
+       }
+
+       function getQuestProgress(questId, type) {
+           // Get progress from localStorage
+           const key = `quest_${type}_${questId}`;
+           return parseInt(localStorage.getItem(key) || '0');
+       }
+
+       function updateQuestProgress(questId, type, value) {
+           const key = `quest_${type}_${questId}`;
+           localStorage.setItem(key, value);
+           renderQuests();
+       }
+
+       async function claimQuestReward(questId, type) {
+           const quests = getQuests();
+           const questList = type === 'daily' ? quests.daily : quests.weekly;
+           const quest = questList.find(q => q.id === questId);
+           
+           if (quest && !quest.claimed) {
+               quest.claimed = true;
+               await addCoins(quest.reward);
+               sessionCoins += quest.reward;
+               
+               const coins = parseInt(localStorage.getItem('aimtrainer_coins') || '0');
+               updateCoinsDisplay(coins);
+               
+               alert(`🎉 Quest Complete: ${quest.name}\n+${quest.reward} coins!`);
+               renderQuests();
+           }
+       }
+
+       // Skins system
+       function initSkins() {
+           renderSkins();
+       }
+
+       function renderSkins() {
+           const ownedSkins = JSON.parse(localStorage.getItem('aimtrainer_skins') || '["default"]');
+           const equippedSkin = localStorage.getItem('aimtrainer_equipped_skin') || 'default';
+           const coins = parseInt(localStorage.getItem('aimtrainer_coins') || '0');
+           
+           // Render owned skins
+           const skinsGrid = document.getElementById('skins-grid');
+           if (skinsGrid) {
+               const owned = Object.values(SKINS).filter(s => ownedSkins.includes(s.id));
+               skinsGrid.innerHTML = owned.map(skin => createSkinCard(skin, skin.id === equippedSkin, true)).join('');
+           }
+           
+           // Render store
+           const storeGrid = document.getElementById('store-grid');
+           if (storeGrid) {
+               const storeSkins = Object.values(SKINS).filter(s => !ownedSkins.includes(s.id));
+               storeGrid.innerHTML = storeSkins.map(skin => createSkinCard(skin, false, false, coins)).join('');
+           }
+           
+           updateCoinsDisplay(coins);
+       }
+
+       function createSkinCard(skin, isEquipped, isOwned, coins = 0) {
+           const colorHex = '#' + skin.color.toString(16).padStart(6, '0');
+           
+           return `
+               <div class="skin-card ${isEquipped ? 'equipped' : ''}">
+                   <div class="skin-preview" style="background: ${colorHex}; color: ${colorHex};"></div>
+                   <div class="skin-name">${skin.name}</div>
+                   ${isOwned ? 
+                       (isEquipped ?
+                           `<div class="equipped-badge">Equipped ✓</div>` :
+                           `<button class="equip-btn" onclick="equipSkinById('${skin.id}')">Equip</button>`) :
+                       `<div class="skin-price">🪙 ${skin.price}</div>
+                        <button class="buy-btn" onclick="buySkinById('${skin.id}', ${skin.price})" ${coins < skin.price ? 'disabled style="opacity:0.5"' : ''}>Buy</button>`
+                   }
+               </div>
+           `;
+       }
+
+       async function buySkinById(skinId, price) {
+           const coins = parseInt(localStorage.getItem('aimtrainer_coins') || '0');
+           
+           if (coins < price) {
+               alert('Not enough coins!');
+               return;
+           }
+           
+           const result = await buySkin(skinId);
+           if (result.success) {
+               const newCoins = coins - price;
+               localStorage.setItem('aimtrainer_coins', newCoins);
+               updateCoinsDisplay(newCoins);
+               renderSkins();
+               alert('Skin purchased!');
+           } else {
+               alert('Error: ' + result.error);
+           }
+       }
+
+       async function equipSkinById(skinId) {
+           await equipSkin(skinId);
+           localStorage.setItem('aimtrainer_equipped_skin', skinId);
+           renderSkins();
+       }
+
+       // Leaderboard system
+       function initLeaderboard() {
+           loadLeaderboardForGame();
+       }
+
+       async function loadLeaderboardForGame() {
+           const gameId = document.getElementById('leaderboard-game-select').value;
+           const leaderboardEl = document.getElementById('global-leaderboard');
+           const rankEl = document.getElementById('your-rank');
+           
+           if (gameId === 'all') {
+               leaderboardEl.innerHTML = '<p class="no-leaderboard">Select a specific game to see the leaderboard</p>';
+               rankEl.innerHTML = '';
+               return;
+           }
+           
+           // Try to load from Firebase
+           try {
+               const scores = await getGlobalLeaderboard(gameId, 5);
+               
+               if (scores.length === 0) {
+                   leaderboardEl.innerHTML = '<p class="no-leaderboard">No scores yet. Be the first to play!</p>';
+               } else {
+                   const gameName = gameNames[gameId] || gameId;
+                   leaderboardEl.innerHTML = `
+                       <h3>🏆 ${gameName} - Top Players</h3>
+                       ${scores.map((entry, i) => `
+                           <div class="leaderboard-row ${i < 3 ? 'top-3' : ''}">
+                               <span class="rank ${i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : ''}">${i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '#' + entry.rank}</span>
+                               <span class="username">${escapeHtml(entry.username)}${entry.isMe ? ' (You)' : ''}</span>
+                               <span class="score ${i < 3 ? 'high' : ''}">${entry.score}</span>
+                           </div>
+                       `).join('')}
+                   `;
+               }
+               
+               // Show user's rank
+               const pb = localStorage.getItem('aimtrainer_hard_' + gameId);
+               if (pb) {
+                   const percentile = await getUserPercentile(gameId, pb);
+                   rankEl.innerHTML = `
+                       <div class="rank-value">Your Best: ${pb}</div>
+                       ${percentile ? `<div class="percentile">📊 Top ${percentile}% Worldwide</div>` : ''}
+                   `;
+               } else {
+                   rankEl.innerHTML = '<div class="rank-value">-</div><div class="percentile">Play hard mode to rank!</div>';
+               }
+           } catch (e) {
+               console.error('Leaderboard error:', e);
+               leaderboardEl.innerHTML = '<p class="no-leaderboard">Unable to load leaderboard</p>';
+           }
+       }
+
+      // Game names mapping for display
+      const gameNames = {
+          '360Aim': '360° Aim Tracker',
+          'flick': '360° Flick Trainer',
+          'bounceTracker': 'Bounce Tracker',
+          'reactionTrainer': 'Reaction Trainer',
+          'microflick': 'Micro Flick Trainer',
+          'glider': 'Glider Trainer',
+          'staticPrecision': 'Static Precision',
+          'jumppeek': 'Jump Peek Trainer'
+      };
 
        // Initialize personal bests on load
        function initPersonalBests() {

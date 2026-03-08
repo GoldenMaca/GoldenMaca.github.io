@@ -1,4 +1,4 @@
-// Firebase Authentication System - FIXED VERSION
+// Firebase Authentication System
 // Uses localStorage for offline support, Firebase when available
 
 const firebaseAuthConfig = {
@@ -39,47 +39,19 @@ const SKINS = {
     orange: { id: 'orange', name: 'Sunset Orange', price: 180, color: 0xff6600, emissive: 0xff4400 }
 };
 
-// Quests - with proper claim tracking
+// Quests
 const QUESTS = {
     daily: [
-        { id: 'play_3', name: 'Play 3 Games', desc: 'Complete 3 hard mode games', target: 3, reward: 25 },
-        { id: 'score_1000', name: 'Score Master', desc: 'Score over 1000 in any game', target: 1000, reward: 50 },
-        { id: 'play_specific', name: 'Variety Pack', desc: 'Play 2 different trainers', target: 2, reward: 35 }
+        { id: 'play_3', name: 'Play 3 Games', desc: 'Complete 3 hard mode games', target: 3, reward: 25, claimed: false },
+        { id: 'score_1000', name: 'Score Master', desc: 'Score over 1000 in any game', target: 1000, reward: 50, claimed: false },
+        { id: 'play_specific', name: 'Variety Pack', desc: 'Play 2 different trainers', target: 2, reward: 35, claimed: false }
     ],
     weekly: [
-        { id: 'play_20', name: 'Dedicated', desc: 'Complete 20 hard mode games', target: 20, reward: 150 },
-        { id: 'score_5000', name: 'High Scorer', desc: 'Score over 5000 in any game', target: 5000, reward: 300 },
-        { id: 'all_games', name: 'Full Practice', desc: 'Play all 8 trainers at least once', target: 8, reward: 200 }
+        { id: 'play_20', name: 'Dedicated', desc: 'Complete 20 hard mode games', target: 20, reward: 150, claimed: false },
+        { id: 'score_5000', name: 'High Scorer', desc: 'Score over 5000 in any game', target: 5000, reward: 300, claimed: false },
+        { id: 'all_games', name: 'Full Practice', desc: 'Play all 8 trainers at least once', target: 8, reward: 200, claimed: false }
     ]
 };
-
-// Get quests with proper claim status from localStorage
-function getQuests() {
-    const claimedQuests = JSON.parse(localStorage.getItem('aimtrainer_claimed_quests') || '{}');
-    const today = new Date().toDateString();
-    const lastClaimDate = localStorage.getItem('aimtrainer_quest_date');
-    
-    // Reset daily quests if it's a new day
-    if (lastClaimDate !== today) {
-        localStorage.setItem('aimtrainer_quest_date', today);
-        localStorage.setItem('aimtrainer_claimed_quests', '{}');
-        localStorage.removeItem('quest_progress_daily_play_3');
-        localStorage.removeItem('quest_progress_daily_score_1000');
-        localStorage.removeItem('quest_progress_daily_play_specific');
-    }
-    
-    const allQuests = JSON.parse(JSON.stringify(QUESTS));
-    
-    // Mark claimed quests
-    allQuests.daily.forEach(q => {
-        q.claimed = claimedQuests['daily_' + q.id] || false;
-    });
-    allQuests.weekly.forEach(q => {
-        q.claimed = claimedQuests['weekly_' + q.id] || false;
-    });
-    
-    return allQuests;
-}
 
 // Initialize Firebase
 async function initFirebaseAuth() {
@@ -146,10 +118,9 @@ async function loadUserProfile(uid) {
         localStorage.setItem('aimtrainer_coins', userProfile.coins);
         localStorage.setItem('aimtrainer_skins', JSON.stringify(userProfile.skins));
         localStorage.setItem('aimtrainer_equipped_skin', userProfile.equippedSkin);
-        localStorage.setItem('aimtrainer_username', userProfile.username);
         return userProfile;
     } catch (e) {
-        console.log('Error loading profile:', e);
+        userCoins = parseInt(localStorage.getItem('aimtrainer_coins') || '0');
         return null;
     }
 }
@@ -185,7 +156,10 @@ async function signUp(email, password, username) {
             referrals: 0
         });
         
-        localStorage.setItem('aimtrainer_username', username);
+        if (refCode) {
+            await applyReferralCode(refCode);
+        }
+        
         localStorage.setItem('aimtrainer_referral_code', userReferralCode);
         
         return { success: true, user: cred.user };
@@ -221,32 +195,10 @@ async function signInWithGoogle() {
 
 async function logOut() {
     if (firebaseReady && auth) {
-        try {
-            await firebase.auth().signOut();
-        } catch (e) {
-            console.log('Logout error:', e);
-        }
+        await firebase.auth().signOut();
     }
     currentUser = null;
     userProfile = null;
-    updateAuthUI(false);
-}
-
-// Show profile modal
-function showProfileCard() {
-    const coins = parseInt(localStorage.getItem('aimtrainer_coins') || '0');
-    const username = localStorage.getItem('aimtrainer_username') || 'Player';
-    const totalRuns = parseInt(localStorage.getItem('aimtrainer_total_runs') || '0');
-    const skins = JSON.parse(localStorage.getItem('aimtrainer_skins') || '["default"]');
-    
-    // Calculate rank
-    let rank = 'Bronze';
-    if (totalRuns >= 100) rank = 'Diamond';
-    else if (totalRuns >= 50) rank = 'Platinum';
-    else if (totalRuns >= 25) rank = 'Gold';
-    else if (totalRuns >= 10) rank = 'Silver';
-    
-    alert(`👤 Profile\n\nUsername: ${username}\n🪙 Coins: ${coins}\n🎮 Total Games: ${totalRuns}\n👑 Rank: ${rank}\n🎨 Skins Owned: ${skins.length}`);
 }
 
 function updateAuthUI(isLoggedIn) {
@@ -258,9 +210,6 @@ function updateAuthUI(isLoggedIn) {
     
     if (isLoggedIn && userProfile) {
         authSection.innerHTML = `
-            <div class="user-avatar" onclick="showProfileCard()" style="cursor:pointer;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#00ff88,#00cc66);display:flex;align-items:center;justify-content:center;font-weight:bold;color:#000;font-size:18px;">
-                ${(userProfile.username || username).charAt(0).toUpperCase()}
-            </div>
             <div class="user-info">
                 <span class="username">${userProfile.username || username}</span>
                 <span class="coins">🪙 ${coins}</span>
@@ -277,42 +226,15 @@ function getCurrentSkin() {
     return SKINS[skinId] || SKINS.default;
 }
 
-// Submit score to global leaderboard - FIXED VERSION
 async function submitGlobalScore(gameId, score, difficulty) {
-    console.log('submitGlobalScore called:', gameId, score, difficulty, 'firebaseReady:', firebaseReady, 'currentUser:', currentUser);
-    
-    // Only submit hard mode scores
-    if (difficulty !== 'hard') {
-        console.log('Not hard mode, skipping leaderboard');
-        return false;
-    }
-    
-    // Even if not logged in, try to submit with local username
-    if (!firebaseReady) {
-        console.log('Firebase not ready, skipping leaderboard');
-        return false;
-    }
-    
+    if (!firebaseReady || !currentUser || difficulty !== 'hard') return false;
     try {
-        const username = userProfile?.username || localStorage.getItem('aimtrainer_username') || 'Player';
-        const userId = currentUser?.uid || 'local_' + (localStorage.getItem('aimtrainer_userid') || Math.random().toString(36).substr(2, 9));
-        
-        console.log('Submitting score to leaderboard:', { gameId, score, username, userId });
-        
         await db.collection('leaderboard').add({
-            gameId: gameId,
-            score: parseInt(score),
-            userId: userId,
-            username: username,
-            timestamp: Date.now()
+            gameId, score: parseInt(score), userId: currentUser.uid,
+            username: userProfile?.username || 'Player', timestamp: Date.now()
         });
-        
-        console.log('Score submitted successfully!');
         return true;
-    } catch (e) {
-        console.error('Error submitting score to leaderboard:', e);
-        return false;
-    }
+    } catch (e) { return false; }
 }
 
 async function getGlobalLeaderboard(gameId, count = 5) {
@@ -324,21 +246,12 @@ async function getGlobalLeaderboard(gameId, count = 5) {
             .limit(count).get();
         const results = [];
         let rank = 1;
-        const userId = currentUser?.uid || 'local_user';
         snapshot.forEach(doc => {
             const d = doc.data();
-            results.push({ 
-                rank: rank++, 
-                username: d.username || 'Anonymous', 
-                score: d.score, 
-                isMe: d.userId === userId 
-            });
+            results.push({ rank: rank++, username: d.username || 'Anonymous', score: d.score, isMe: currentUser && d.userId === currentUser.uid });
         });
         return results;
-    } catch (e) { 
-        console.error('Error getting leaderboard:', e);
-        return []; 
-    }
+    } catch (e) { return []; }
 }
 
 async function getUserPercentile(gameId, score) {
@@ -377,13 +290,6 @@ async function equipSkin(skinId) {
 async function addCoins(amount) {
     const coins = parseInt(localStorage.getItem('aimtrainer_coins') || '0');
     localStorage.setItem('aimtrainer_coins', coins + amount);
-    
-    // Update UI if exists
-    const displayCoins = document.getElementById('display-coins');
-    const skinsCoins = document.getElementById('skins-coins');
-    if (displayCoins) displayCoins.textContent = coins + amount;
-    if (skinsCoins) skinsCoins.textContent = coins + amount;
-    
     return true;
 }
 
@@ -402,6 +308,25 @@ function getPlayHistory(gameId = null) {
     return history.slice(-20);
 }
 
+function getQuests() { 
+    const referralCode = localStorage.getItem('aimtrainer_referral_code');
+    const referrals = parseInt(localStorage.getItem('aimtrainer_referrals') || '0');
+    const allQuests = JSON.parse(JSON.stringify(QUESTS));
+    
+    if (referralCode) {
+        allQuests.daily.push({
+            id: 'referral',
+            name: 'Share & Earn',
+            desc: 'Share your referral link and get coins for each sign-up!',
+            target: referrals,
+            reward: 50,
+            claimed: false,
+            isReferral: true
+        });
+    }
+    return allQuests; 
+}
+
 function generateReferralCode() {
     const code = 'OCTO' + Math.random().toString(36).substr(2, 6).toUpperCase();
     localStorage.setItem('aimtrainer_referral_code', code);
@@ -416,6 +341,31 @@ function getReferralCode() {
     return code;
 }
 
+async function applyReferralCode(code) {
+    if (!code || code.length < 6) return false;
+    
+    try {
+        const snapshot = await db.collection('users')
+            .where('referralCode', '==', code.toUpperCase())
+            .limit(1).get();
+        
+        if (!snapshot.empty) {
+            const referrerDoc = snapshot.docs[0];
+            const referrerData = referrerDoc.data();
+            
+            const currentReferrals = referrerData.referrals || 0;
+            await db.collection('users').doc(referrerDoc.id).update({
+                referrals: currentReferrals + 1,
+                coins: referrerData.coins + 50
+            });
+            return true;
+        }
+    } catch (e) {
+        console.log('Referral code error:', e);
+    }
+    return false;
+}
+
 function reportBug() {
     const subject = encodeURIComponent('OctoAim Bug Report');
     const body = encodeURIComponent(
@@ -426,10 +376,10 @@ function reportBug() {
 
 function shareReferral() {
     const code = getReferralCode();
-    const link = window.location.origin + window.location.pathname + '?ref=' + code;
+    const link = 'https://octoaim.gamer.gd.site?ref=' + code;
     
     navigator.clipboard.writeText(link).then(function() {
-        alert('Referral link copied to clipboard!\n\n' + link + '\n\nShare it with friends to earn coins!');
+        alert('Referral link copied to clipboard!\n\n' + link + '\n\nShare it with friends to earn 50 coins per sign-up!');
     }).catch(function() {
         prompt('Copy this referral link:', link);
     });
@@ -458,11 +408,10 @@ window.getPlayHistory = getPlayHistory;
 window.getCurrentSkin = getCurrentSkin;
 window.getQuests = getQuests;
 window.getReferralCode = getReferralCode;
+window.applyReferralCode = applyReferralCode;
 window.reportBug = reportBug;
 window.shareReferral = shareReferral;
-window.showProfileCard = showProfileCard;
 window.SKINS = SKINS;
 window.escapeHtml = escapeHtml;
 
-console.log('Firebase Auth System loaded - FIXED VERSION');
-
+console.log('Firebase Auth System loaded!');
