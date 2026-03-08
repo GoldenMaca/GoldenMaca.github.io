@@ -96,25 +96,10 @@
            color: #fff;
        }
 
-.auth-box .btn-google {
-           background: linear-gradient(135deg, #4285F4 0%, #3367D6 100%);
-           color: #fff;
+       .auth-box .btn-google {
+           background: #fff;
+           color: #333;
            margin-top: 10px;
-           display: flex;
-           align-items: center;
-           justify-content: center;
-           gap: 10px;
-           font-weight: 500;
-       }
-
-       .auth-box .btn-google:hover {
-           background: linear-gradient(135deg, #3367D6 0%, #4285F4 100%);
-           box-shadow: 0 4px 15px rgba(66, 133, 244, 0.4);
-       }
-
-       .auth-box .btn-google svg {
-           width: 18px;
-           height: 18px;
        }
 
        .auth-box .close-auth {
@@ -1362,150 +1347,10 @@
            font-weight: bold;
        }
 
-.no-leaderboard {
+       .no-leaderboard {
            text-align: center;
            color: #666;
            padding: 40px;
-       }
-
-       /* Profile Card Modal */
-       .profile-modal {
-           position: fixed;
-           top: 0;
-           left: 0;
-           width: 100%;
-           height: 100%;
-           background: rgba(0,0,0,0.9);
-           display: none;
-           align-items: center;
-           justify-content: center;
-           z-index: 2000;
-       }
-
-       .profile-modal.active {
-           display: flex;
-       }
-
-       .profile-card {
-           background: linear-gradient(145deg, #1a1a2e, #0f0f1a);
-           border: 2px solid #00ff88;
-           border-radius: 20px;
-           padding: 40px;
-           width: 350px;
-           max-width: 90%;
-           text-align: center;
-           animation: profilePop 0.3s ease;
-       }
-
-       @keyframes profilePop {
-           0% { transform: scale(0.8); opacity: 0; }
-           100% { transform: scale(1); opacity: 1; }
-       }
-
-       .profile-card .close-profile {
-           position: absolute;
-           top: 15px;
-           right: 20px;
-           background: none;
-           border: none;
-           color: #666;
-           font-size: 24px;
-           cursor: pointer;
-       }
-
-       .profile-card .profile-avatar {
-           width: 100px;
-           height: 100px;
-           border-radius: 50%;
-           background: linear-gradient(135deg, #00ff88, #00cc66);
-           display: flex;
-           align-items: center;
-           justify-content: center;
-           font-size: 48px;
-           font-weight: bold;
-           color: #000;
-           margin: 0 auto 20px;
-           box-shadow: 0 0 30px rgba(0,255,136,0.5);
-       }
-
-       .profile-card .profile-username {
-           font-size: 28px;
-           font-weight: bold;
-           color: #fff;
-           margin-bottom: 5px;
-       }
-
-       .profile-card .profile-rank {
-           font-size: 14px;
-           color: #ffaa00;
-           margin-bottom: 25px;
-       }
-
-       .profile-card .profile-stats {
-           display: grid;
-           grid-template-columns: 1fr 1fr;
-           gap: 15px;
-           margin-bottom: 25px;
-       }
-
-       .profile-card .profile-stat {
-           background: rgba(0,0,0,0.5);
-           padding: 15px;
-           border-radius: 10px;
-           border: 1px solid #333;
-       }
-
-       .profile-card .profile-stat-value {
-           font-size: 24px;
-           font-weight: bold;
-           color: #00ff88;
-       }
-
-       .profile-card .profile-stat-label {
-           font-size: 11px;
-           color: #666;
-           text-transform: uppercase;
-           letter-spacing: 1px;
-           margin-top: 5px;
-       }
-
-       .profile-card .logout-btn {
-           width: 100%;
-           padding: 12px;
-           background: #ff4444;
-           border: none;
-           border-radius: 8px;
-           color: #fff;
-           font-size: 16px;
-           font-weight: bold;
-           cursor: pointer;
-           transition: all 0.3s;
-       }
-
-       .profile-card .logout-btn:hover {
-           background: #ff6666;
-           box-shadow: 0 0 20px rgba(255,68,68,0.5);
-       }
-
-       /* User avatar in header */
-       .user-avatar {
-           width: 40px;
-           height: 40px;
-           border-radius: 50%;
-           background: linear-gradient(135deg, #00ff88, #00cc66);
-           display: flex;
-           align-items: center;
-           justify-content: center;
-           font-weight: bold;
-           color: #000;
-           font-size: 18px;
-           cursor: pointer;
-           transition: all 0.3s;
-       }
-
-       .user-avatar:hover {
-           transform: scale(1.1);
-           box-shadow: 0 0 15px rgba(0,255,136,0.5);
        }
    </style>
 </head>
@@ -1528,37 +1373,8 @@
                     <button class="btn-primary" onclick="handleAuth()">Submit</button>
                     <button class="btn-secondary" onclick="closeAuthModal()">Cancel</button>
                 </div>
-                <button class="btn-google" onclick="handleGoogleAuth()">
-                    <svg viewBox="0 0 24 24" width="18" height="18">
-                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                    </svg>
-                    Continue with Google
-                </button>
+                <button class="btn-google" onclick="handleGoogleAuth()">Sign in with Google</button>
             </div>
-        </div>
-    </div>
-
-    <!-- Profile Card Modal -->
-    <div class="profile-modal" id="profile-modal">
-        <div class="profile-card">
-            <button class="close-profile" onclick="closeProfileCard()">×</button>
-            <div class="profile-avatar">U</div>
-            <div class="profile-username">Username</div>
-            <div class="profile-rank">Bronze</div>
-            <div class="profile-stats">
-                <div class="profile-stat">
-                    <div class="profile-stat-value">0</div>
-                    <div class="profile-stat-label">Coins</div>
-                </div>
-                <div class="profile-stat">
-                    <div class="profile-stat-value">0</div>
-                    <div class="profile-stat-label">Games</div>
-                </div>
-            </div>
-            <button class="logout-btn" onclick="handleLogout()">Sign Out</button>
         </div>
     </div>
 

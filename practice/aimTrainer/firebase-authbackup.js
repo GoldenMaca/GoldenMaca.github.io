@@ -1,4 +1,4 @@
-// Firebase Authentication System
+// Firebase Authentication System - FIXED VERSION
 // Uses localStorage for offline support, Firebase when available
 
 const firebaseAuthConfig = {
@@ -39,19 +39,47 @@ const SKINS = {
     orange: { id: 'orange', name: 'Sunset Orange', price: 180, color: 0xff6600, emissive: 0xff4400 }
 };
 
-// Quests
+// Quests - with proper claim tracking
 const QUESTS = {
     daily: [
-        { id: 'play_3', name: 'Play 3 Games', desc: 'Complete 3 hard mode games', target: 3, reward: 25, claimed: false },
-        { id: 'score_1000', name: 'Score Master', desc: 'Score over 1000 in any game', target: 1000, reward: 50, claimed: false },
-        { id: 'play_specific', name: 'Variety Pack', desc: 'Play 2 different trainers', target: 2, reward: 35, claimed: false }
+        { id: 'play_3', name: 'Play 3 Games', desc: 'Complete 3 hard mode games', target: 3, reward: 25 },
+        { id: 'score_1000', name: 'Score Master', desc: 'Score over 1000 in any game', target: 1000, reward: 50 },
+        { id: 'play_specific', name: 'Variety Pack', desc: 'Play 2 different trainers', target: 2, reward: 35 }
     ],
     weekly: [
-        { id: 'play_20', name: 'Dedicated', desc: 'Complete 20 hard mode games', target: 20, reward: 150, claimed: false },
-        { id: 'score_5000', name: 'High Scorer', desc: 'Score over 5000 in any game', target: 5000, reward: 300, claimed: false },
-        { id: 'all_games', name: 'Full Practice', desc: 'Play all 8 trainers at least once', target: 8, reward: 200, claimed: false }
+        { id: 'play_20', name: 'Dedicated', desc: 'Complete 20 hard mode games', target: 20, reward: 150 },
+        { id: 'score_5000', name: 'High Scorer', desc: 'Score over 5000 in any game', target: 5000, reward: 300 },
+        { id: 'all_games', name: 'Full Practice', desc: 'Play all 8 trainers at least once', target: 8, reward: 200 }
     ]
 };
+
+// Get quests with proper claim status from localStorage
+function getQuests() {
+    const claimedQuests = JSON.parse(localStorage.getItem('aimtrainer_claimed_quests') || '{}');
+    const today = new Date().toDateString();
+    const lastClaimDate = localStorage.getItem('aimtrainer_quest_date');
+    
+    // Reset daily quests if it's a new day
+    if (lastClaimDate !== today) {
+        localStorage.setItem('aimtrainer_quest_date', today);
+        localStorage.setItem('aimtrainer_claimed_quests', '{}');
+        localStorage.removeItem('quest_progress_daily_play_3');
+        localStorage.removeItem('quest_progress_daily_score_1000');
+        localStorage.removeItem('quest_progress_daily_play_specific');
+    }
+    
+    const allQuests = JSON.parse(JSON.stringify(QUESTS));
+    
+    // Mark claimed quests
+    allQuests.daily.forEach(q => {
+        q.claimed = claimedQuests['daily_' + q.id] || false;
+    });
+    allQuests.weekly.forEach(q => {
+        q.claimed = claimedQuests['weekly_' + q.id] || false;
+    });
+    
+    return allQuests;
+}
 
 // Initialize Firebase
 async function initFirebaseAuth() {
@@ -77,26 +105,111 @@ async function initFirebaseAuth() {
         auth = firebase.auth();
         db = firebase.firestore();
         
+        // Enable offline persistence for data syncing
+        db.enablePersistence({ synchronizeTabs: true }).catch(err => {
+            console.log('Persistence error:', err.code);
+        });
+        
+        // Test Firestore connection
+        try {
+            await db.collection('leaderboard').limit(1).get();
+            firebaseReady = true;
+            console.log('✅ Firebase connected successfully!');
+        } catch (connErr) {
+            if (connErr.message && connErr.message.includes('not-found')) {
+                console.log('⚠️ Firestore database not found. Using offline mode.');
+                firebaseReady = false;
+            } else {
+                firebaseReady = true;
+                console.log('✅ Firebase connected!');
+            }
+        }
+        
+        // Listen for auth changes - handles auto-login
         firebase.auth().onAuthStateChanged(async (user) => {
+            console.log('Auth state changed:', user ? user.email : 'logged out');
             if (user) {
                 currentUser = user;
                 await loadUserProfile(user.uid);
                 updateAuthUI(true);
+                
+                // Sync local data with Firebase
+                await syncUserData();
+                
+                // Start leaderboard refresh interval
+                startLeaderboardRefresh();
             } else {
+                // Check if user explicitly logged out
+                const explicitlyLoggedOut = localStorage.getItem('aimtrainer_logged_out') === 'true';
+                if (!explicitlyLoggedOut) {
+                    console.log('No user, but not explicitly logged out');
+                }
                 currentUser = null;
                 userProfile = null;
                 updateAuthUI(false);
             }
         });
         
-        firebaseReady = true;
-        console.log('Firebase connected!');
         return true;
     } catch (e) {
-        console.log('Firebase not available, using local-only mode:', e);
+        console.log('Firebase error:', e.message);
         firebaseReady = false;
+        console.log('Using offline mode');
         return false;
     }
+}
+
+// Sync local data with Firebase after login
+async function syncUserData() {
+    if (!currentUser || !firebaseReady) return;
+    
+    try {
+        const userDoc = await db.collection('users').doc(currentUser.uid).get();
+        if (userDoc.exists) {
+            const fbData = userDoc.data();
+            
+            // Merge local coins with Firebase (use higher)
+            const localCoins = parseInt(localStorage.getItem('aimtrainer_coins') || '0');
+            const fbCoins = fbData.coins || 0;
+            const mergedCoins = Math.max(localCoins, fbCoins);
+            
+            // Merge skins
+            const localSkins = JSON.parse(localStorage.getItem('aimtrainer_skins') || '["default"]');
+            const fbSkins = fbData.skins || ['default'];
+            const mergedSkins = [...new Set([...localSkins, ...fbSkins])];
+            
+            // Update Firebase with merged data
+            await db.collection('users').doc(currentUser.uid).update({
+                coins: mergedCoins,
+                skins: mergedSkins,
+                equippedSkin: fbData.equippedSkin || 'default'
+            });
+            
+            // Update local storage
+            localStorage.setItem('aimtrainer_coins', mergedCoins);
+            localStorage.setItem('aimtrainer_skins', JSON.stringify(mergedSkins));
+            localStorage.setItem('aimtrainer_equipped_skin', fbData.equippedSkin || 'default');
+            localStorage.setItem('aimtrainer_username', fbData.username);
+            
+            console.log('Data synced:', { coins: mergedCoins, skins: mergedSkins.length });
+        }
+    } catch (e) {
+        console.log('Sync error:', e);
+    }
+}
+
+// Start periodic leaderboard refresh (every 5 minutes)
+let leaderboardInterval = null;
+function startLeaderboardRefresh() {
+    if (leaderboardInterval) clearInterval(leaderboardInterval);
+    
+    // Refresh every 5 minutes (300000 ms)
+    leaderboardInterval = setInterval(() => {
+        if (typeof loadLeaderboardForGame === 'function') {
+            console.log('🔄 Refreshing leaderboard...');
+            loadLeaderboardForGame();
+        }
+    }, 300000);
 }
 
 async function loadUserProfile(uid) {
@@ -118,9 +231,10 @@ async function loadUserProfile(uid) {
         localStorage.setItem('aimtrainer_coins', userProfile.coins);
         localStorage.setItem('aimtrainer_skins', JSON.stringify(userProfile.skins));
         localStorage.setItem('aimtrainer_equipped_skin', userProfile.equippedSkin);
+        localStorage.setItem('aimtrainer_username', userProfile.username);
         return userProfile;
     } catch (e) {
-        userCoins = parseInt(localStorage.getItem('aimtrainer_coins') || '0');
+        console.log('Error loading profile:', e);
         return null;
     }
 }
@@ -156,11 +270,11 @@ async function signUp(email, password, username) {
             referrals: 0
         });
         
-        if (refCode) {
-            await applyReferralCode(refCode);
-        }
-        
+        localStorage.setItem('aimtrainer_username', username);
         localStorage.setItem('aimtrainer_referral_code', userReferralCode);
+        
+        // Clear the explicit logout flag so user stays logged in on reload
+        localStorage.removeItem('aimtrainer_logged_out');
         
         return { success: true, user: cred.user };
     } catch (e) {
@@ -174,6 +288,8 @@ async function signIn(email, password) {
     }
     try {
         const cred = await firebase.auth().signInWithEmailAndPassword(email, password);
+        // Clear the explicit logout flag so user stays logged in on reload
+        localStorage.removeItem('aimtrainer_logged_out');
         return { success: true, user: cred.user };
     } catch (e) {
         return { success: false, error: e.message };
@@ -187,6 +303,8 @@ async function signInWithGoogle() {
     try {
         const provider = new firebase.auth.GoogleAuthProvider();
         const cred = await firebase.auth().signInWithPopup(provider);
+        // Clear the explicit logout flag so user stays logged in on reload
+        localStorage.removeItem('aimtrainer_logged_out');
         return { success: true, user: cred.user };
     } catch (e) {
         return { success: false, error: e.message };
@@ -194,11 +312,74 @@ async function signInWithGoogle() {
 }
 
 async function logOut() {
+    // Mark as explicitly logged out so we don't try to auto-restore
+    localStorage.setItem('aimtrainer_logged_out', 'true');
+    
     if (firebaseReady && auth) {
-        await firebase.auth().signOut();
+        try {
+            await firebase.auth().signOut();
+        } catch (e) {
+            console.log('Logout error:', e);
+        }
     }
     currentUser = null;
     userProfile = null;
+    updateAuthUI(false);
+}
+
+// Show profile modal
+function showProfileCard() {
+    const profileModal = document.getElementById('profile-modal');
+    if (!profileModal) {
+        // Fallback to alert if modal doesn't exist
+        const coins = parseInt(localStorage.getItem('aimtrainer_coins') || '0');
+        const username = localStorage.getItem('aimtrainer_username') || 'Player';
+        const totalRuns = parseInt(localStorage.getItem('aimtrainer_total_runs') || '0');
+        const skins = JSON.parse(localStorage.getItem('aimtrainer_skins') || '["default"]');
+        
+        let rank = 'Bronze';
+        if (totalRuns >= 100) rank = 'Diamond';
+        else if (totalRuns >= 50) rank = 'Platinum';
+        else if (totalRuns >= 25) rank = 'Gold';
+        else if (totalRuns >= 10) rank = 'Silver';
+        
+        alert(`👤 Profile\n\nUsername: ${username}\n🪙 Coins: ${coins}\n🎮 Total Games: ${totalRuns}\n👑 Rank: ${rank}\n🎨 Skins Owned: ${skins.length}\n\nClick OK to sign out`);
+        return;
+    }
+    
+    const coins = parseInt(localStorage.getItem('aimtrainer_coins') || '0');
+    const username = localStorage.getItem('aimtrainer_username') || 'Player';
+    const totalRuns = parseInt(localStorage.getItem('aimtrainer_total_runs') || '0');
+    
+    // Calculate rank
+    let rank = 'Bronze';
+    if (totalRuns >= 100) rank = 'Diamond';
+    else if (totalRuns >= 50) rank = 'Platinum';
+    else if (totalRuns >= 25) rank = 'Gold';
+    else if (totalRuns >= 10) rank = 'Silver';
+    
+    // Update modal content
+    const avatarEl = profileModal.querySelector('.profile-avatar');
+    const usernameEl = profileModal.querySelector('.profile-username');
+    const rankEl = profileModal.querySelector('.profile-rank');
+    const coinsEl = profileModal.querySelectorAll('.profile-stat-value')[0];
+    const gamesEl = profileModal.querySelectorAll('.profile-stat-value')[1];
+    
+    if (avatarEl) avatarEl.textContent = (userProfile?.username || username).charAt(0).toUpperCase();
+    if (usernameEl) usernameEl.textContent = userProfile?.username || username;
+    if (rankEl) rankEl.textContent = rank;
+    if (coinsEl) coinsEl.textContent = coins;
+    if (gamesEl) gamesEl.textContent = totalRuns;
+    
+    // Show modal
+    profileModal.classList.add('active');
+}
+
+function closeProfileCard() {
+    const profileModal = document.getElementById('profile-modal');
+    if (profileModal) {
+        profileModal.classList.remove('active');
+    }
 }
 
 function updateAuthUI(isLoggedIn) {
@@ -210,6 +391,9 @@ function updateAuthUI(isLoggedIn) {
     
     if (isLoggedIn && userProfile) {
         authSection.innerHTML = `
+            <div class="user-avatar" onclick="showProfileCard()" style="cursor:pointer;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#00ff88,#00cc66);display:flex;align-items:center;justify-content:center;font-weight:bold;color:#000;font-size:18px;">
+                ${(userProfile.username || username).charAt(0).toUpperCase()}
+            </div>
             <div class="user-info">
                 <span class="username">${userProfile.username || username}</span>
                 <span class="coins">🪙 ${coins}</span>
@@ -226,15 +410,42 @@ function getCurrentSkin() {
     return SKINS[skinId] || SKINS.default;
 }
 
+// Submit score to global leaderboard - FIXED VERSION
 async function submitGlobalScore(gameId, score, difficulty) {
-    if (!firebaseReady || !currentUser || difficulty !== 'hard') return false;
+    console.log('submitGlobalScore called:', gameId, score, difficulty, 'firebaseReady:', firebaseReady, 'currentUser:', currentUser);
+    
+    // Only submit hard mode scores
+    if (difficulty !== 'hard') {
+        console.log('Not hard mode, skipping leaderboard');
+        return false;
+    }
+    
+    // Even if not logged in, try to submit with local username
+    if (!firebaseReady) {
+        console.log('Firebase not ready, skipping leaderboard');
+        return false;
+    }
+    
     try {
+        const username = userProfile?.username || localStorage.getItem('aimtrainer_username') || 'Player';
+        const userId = currentUser?.uid || 'local_' + (localStorage.getItem('aimtrainer_userid') || Math.random().toString(36).substr(2, 9));
+        
+        console.log('Submitting score to leaderboard:', { gameId, score, username, userId });
+        
         await db.collection('leaderboard').add({
-            gameId, score: parseInt(score), userId: currentUser.uid,
-            username: userProfile?.username || 'Player', timestamp: Date.now()
+            gameId: gameId,
+            score: parseInt(score),
+            userId: userId,
+            username: username,
+            timestamp: Date.now()
         });
+        
+        console.log('Score submitted successfully!');
         return true;
-    } catch (e) { return false; }
+    } catch (e) {
+        console.error('Error submitting score to leaderboard:', e);
+        return false;
+    }
 }
 
 async function getGlobalLeaderboard(gameId, count = 5) {
@@ -246,12 +457,21 @@ async function getGlobalLeaderboard(gameId, count = 5) {
             .limit(count).get();
         const results = [];
         let rank = 1;
+        const userId = currentUser?.uid || 'local_user';
         snapshot.forEach(doc => {
             const d = doc.data();
-            results.push({ rank: rank++, username: d.username || 'Anonymous', score: d.score, isMe: currentUser && d.userId === currentUser.uid });
+            results.push({ 
+                rank: rank++, 
+                username: d.username || 'Anonymous', 
+                score: d.score, 
+                isMe: d.userId === userId 
+            });
         });
         return results;
-    } catch (e) { return []; }
+    } catch (e) { 
+        console.error('Error getting leaderboard:', e);
+        return []; 
+    }
 }
 
 async function getUserPercentile(gameId, score) {
@@ -290,6 +510,13 @@ async function equipSkin(skinId) {
 async function addCoins(amount) {
     const coins = parseInt(localStorage.getItem('aimtrainer_coins') || '0');
     localStorage.setItem('aimtrainer_coins', coins + amount);
+    
+    // Update UI if exists
+    const displayCoins = document.getElementById('display-coins');
+    const skinsCoins = document.getElementById('skins-coins');
+    if (displayCoins) displayCoins.textContent = coins + amount;
+    if (skinsCoins) skinsCoins.textContent = coins + amount;
+    
     return true;
 }
 
@@ -308,25 +535,6 @@ function getPlayHistory(gameId = null) {
     return history.slice(-20);
 }
 
-function getQuests() { 
-    const referralCode = localStorage.getItem('aimtrainer_referral_code');
-    const referrals = parseInt(localStorage.getItem('aimtrainer_referrals') || '0');
-    const allQuests = JSON.parse(JSON.stringify(QUESTS));
-    
-    if (referralCode) {
-        allQuests.daily.push({
-            id: 'referral',
-            name: 'Share & Earn',
-            desc: 'Share your referral link and get coins for each sign-up!',
-            target: referrals,
-            reward: 50,
-            claimed: false,
-            isReferral: true
-        });
-    }
-    return allQuests; 
-}
-
 function generateReferralCode() {
     const code = 'OCTO' + Math.random().toString(36).substr(2, 6).toUpperCase();
     localStorage.setItem('aimtrainer_referral_code', code);
@@ -341,31 +549,6 @@ function getReferralCode() {
     return code;
 }
 
-async function applyReferralCode(code) {
-    if (!code || code.length < 6) return false;
-    
-    try {
-        const snapshot = await db.collection('users')
-            .where('referralCode', '==', code.toUpperCase())
-            .limit(1).get();
-        
-        if (!snapshot.empty) {
-            const referrerDoc = snapshot.docs[0];
-            const referrerData = referrerDoc.data();
-            
-            const currentReferrals = referrerData.referrals || 0;
-            await db.collection('users').doc(referrerDoc.id).update({
-                referrals: currentReferrals + 1,
-                coins: referrerData.coins + 50
-            });
-            return true;
-        }
-    } catch (e) {
-        console.log('Referral code error:', e);
-    }
-    return false;
-}
-
 function reportBug() {
     const subject = encodeURIComponent('OctoAim Bug Report');
     const body = encodeURIComponent(
@@ -376,10 +559,10 @@ function reportBug() {
 
 function shareReferral() {
     const code = getReferralCode();
-    const link = 'https://octoaim.gamer.gd.site?ref=' + code;
+    const link = window.location.origin + window.location.pathname + '?ref=' + code;
     
     navigator.clipboard.writeText(link).then(function() {
-        alert('Referral link copied to clipboard!\n\n' + link + '\n\nShare it with friends to earn 50 coins per sign-up!');
+        alert('Referral link copied to clipboard!\n\n' + link + '\n\nShare it with friends to earn coins!');
     }).catch(function() {
         prompt('Copy this referral link:', link);
     });
@@ -408,10 +591,14 @@ window.getPlayHistory = getPlayHistory;
 window.getCurrentSkin = getCurrentSkin;
 window.getQuests = getQuests;
 window.getReferralCode = getReferralCode;
-window.applyReferralCode = applyReferralCode;
 window.reportBug = reportBug;
 window.shareReferral = shareReferral;
+window.showProfileCard = showProfileCard;
+window.closeProfileCard = closeProfileCard;
+window.syncUserData = syncUserData;
+window.startLeaderboardRefresh = startLeaderboardRefresh;
 window.SKINS = SKINS;
 window.escapeHtml = escapeHtml;
 
-console.log('Firebase Auth System loaded!');
+console.log('Firebase Auth System loaded - FIXED VERSION');
+
