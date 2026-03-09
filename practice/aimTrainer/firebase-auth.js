@@ -138,6 +138,9 @@ async function initFirebaseAuth() {
                 
                 // Start leaderboard refresh interval
                 startLeaderboardRefresh();
+                
+                // Start high score sync to Firebase (new feature)
+                startHighScoreSync();
             } else {
                 // Check if user explicitly logged out
                 const explicitlyLoggedOut = localStorage.getItem('aimtrainer_logged_out') === 'true';
@@ -667,6 +670,209 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
+// ==================== NEW LEADERBOARD SYSTEM ====================
+// Weekly/Monthly leaderboards with auto-sync every 5 minutes
+// Only stores 1 score per person (their best)
+
+// Sync interval in milliseconds (5 minutes)
+const LEADERBOARD_SYNC_INTERVAL = 300000;
+
+// Get current period start times
+function getWeekStart() {
+    const now = new Date();
+    const day = now.getDay();
+    const diff = now.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Sunday
+    const weekStart = new Date(now.setDate(diff));
+    weekStart.setHours(0, 0, 0, 0);
+    return weekStart.getTime();
+}
+
+function getMonthStart() {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+}
+
+// Sync user's high scores to Firebase
+async function syncHighScoresToFirebase() {
+    if (!firebaseReady || !currentUser) return;
+    
+    try {
+        const userId = currentUser.uid;
+        const username = userProfile?.username || localStorage.getItem('aimtrainer_username') || 'Player';
+        const now = Date.now();
+        
+        // Get all game high scores from localStorage
+        const games = ['360Aim', 'flick', 'bounceTracker', 'reactionTrainer', 'microflick', 'glider', 'staticPrecision', 'jumppeek'];
+        
+        for (const gameId of games) {
+            const hardScore = localStorage.getItem('aimtrainer_hard_' + gameId);
+            if (!hardScore) continue;
+            
+            const score = parseInt(hardScore);
+            
+            // Update all-time leaderboard (single document per user per game)
+            await db.collection('leaderboard_alltime').doc(userId + '_' + gameId).set({
+                userId: userId,
+                username: username,
+                gameId: gameId,
+                score: score,
+                updatedAt: now
+            }, { merge: true });
+            
+            // Update weekly leaderboard
+            const weekStart = getWeekStart();
+            await db.collection('leaderboard_weekly').doc(userId + '_' + gameId + '_' + weekStart).set({
+                userId: userId,
+                username: username,
+                gameId: gameId,
+                score: score,
+                weekStart: weekStart,
+                updatedAt: now
+            }, { merge: true });
+            
+            // Update monthly leaderboard
+            const monthStart = getMonthStart();
+            await db.collection('leaderboard_monthly').doc(userId + '_' + gameId + '_' + monthStart).set({
+                userId: userId,
+                username: username,
+                gameId: gameId,
+                score: score,
+                monthStart: monthStart,
+                updatedAt: now
+            }, { merge: true });
+        }
+        
+        console.log('✅ High scores synced to Firebase!');
+    } catch (e) {
+        console.error('Error syncing high scores:', e);
+    }
+}
+
+// Get leaderboard by period (alltime, weekly, monthly)
+async function getLeaderboardByPeriod(gameId, period = 'alltime', count = 5) {
+    if (!firebaseReady) return [];
+    
+    try {
+        let collectionName = 'leaderboard_alltime';
+        if (period === 'weekly') {
+            collectionName = 'leaderboard_weekly';
+        } else if (period === 'monthly') {
+            collectionName = 'leaderboard_monthly';
+        }
+        
+        // For weekly/monthly, we need to filter by current period
+        let query = db.collection(collectionName)
+            .where('gameId', '==', gameId)
+            .orderBy('score', 'desc')
+            .limit(count);
+        
+        const snapshot = await query.get();
+        
+        const results = [];
+        let rank = 1;
+        const userId = currentUser?.uid || 'local_user';
+        
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            results.push({
+                rank: rank++,
+                username: data.username || 'Anonymous',
+                score: data.score,
+                isMe: data.userId === userId
+            });
+        });
+        
+        return results;
+    } catch (e) {
+        console.error('Error getting ' + period + ' leaderboard:', e);
+        return [];
+    }
+}
+
+// Get weekly leaderboard (convenience function)
+async function getWeeklyLeaderboard(gameId, count = 5) {
+    return getLeaderboardByPeriod(gameId, 'weekly', count);
+}
+
+// Get monthly leaderboard (convenience function)
+async function getMonthlyLeaderboard(gameId, count = 5) {
+    return getLeaderboardByPeriod(gameId, 'monthly', count);
+}
+
+// Get all-time leaderboard (convenience function)
+async function getAllTimeLeaderboard(gameId, count = 5) {
+    return getLeaderboardByPeriod(gameId, 'alltime', count);
+}
+
+// Legacy function - now uses all-time
+async function getGlobalLeaderboard(gameId, count = 5) {
+    return getAllTimeLeaderboard(gameId, count);
+}
+
+// Submit score - now also syncs immediately
+async function submitGlobalScore(gameId, score, difficulty) {
+    console.log('submitGlobalScore called:', gameId, score, difficulty, 'firebaseReady:', firebaseReady, 'currentUser:', currentUser);
+    
+    // Only submit hard mode scores
+    if (difficulty !== 'hard') {
+        console.log('Not hard mode, skipping leaderboard');
+        return false;
+    }
+    
+    // Even if not logged in, try to submit with local username
+    if (!firebaseReady) {
+        console.log('Firebase not ready, skipping leaderboard');
+        return false;
+    }
+    
+    try {
+        const username = userProfile?.username || localStorage.getItem('aimtrainer_username') || 'Player';
+        const userId = currentUser?.uid || 'local_' + (localStorage.getItem('aimtrainer_userid') || Math.random().toString(36).substr(2, 9));
+        const now = Date.now();
+        
+        console.log('Submitting score to leaderboard:', { gameId, score, username, userId });
+        
+        // Also add to the legacy leaderboard for backward compatibility
+        await db.collection('leaderboard').add({
+            gameId: gameId,
+            score: parseInt(score),
+            userId: userId,
+            username: username,
+            timestamp: now
+        });
+        
+        // Update user's best score documents (new system)
+        if (currentUser) {
+            await syncHighScoresToFirebase();
+        }
+        
+        console.log('Score submitted successfully!');
+        return true;
+    } catch (e) {
+        console.error('Error submitting score to leaderboard:', e);
+        return false;
+    }
+}
+
+// Start periodic high score sync (every 5 minutes)
+let highScoreSyncInterval = null;
+function startHighScoreSync() {
+    if (highScoreSyncInterval) clearInterval(highScoreSyncInterval);
+    
+    // Sync immediately on start
+    if (currentUser && firebaseReady) {
+        syncHighScoresToFirebase();
+    }
+    
+    // Then sync every 5 minutes
+    highScoreSyncInterval = setInterval(() => {
+        if (currentUser && firebaseReady) {
+            console.log('🔄 Syncing high scores to Firebase...');
+            syncHighScoresToFirebase();
+        }
+    }, LEADERBOARD_SYNC_INTERVAL);
+}
+
 // Make global
 window.initFirebaseAuth = initFirebaseAuth;
 window.signUp = signUp;
@@ -675,6 +881,12 @@ window.signInWithGoogle = signInWithGoogle;
 window.logOut = logOut;
 window.submitGlobalScore = submitGlobalScore;
 window.getGlobalLeaderboard = getGlobalLeaderboard;
+window.getAllTimeLeaderboard = getAllTimeLeaderboard;
+window.getWeeklyLeaderboard = getWeeklyLeaderboard;
+window.getMonthlyLeaderboard = getMonthlyLeaderboard;
+window.getLeaderboardByPeriod = getLeaderboardByPeriod;
+window.syncHighScoresToFirebase = syncHighScoresToFirebase;
+window.startHighScoreSync = startHighScoreSync;
 window.getUserPercentile = getUserPercentile;
 window.buySkin = buySkin;
 window.equipSkin = equipSkin;
