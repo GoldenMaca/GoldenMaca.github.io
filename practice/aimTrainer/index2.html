@@ -2027,6 +2027,299 @@
        .your-score-item .score-value.monthly {
            color: #4488ff;
        }
+
+       /* Social Button */
+       .header-auth .social-btn {
+           width: 40px;
+           height: 40px;
+           border-radius: 50%;
+           overflow: hidden;
+           display: flex;
+           align-items: center;
+           justify-content: center;
+           background: linear-gradient(135deg, #4488ff, #2244ff);
+           cursor: pointer;
+           transition: all 0.3s;
+           border: none;
+           font-size: 18px;
+       }
+
+       .header-auth .social-btn:hover {
+           transform: scale(1.1);
+           box-shadow: 0 0 15px #4488ff;
+       }
+
+       .header-auth .social-btn.has-notifications::after {
+           content: '';
+           position: absolute;
+           top: -2px;
+           right: -2px;
+           width: 12px;
+           height: 12px;
+           background: #ff4444;
+           border-radius: 50%;
+           border: 2px solid #0a0a0f;
+       }
+
+       /* Social Modal */
+       .social-modal {
+           position: fixed;
+           top: 0;
+           left: 0;
+           width: 100%;
+           height: 100%;
+           background: rgba(0,0,0,0.9);
+           display: none;
+           align-items: center;
+           justify-content: center;
+           z-index: 2000;
+           backdrop-filter: blur(10px);
+       }
+
+       .social-modal.active {
+           display: flex;
+       }
+
+       .social-box {
+           background: linear-gradient(160deg, #1a1a2e 0%, #0f0f1a 50%, #16213e 100%);
+           border: 1px solid #4488ff;
+           border-radius: 20px;
+           padding: 30px;
+           width: 450px;
+           max-width: 95%;
+           max-height: 80vh;
+           overflow-y: auto;
+           animation: slideUp 0.3s ease;
+       }
+
+       .social-box h2 {
+           color: #fff;
+           font-size: 24px;
+           margin-bottom: 20px;
+           display: flex;
+           align-items: center;
+           gap: 10px;
+       }
+
+       .social-box .close-social {
+           position: absolute;
+           top: 15px;
+           right: 20px;
+           background: none;
+           border: none;
+           color: #666;
+           font-size: 28px;
+           cursor: pointer;
+       }
+
+       .social-box .close-social:hover {
+           color: #fff;
+       }
+
+       /* Search input */
+       .social-search {
+           display: flex;
+           gap: 10px;
+           margin-bottom: 20px;
+       }
+
+       .social-search input {
+           flex: 1;
+           padding: 12px 16px;
+           background: rgba(0,0,0,0.5);
+           border: 2px solid #333;
+           border-radius: 8px;
+           color: #fff;
+           font-size: 14px;
+       }
+
+       .social-search input:focus {
+           outline: none;
+           border-color: #4488ff;
+       }
+
+       .social-search button {
+           padding: 12px 20px;
+           background: #4488ff;
+           border: none;
+           border-radius: 8px;
+           color: #fff;
+           font-weight: bold;
+           cursor: pointer;
+           transition: all 0.3s;
+       }
+
+       .social-search button:hover {
+           box-shadow: 0 0 15px #4488ff;
+       }
+
+       /* Referral Section */
+       .referral-section {
+           background: rgba(0,0,0,0.5);
+           border: 1px solid #333;
+           border-radius: 12px;
+           padding: 20px;
+           margin-bottom: 20px;
+       }
+
+       .referral-section h3 {
+           color: #888;
+           font-size: 14px;
+           margin-bottom: 15px;
+       }
+
+       .referral-link-box {
+           display: flex;
+           gap: 10px;
+       }
+
+       .referral-link-box input {
+           flex: 1;
+           padding: 10px;
+           background: #222;
+           border: 1px solid #444;
+           border-radius: 6px;
+           color: #00ff88;
+           font-size: 13px;
+           font-family: monospace;
+       }
+
+       .referral-link-box button {
+           padding: 10px 16px;
+           background: #00ff88;
+           border: none;
+           border-radius: 6px;
+           color: #000;
+           font-weight: bold;
+           cursor: pointer;
+           transition: all 0.3s;
+       }
+
+       .referral-link-box button:hover {
+           box-shadow: 0 0 15px #00ff88;
+       }
+
+       .referral-reward {
+           color: #ffaa00;
+           font-size: 13px;
+           margin-top: 10px;
+       }
+
+       /* Friends List */
+       .friends-section-title {
+           display: flex;
+           justify-content: space-between;
+           align-items: center;
+           margin-bottom: 15px;
+       }
+
+       .friends-section-title h3 {
+           color: #888;
+           font-size: 14px;
+       }
+
+       .friends-list-container {
+           max-height: 250px;
+           overflow-y: auto;
+       }
+
+       .social-friend-item {
+           display: flex;
+           align-items: center;
+           gap: 12px;
+           padding: 12px;
+           background: rgba(0,0,0,0.3);
+           border-radius: 8px;
+           margin-bottom: 8px;
+           transition: all 0.3s;
+       }
+
+       .social-friend-item:hover {
+           background: rgba(68, 136, 255, 0.1);
+       }
+
+       .social-friend-avatar {
+           width: 40px;
+           height: 40px;
+           border-radius: 50%;
+           background: linear-gradient(135deg, #4488ff, #2244ff);
+           display: flex;
+           align-items: center;
+           justify-content: center;
+           font-weight: bold;
+           color: #fff;
+       }
+
+       .social-friend-info {
+           flex: 1;
+       }
+
+       .social-friend-name {
+           color: #fff;
+           font-weight: bold;
+           font-size: 14px;
+       }
+
+       .social-friend-stats {
+           color: #666;
+           font-size: 12px;
+       }
+
+       .social-friend-remove {
+           background: transparent;
+           border: none;
+           color: #ff4444;
+           cursor: pointer;
+           font-size: 18px;
+           opacity: 0.5;
+           transition: all 0.3s;
+       }
+
+       .social-friend-remove:hover {
+           opacity: 1;
+       }
+
+       /* Search Results */
+       .search-results {
+           margin-top: 15px;
+       }
+
+       .search-result-item {
+           display: flex;
+           align-items: center;
+           gap: 12px;
+           padding: 12px;
+           background: rgba(0,0,0,0.3);
+           border-radius: 8px;
+           margin-bottom: 8px;
+       }
+
+       .search-result-item .add-btn {
+           padding: 8px 16px;
+           background: #00ff88;
+           border: none;
+           border-radius: 6px;
+           color: #000;
+           font-weight: bold;
+           cursor: pointer;
+           font-size: 12px;
+       }
+
+       .search-result-item .add-btn:hover {
+           box-shadow: 0 0 10px #00ff88;
+       }
+
+       .search-result-item .add-btn:disabled {
+           background: #333;
+           color: #666;
+           cursor: not-allowed;
+       }
+
+       .no-friends {
+           text-align: center;
+           padding: 30px;
+           color: #666;
+       }
    </style>
 </head>
 <body>
@@ -2132,7 +2425,45 @@
 
     <!-- Header Auth Section -->
     <div class="header-auth" id="auth-section">
+        <button class="social-btn" onclick="showSocialModal()" title="Friends">👥</button>
         <button class="auth-btn" onclick="showAuthModal()">Sign In</button>
+    </div>
+
+    <!-- Social Modal -->
+    <div class="social-modal" id="social-modal">
+        <div class="social-box">
+            <h2>👥 Friends</h2>
+            
+            <!-- Search for friends -->
+            <div class="social-search">
+                <input type="text" id="friend-search-input" placeholder="Search for players...">
+                <button onclick="searchFriends()">Search</button>
+            </div>
+            
+            <!-- Search Results -->
+            <div class="search-results" id="search-results"></div>
+            
+            <!-- Your Friends List -->
+            <div class="friends-section-title">
+                <h3>Your Friends</h3>
+            </div>
+            <div class="friends-list-container" id="social-friends-list">
+                <div class="no-friends">No friends yet. Search for players to add!</div>
+            </div>
+            
+            <!-- Referral Link Section -->
+            <div class="referral-section">
+                <h3>🔗 Invite Friends</h3>
+                <p style="color: #666; font-size: 13px; margin-bottom: 15px;">Share your unique link to invite friends!</p>
+                <div class="referral-link-box">
+                    <input type="text" id="referral-link" readonly>
+                    <button onclick="copyReferralLink()">Copy</button>
+                </div>
+                <p class="referral-reward">🎁 Get 50 coins for each friend who joins!</p>
+            </div>
+            
+            <button class="btn-secondary" onclick="closeSocialModal()" style="width: 100%; margin-top: 10px;">Close</button>
+        </div>
     </div>
 
     <div class="bg">
@@ -2151,7 +2482,9 @@
             <button class="tab-btn" onclick="switchTab('leaderboard')">LEADERBOARD</button>
             <button class="tab-btn" onclick="switchTab('skins')">SKINS</button>
             <button class="tab-btn" onclick="switchTab('stats')">STATS</button>
-        </div>
+            <a href="analytics.html" class="tab-btn" style="text-decoration: none; display: inline-flex; align-items: center;">📊 ANALYTICS</a>
+            
+        </div> 
       
        <!-- Scenarios Tab -->
        <div id="scenarios" class="tab-content active">
@@ -2667,12 +3000,41 @@
        function loadWeeklyMonthlyScores() {
            const games = ['360Aim', 'flick', 'bounceTracker', 'reactionTrainer', 'microflick', 'glider', 'staticPrecision', 'jumppeek'];
            
+           // Clear old weekly/monthly scores if it's a new period
+           const currentWeekStart = getWeekStart();
+           const currentMonthStart = getMonthStart();
+           const storedWeekStart = parseInt(localStorage.getItem('aimtrainer_week_start') || '0');
+           const storedMonthStart = parseInt(localStorage.getItem('aimtrainer_month_start') || '0');
+           
+           // If new week, reset weekly scores
+           if (storedWeekStart !== currentWeekStart && storedWeekStart !== 0) {
+               console.log('New week detected, resetting weekly scores');
+               games.forEach(gameId => {
+                   localStorage.removeItem('aimtrainer_weekly_' + gameId);
+               });
+           }
+           
+           // If new month, reset monthly scores  
+           if (storedMonthStart !== currentMonthStart && storedMonthStart !== 0) {
+               console.log('New month detected, resetting monthly scores');
+               games.forEach(gameId => {
+                   localStorage.removeItem('aimtrainer_monthly_' + gameId);
+               });
+           }
+           
+           // Store current period starts
+           localStorage.setItem('aimtrainer_week_start', currentWeekStart);
+           localStorage.setItem('aimtrainer_month_start', currentMonthStart);
+           
+           // Load scores into global variables
            games.forEach(gameId => {
                // Weekly scores
                const weeklyKey = 'aimtrainer_weekly_' + gameId;
                const weeklyScore = localStorage.getItem(weeklyKey);
                if (weeklyScore) {
                    window['weeklyScore_' + gameId] = parseInt(weeklyScore);
+               } else {
+                   window['weeklyScore_' + gameId] = 0;
                }
                
                // Monthly scores
@@ -2680,7 +3042,14 @@
                const monthlyScore = localStorage.getItem(monthlyKey);
                if (monthlyScore) {
                    window['monthlyScore_' + gameId] = parseInt(monthlyScore);
+               } else {
+                   window['monthlyScore_' + gameId] = 0;
                }
+           });
+           
+           console.log('Weekly/Monthly scores loaded:', {
+               weekly: window['weeklyScore_360Aim'],
+               monthly: window['monthlyScore_360Aim']
            });
        }
 
@@ -2729,6 +3098,35 @@
 
        // Check auth state and update UI - runs every time page is loaded
        function checkAuthStateAndUpdateUI() {
+           // First, check if user explicitly logged out
+           const isExplicitlyLoggedOut = localStorage.getItem('aimtrainer_logged_out') === 'true';
+           
+           if (isExplicitlyLoggedOut) {
+               // User explicitly logged out - clear any stale data and show logged out state
+               console.log('User explicitly logged out, clearing cached data');
+               
+               // Clear all aimtrainer data but keep the logged_out flag
+               const keysToRemove = [];
+               for (let i = 0; i < localStorage.length; i++) {
+                   const key = localStorage.key(i);
+                   if (key && key.startsWith('aimtrainer_') && key !== 'aimtrainer_logged_out') {
+                       keysToRemove.push(key);
+                   }
+               }
+               keysToRemove.forEach(key => localStorage.removeItem(key));
+               
+               // Clear weekly/monthly score variables
+               const games = ['360Aim', 'flick', 'bounceTracker', 'reactionTrainer', 'microflick', 'glider', 'staticPrecision', 'jumppeek'];
+               games.forEach(gameId => {
+                   window['weeklyScore_' + gameId] = 0;
+                   window['monthlyScore_' + gameId] = 0;
+               });
+               
+               updateAuthUI(false);
+               return;
+           }
+           
+           // Check Firebase auth state
            if (typeof firebase !== 'undefined' && firebase.auth) {
                const unsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
                    if (user) {
@@ -2740,11 +3138,22 @@
                        const photoURL = localStorage.getItem('aimtrainer_photoURL') || user.photoURL;
                        const coins = parseInt(localStorage.getItem('aimtrainer_coins') || '0');
                        
+                       // Reload weekly/monthly scores for this user
+                       loadWeeklyMonthlyScores();
+                       
                        // Update the auth section manually with user info
                        updateAuthUIWithUserData(username, photoURL, coins);
                    } else {
                        // User is signed out
                        console.log('User signed out');
+                       
+                       // Clear scores and show logged out state
+                       const games = ['360Aim', 'flick', 'bounceTracker', 'reactionTrainer', 'microflick', 'glider', 'staticPrecision', 'jumppeek'];
+                       games.forEach(gameId => {
+                           window['weeklyScore_' + gameId] = 0;
+                           window['monthlyScore_' + gameId] = 0;
+                       });
+                       
                        updateAuthUI(false);
                    }
                    unsubscribe(); // Stop listening after first check
@@ -2752,11 +3161,12 @@
            } else {
                // Firebase not loaded, check localStorage as fallback
                const username = localStorage.getItem('aimtrainer_username');
-               const isExplicitlyLoggedOut = localStorage.getItem('aimtrainer_logged_out') === 'true';
                
-               if (username && !isExplicitlyLoggedOut) {
+               if (username) {
                    // User was logged in before, show their info
                    const coins = parseInt(localStorage.getItem('aimtrainer_coins') || '0');
+                   // Reload scores
+                   loadWeeklyMonthlyScores();
                    updateAuthUIWithUserData(username, null, coins);
                } else {
                    // User is not logged in
@@ -2780,6 +3190,7 @@
            }
            
            authSection.innerHTML = `
+               <button class="social-btn" onclick="showSocialModal()" title="Friends">👥</button>
                <div class="user-avatar" onclick="showProfileCard()" title="Click to view profile: ${displayName}">
                    ${avatarHTML}
                </div>
@@ -2788,6 +3199,32 @@
                    <span class="coins">🪙 ${coins}</span>
                </div>
            `;
+       }
+
+       // Update auth UI
+       function updateAuthUI(isLoggedIn) {
+           const authSection = document.getElementById('auth-section');
+           if (!authSection) return;
+           
+           if (isLoggedIn) {
+               const username = localStorage.getItem('aimtrainer_username') || 'Player';
+               const coins = parseInt(localStorage.getItem('aimtrainer_coins') || '0');
+               authSection.innerHTML = `
+                   <button class="social-btn" onclick="showSocialModal()" title="Friends">👥</button>
+                   <div class="user-avatar" onclick="showProfileCard()" title="Click to view profile: ${username}">
+                       <span class="avatar-letter">${username.charAt(0).toUpperCase()}</span>
+                   </div>
+                   <div class="user-info">
+                       <span class="username">${username}</span>
+                       <span class="coins">🪙 ${coins}</span>
+                   </div>
+               `;
+           } else {
+               authSection.innerHTML = `
+                   <button class="social-btn" onclick="showSocialModal()" title="Friends">👥</button>
+                   <button class="auth-btn" onclick="showAuthModal()">Sign In</button>
+               `;
+           }
        }
 
        // Auth functions
@@ -3547,9 +3984,192 @@
            }
         }
       
-       createParticles();
-       initPersonalBests();
-       initStats();
+      createParticles();
+      initPersonalBests();
+      initStats();
+      
+      // Initialize social features
+      initSocial();
+      
+      // ==================== SOCIAL FUNCTIONS ====================
+      function initSocial() {
+          // Generate or get user's unique ID
+          let userId = localStorage.getItem('aimtrainer_user_id');
+          if (!userId) {
+              userId = 'user_' + Math.random().toString(36).substr(2, 9);
+              localStorage.setItem('aimtrainer_user_id', userId);
+          }
+          
+          // Set up referral link
+          const referralLink = window.location.origin + window.location.pathname + '?ref=' + userId;
+          document.getElementById('referral-link').value = referralLink;
+          
+          // Load friends list
+          renderSocialFriendsList();
+          
+          // Check for referral in URL
+          const urlParams = new URLSearchParams(window.location.search);
+          const refCode = urlParams.get('ref');
+          if (refCode && refCode !== userId) {
+              localStorage.setItem('aimtrainer_referrer', refCode);
+          }
+      }
+
+      function showSocialModal() {
+          document.getElementById('social-modal').classList.add('active');
+      }
+
+      function closeSocialModal() {
+          document.getElementById('social-modal').classList.remove('active');
+      }
+
+      function getSocialFriends() {
+          try {
+              return JSON.parse(localStorage.getItem('aimtrainer_friends') || '[]');
+          } catch (e) {
+              return [];
+          }
+      }
+
+      function saveSocialFriends(friends) {
+          localStorage.setItem('aimtrainer_friends', JSON.stringify(friends));
+      }
+
+      function searchFriends() {
+          const searchInput = document.getElementById('friend-search-input');
+          const query = searchInput.value.trim().toLowerCase();
+          const resultsContainer = document.getElementById('search-results');
+          
+          if (!query) {
+              resultsContainer.innerHTML = '';
+              return;
+          }
+          
+          const friends = getSocialFriends();
+          const friendNames = friends.map(f => f.username.toLowerCase());
+          
+          const mockUsers = generateMockSearchResults(query);
+          
+          if (mockUsers.length === 0) {
+              resultsContainer.innerHTML = '<div class="no-friends">No players found matching "' + escapeHtml(query) + '"</div>';
+              return;
+          }
+          
+          resultsContainer.innerHTML = mockUsers.map(user => {
+              const isFriend = friendNames.includes(user.username.toLowerCase());
+              return `
+                  <div class="search-result-item">
+                      <div class="social-friend-avatar">${user.username.charAt(0).toUpperCase()}</div>
+                      <div class="social-friend-info">
+                          <div class="social-friend-name">${escapeHtml(user.username)}</div>
+                          <div class="social-friend-stats">${user.games} games • Best: ${user.bestScore}</div>
+                      </div>
+                      <button class="add-btn" onclick="addFriendByName('${escapeHtml(user.username)}')" ${isFriend ? 'disabled' : ''}>
+                          ${isFriend ? 'Added' : 'Add'}
+                      </button>
+                  </div>
+              `;
+          }).join('');
+      }
+
+      function generateMockSearchResults(query) {
+          const sampleUsers = [
+              { username: 'ProGamer123', games: 156, bestScore: 12500 },
+              { username: 'AimLord', games: 89, bestScore: 9800 },
+              { username: 'NightOwl', games: 234, bestScore: 15200 },
+              { username: 'SpeedShot', games: 67, bestScore: 8200 },
+              { username: 'TrackerKing', games: 112, bestScore: 11000 },
+              { username: 'FlickMaster', games: 45, bestScore: 7500 },
+              { username: 'PrecisionPro', games: 78, bestScore: 8900 },
+              { username: 'ReactFast', games: 201, bestScore: 13500 },
+          ];
+          
+          return sampleUsers.filter(u => u.username.toLowerCase().includes(query));
+      }
+
+      function addFriendByName(username) {
+          const friends = getSocialFriends();
+          
+          if (friends.some(f => f.username.toLowerCase() === username.toLowerCase())) {
+              alert('This player is already your friend!');
+              return;
+          }
+          
+          friends.push({
+              username: username,
+              addedAt: Date.now()
+          });
+          
+          saveSocialFriends(friends);
+          renderSocialFriendsList();
+          
+          document.getElementById('search-results').innerHTML = '';
+          document.getElementById('friend-search-input').value = '';
+          
+          alert('Friend added: ' + username);
+      }
+
+      function removeSocialFriend(index) {
+          const friends = getSocialFriends();
+          friends.splice(index, 1);
+          saveSocialFriends(friends);
+          renderSocialFriendsList();
+      }
+
+      function renderSocialFriendsList() {
+          const container = document.getElementById('social-friends-list');
+          const friends = getSocialFriends();
+          
+          if (friends.length === 0) {
+              container.innerHTML = '<div class="no-friends">No friends yet. Search for players to add!</div>';
+              return;
+          }
+          
+          container.innerHTML = friends.map((friend, i) => {
+              const stats = generateFriendStats(friend.username);
+              return `
+                  <div class="social-friend-item">
+                      <div class="social-friend-avatar">${friend.username.charAt(0).toUpperCase()}</div>
+                      <div class="social-friend-info">
+                          <div class="social-friend-name">${escapeHtml(friend.username)}</div>
+                          <div class="social-friend-stats">${stats.games} games • Best: ${stats.bestScore}</div>
+                      </div>
+                      <button class="social-friend-remove" onclick="removeSocialFriend(${i})">×</button>
+                  </div>
+              `;
+          }).join('');
+      }
+
+      function generateFriendStats(username) {
+          let hash = 0;
+          for (let i = 0; i < username.length; i++) {
+              hash = username.charCodeAt(i) + ((hash << 5) - hash);
+          }
+          
+          return {
+              games: Math.abs(hash % 200) + 10,
+              bestScore: Math.abs(hash % 15000) + 1000
+          };
+      }
+
+      function copyReferralLink() {
+          const input = document.getElementById('referral-link');
+          input.select();
+          input.setSelectionRange(0, 99999);
+          
+          navigator.clipboard.writeText(input.value).then(() => {
+              alert('Referral link copied to clipboard! Share it with friends.');
+          }).catch(() => {
+              document.execCommand('copy');
+              alert('Referral link copied! Share it with friends.');
+          });
+      }
+
+      function escapeHtml(text) {
+          const div = document.createElement('div');
+          div.textContent = text;
+          return div.innerHTML;
+      }
    </script>
 </body>
 </html>
