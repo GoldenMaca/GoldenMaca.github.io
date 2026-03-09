@@ -40,11 +40,12 @@ const SKINS = {
 };
 
 // Quests - with proper claim tracking
+// Daily quests now change every day and use dailyGamesPlayed variable
 const QUESTS = {
     daily: [
-        { id: 'play_3', name: 'Play 3 Games', desc: 'Complete 3 hard mode games', target: 3, reward: 25 },
-        { id: 'score_1000', name: 'Score Master', desc: 'Score over 1000 in any game', target: 1000, reward: 50 },
-        { id: 'play_specific', name: 'Variety Pack', desc: 'Play 2 different trainers', target: 2, reward: 35 }
+        { id: 'play_3', name: 'Play 3 Games', desc: 'Complete 3 hard mode games today', target: 3, reward: 25, type: 'games' },
+        { id: 'score_1000', name: 'Score Master', desc: 'Score over 1000 in any game', target: 1000, reward: 50, type: 'score' },
+        { id: 'play_specific', name: 'Variety Pack', desc: 'Play 2 different trainers today', target: 2, reward: 35, type: 'variety' }
     ],
     weekly: [
         { id: 'play_20', name: 'Dedicated', desc: 'Complete 20 hard mode games', target: 20, reward: 150 },
@@ -52,6 +53,79 @@ const QUESTS = {
         { id: 'all_games', name: 'Full Practice', desc: 'Play all 8 trainers at least once', target: 8, reward: 200 }
     ]
 };
+
+// Generate daily quests based on the day (changes every 24 hours)
+function generateDailyQuests() {
+    const today = new Date().toDateString();
+    const storedDate = localStorage.getItem('aimtrainer_daily_quests_date');
+    
+    // Check if we need to generate new quests for today
+    if (storedDate !== today) {
+        // Generate new random quests for today
+        const allPossibleQuests = [
+            { id: 'play_3', name: 'Play 3 Games', desc: 'Complete 3 hard mode games today', target: 3, reward: 25, type: 'games' },
+            { id: 'play_5', name: 'Getting Warmed Up', desc: 'Complete 5 hard mode games today', target: 5, reward: 40, type: 'games' },
+            { id: 'score_500', name: 'Quick Score', desc: 'Score over 500 in any game', target: 500, reward: 20, type: 'score' },
+            { id: 'score_1000', name: 'Score Master', desc: 'Score over 1000 in any game', target: 1000, reward: 50, type: 'score' },
+            { id: 'score_2000', name: 'High Scorer', desc: 'Score over 2000 in any game', target: 2000, reward: 75, type: 'score' },
+            { id: 'play_2', name: 'Quick Practice', desc: 'Play 2 hard mode games today', target: 2, reward: 15, type: 'games' },
+            { id: 'variety_2', name: 'Variety Pack', desc: 'Play 2 different trainers today', target: 2, reward: 35, type: 'variety' },
+            { id: 'variety_3', name: 'Explorer', desc: 'Play 3 different trainers today', target: 3, reward: 50, type: 'variety' }
+        ];
+        
+        // Shuffle and pick 3 random quests
+        const shuffled = allPossibleQuests.sort(() => 0.5 - Math.random());
+        const dailyQuests = shuffled.slice(0, 3);
+        
+        // Save to localStorage
+        localStorage.setItem('aimtrainer_daily_quests', JSON.stringify(dailyQuests));
+        localStorage.setItem('aimtrainer_daily_quests_date', today);
+        
+        // Reset daily progress
+        localStorage.setItem('aimtrainer_dailyGamesPlayed', '0');
+        localStorage.setItem('aimtrainer_dailyGamesPlayedSet', JSON.stringify([]));
+        
+        console.log('New daily quests generated for', today);
+        return dailyQuests;
+    }
+    
+    // Return stored quests
+    return JSON.parse(localStorage.getItem('aimtrainer_daily_quests') || '[]');
+}
+
+// Get daily games played today
+function getDailyGamesPlayed() {
+    return parseInt(localStorage.getItem('aimtrainer_dailyGamesPlayed') || '0');
+}
+
+// Get the set of unique games played today
+function getDailyGamesPlayedSet() {
+    return JSON.parse(localStorage.getItem('aimtrainer_dailyGamesPlayedSet') || '[]');
+}
+
+// Track a game played today
+function trackDailyGame(gameId) {
+    const today = new Date().toDateString();
+    const storedDate = localStorage.getItem('aimtrainer_daily_games_date');
+    
+    // Reset if it's a new day
+    if (storedDate !== today) {
+        localStorage.setItem('aimtrainer_dailyGamesPlayed', '0');
+        localStorage.setItem('aimtrainer_dailyGamesPlayedSet', '[]');
+        localStorage.setItem('aimtrainer_daily_games_date', today);
+    }
+    
+    // Increment games played
+    const current = getDailyGamesPlayed();
+    localStorage.setItem('aimtrainer_dailyGamesPlayed', (current + 1).toString());
+    
+    // Add to set of unique games
+    const gameSet = getDailyGamesPlayedSet();
+    if (!gameSet.includes(gameId)) {
+        gameSet.push(gameId);
+        localStorage.setItem('aimtrainer_dailyGamesPlayedSet', JSON.stringify(gameSet));
+    }
+}
 
 // Get quests with proper claim status from localStorage
 function getQuests() {
@@ -63,19 +137,60 @@ function getQuests() {
     if (lastClaimDate !== today) {
         localStorage.setItem('aimtrainer_quest_date', today);
         localStorage.setItem('aimtrainer_claimed_quests', '{}');
-        localStorage.removeItem('quest_progress_daily_play_3');
-        localStorage.removeItem('quest_progress_daily_score_1000');
-        localStorage.removeItem('quest_progress_daily_play_specific');
     }
     
-    const allQuests = JSON.parse(JSON.stringify(QUESTS));
+    // Generate or get today's daily quests
+    const dailyQuests = generateDailyQuests();
     
-    // Mark claimed quests
-    allQuests.daily.forEach(q => {
-        q.claimed = claimedQuests['daily_' + q.id] || false;
+    // Get daily progress
+    const dailyGamesPlayed = getDailyGamesPlayed();
+    const dailyGamesSet = getDailyGamesPlayedSet();
+    const dailyHighScore = parseInt(localStorage.getItem('aimtrainer_daily_high_score') || '0');
+    
+    // Build quests object with progress
+    const allQuests = {
+        daily: [],
+        weekly: []
+    };
+    
+    // Add daily quests with progress
+    dailyQuests.forEach(q => {
+        let progress = 0;
+        if (q.type === 'games') {
+            progress = dailyGamesPlayed;
+        } else if (q.type === 'score') {
+            progress = dailyHighScore;
+        } else if (q.type === 'variety') {
+            progress = dailyGamesSet.length;
+        }
+        
+        allQuests.daily.push({
+            ...q,
+            progress: progress,
+            claimed: claimedQuests['daily_' + q.id] || false
+        });
     });
-    allQuests.weekly.forEach(q => {
-        q.claimed = claimedQuests['weekly_' + q.id] || false;
+    
+    // Weekly quests remain the same
+    const weeklyGamesPlayed = parseInt(localStorage.getItem('aimtrainer_total_runs') || '0');
+    const weeklyHighScore = parseInt(localStorage.getItem('aimtrainer_weekly_high_score') || '0');
+    const weeklyGamesSet = JSON.parse(localStorage.getItem('aimtrainer_weekly_games_played') || '[]');
+    
+    QUESTS.weekly.forEach(q => {
+        let progress = 0;
+        if (q.id === 'play_20') {
+            progress = weeklyGamesPlayed;
+        } else if (q.id === 'score_5000') {
+            progress = weeklyHighScore;
+        } else if (q.id === 'all_games') {
+            progress = weeklyGamesSet.length;
+        }
+        
+        allQuests.weekly.push({
+            ...q,
+            progress: progress,
+            claimed: claimedQuests['weekly_' + q.id] || false
+        });
     });
     
     return allQuests;
@@ -904,6 +1019,10 @@ window.syncUserData = syncUserData;
 window.startLeaderboardRefresh = startLeaderboardRefresh;
 window.SKINS = SKINS;
 window.escapeHtml = escapeHtml;
+window.getDailyGamesPlayed = getDailyGamesPlayed;
+window.getDailyGamesPlayedSet = getDailyGamesPlayedSet;
+window.trackDailyGame = trackDailyGame;
+window.generateDailyQuests = generateDailyQuests;
 
 console.log('Firebase Auth System loaded - FIXED VERSION');
 

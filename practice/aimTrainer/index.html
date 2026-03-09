@@ -3032,7 +3032,7 @@
        }
 
        function createQuestCard(quest, type) {
-           const progress = getQuestProgress(quest.id, type);
+           const progress = quest.progress !== undefined ? quest.progress : getQuestProgress(quest.id, type);
            const progressPercent = Math.min((progress / quest.target) * 100, 100);
            const isComplete = progress >= quest.target;
            const isClaimed = quest.claimed;
@@ -3465,6 +3465,30 @@
                    const totalRuns = parseInt(localStorage.getItem('aimtrainer_total_runs') || '0');
                    localStorage.setItem('aimtrainer_total_runs', totalRuns + 1);
                    
+                   // Track daily games played (for daily quests)
+                   if (typeof trackDailyGame === 'function') {
+                       trackDailyGame(gameId);
+                   }
+                   
+                   // Track daily high score
+                   const currentDailyHigh = parseInt(localStorage.getItem('aimtrainer_daily_high_score') || '0');
+                   if (score > currentDailyHigh) {
+                       localStorage.setItem('aimtrainer_daily_high_score', score.toString());
+                   }
+                   
+                   // Track weekly high score
+                   const currentWeeklyHigh = parseInt(localStorage.getItem('aimtrainer_weekly_high_score') || '0');
+                   if (score > currentWeeklyHigh) {
+                       localStorage.setItem('aimtrainer_weekly_high_score', score.toString());
+                   }
+                   
+                   // Track weekly games played
+                   const weeklyGamesPlayed = JSON.parse(localStorage.getItem('aimtrainer_weekly_games_played') || '[]');
+                   if (!weeklyGamesPlayed.includes(gameId)) {
+                       weeklyGamesPlayed.push(gameId);
+                       localStorage.setItem('aimtrainer_weekly_games_played', JSON.stringify(weeklyGamesPlayed));
+                   }
+                   
                    // Store the score
                    const storageKey = 'aimtrainer_hard_' + gameId;
                    const currentBest = localStorage.getItem(storageKey);
@@ -3494,6 +3518,11 @@
                document.getElementById('session-games').textContent = sessionGames;
                document.getElementById('session-hard').textContent = sessionHardRuns;
                document.getElementById('session-records').textContent = sessionRecords;
+               
+               // Refresh quest display after game
+               if (typeof renderQuests === 'function') {
+                   renderQuests();
+               }
            }
        });
 
@@ -3516,7 +3545,7 @@
               
                container.appendChild(particle);
            }
-       }
+        }
       
        createParticles();
        initPersonalBests();
