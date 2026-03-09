@@ -215,23 +215,22 @@
            background: #0f0f1a;
        }
 
-       /* Password toggle */
+       /* Password toggle - position inside the input field */
        .password-toggle {
            position: absolute;
-           right: 12px;
+           right: 19px;
            top: 0;
            bottom: 0;
-           display: flex;
-           align-items: center;
            background: none;
            border: none;
            color: #555;
            cursor: pointer;
-           font-size: 16px;
-           padding: 4px;
+           font-size: 14px;
+           padding: 4px 6px;
            transition: color 0.3s;
-           width: 32px;
-           justify-content: center;
+           z-index: 10;
+           display: flex;
+           align-items: center;
        }
 
        .password-toggle:hover {
