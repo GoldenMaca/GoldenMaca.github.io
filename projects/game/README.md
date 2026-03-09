@@ -11,9 +11,8 @@ Im thinking for the map:
 
 Bridge -> Cafeteria, Engine Room, Library
 Cafeteria -> Bridge, Deck
-Engine Room -> Cabin, Bridge
-Library -> Cabin, Bridge
-Cabin -> Library, Engine Room
+Engine Room -> Cabin, Bridge, Find ID
+Library -> Engine Room, Bridge
 Deck -> Cafeteria
 
 Need to get key from captains cabin, and paper record stating that he lost his ID on deck somewhere. 

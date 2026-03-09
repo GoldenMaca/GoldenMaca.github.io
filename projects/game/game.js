@@ -47,9 +47,10 @@ function locationB() {
         if (input.toLowerCase() === "get food") {
             food = true;
             locationB();
+        }
         if (input.toLowerCase() === "engine room") {
             locationC();
-
+        }
         if (input.toLowerCase() === "deck") {
             locationD();
         } else {
@@ -64,18 +65,19 @@ function locationC() {
     clear();
     print("\nYou are in the Engine Room!")
     print("\nWhere do you want to go next? Say one of these choices:" +
-        "\n\tLook around\n\tBridge\n\tDeck");
+        "\n\tLook around\n\tBridge\n\tLibrary");
             
     function processInput(input){
         if (input.toLowerCase() === "look around") {
             print("\nYou look around the engine room and find a small panel that you can open. Inside, you find the captain ID card!");
             ID = true;
             locationC();
+        }
         if (input.toLowerCase() === "bridge") {
             locationA();
-            
-        if (input.toLowerCase() === "deck") {
-            locationD();
+        }
+        if (input.toLowerCase() === "library") {
+            locationE();
         }
         else {
             stayHere();
@@ -108,6 +110,29 @@ function locationD() {
     waitForInput(processInput);
 }
 
+function locationE() {
+    clear();
+    print("\nYou are in the Library!");
+    print("\nWhere do you want to go next? Say one of these choices:" +
+        "\n\tLook around\n\tEngine Room");
+    
+    function processInput(input){
+        if (input.toLowerCase() === "look around") {
+            print("\nYou look around the library and find a book about the ship. Inside, you find a map of the ship that shows where all the rooms are!");
+            locationE();
+        }
+        if (input.toLowerCase() === "engine room") {
+            locationC();
+        }
+        else {
+            stayHere();
+            waitThenCall(locationE);
+        }
+    }
+    waitForInput(processInput);
+}
+
+
 
 //finally, make sure you customize this to tell it what should happen at the
 //very start. For this simple example, any input will bring you
@@ -120,3 +145,32 @@ function start(){
     }
     waitForInput(processInput);
 }
+
+function endgame() {
+    print("\nYou now have control of the vessel, you can set the course, but which direction will you go? North, South, East, or West?");
+    
+    function processInput(input){
+        if (input.toLowerCase() === "north") {
+            print("\nYou set the course to North, but you end up crashing into an iceberg and sinking. You lose!");
+            gameActive = false;
+        }
+        if (input.toLowerCase() === "south") {
+            print("\nYou set the course to South, but you end up crashing into a reef and sinking. You lose!");
+            gameActive = false;
+        }
+        if (input.toLowerCase() === "east") {
+            print("\nYou set the course to East, but you end up crashing into a pirate ship and getting captured. You lose!");
+            gameActive = false;
+        }
+        if (input.toLowerCase() === "west") {
+            print("\nYou set the course to West, and you end up finding a nearby island where you find an airstrip! You find a plane and escape. You win!");
+            gameActive = false;
+        }
+        else {
+            stayHere();
+            waitThenCall(endgame);
+        }
+    }
+    waitForInput(processInput);
+}
+
