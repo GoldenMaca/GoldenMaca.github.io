@@ -2667,12 +2667,41 @@
        function loadWeeklyMonthlyScores() {
            const games = ['360Aim', 'flick', 'bounceTracker', 'reactionTrainer', 'microflick', 'glider', 'staticPrecision', 'jumppeek'];
            
+           // Clear old weekly/monthly scores if it's a new period
+           const currentWeekStart = getWeekStart();
+           const currentMonthStart = getMonthStart();
+           const storedWeekStart = parseInt(localStorage.getItem('aimtrainer_week_start') || '0');
+           const storedMonthStart = parseInt(localStorage.getItem('aimtrainer_month_start') || '0');
+           
+           // If new week, reset weekly scores
+           if (storedWeekStart !== currentWeekStart && storedWeekStart !== 0) {
+               console.log('New week detected, resetting weekly scores');
+               games.forEach(gameId => {
+                   localStorage.removeItem('aimtrainer_weekly_' + gameId);
+               });
+           }
+           
+           // If new month, reset monthly scores  
+           if (storedMonthStart !== currentMonthStart && storedMonthStart !== 0) {
+               console.log('New month detected, resetting monthly scores');
+               games.forEach(gameId => {
+                   localStorage.removeItem('aimtrainer_monthly_' + gameId);
+               });
+           }
+           
+           // Store current period starts
+           localStorage.setItem('aimtrainer_week_start', currentWeekStart);
+           localStorage.setItem('aimtrainer_month_start', currentMonthStart);
+           
+           // Load scores into global variables
            games.forEach(gameId => {
                // Weekly scores
                const weeklyKey = 'aimtrainer_weekly_' + gameId;
                const weeklyScore = localStorage.getItem(weeklyKey);
                if (weeklyScore) {
                    window['weeklyScore_' + gameId] = parseInt(weeklyScore);
+               } else {
+                   window['weeklyScore_' + gameId] = 0;
                }
                
                // Monthly scores
@@ -2680,7 +2709,14 @@
                const monthlyScore = localStorage.getItem(monthlyKey);
                if (monthlyScore) {
                    window['monthlyScore_' + gameId] = parseInt(monthlyScore);
+               } else {
+                   window['monthlyScore_' + gameId] = 0;
                }
+           });
+           
+           console.log('Weekly/Monthly scores loaded:', {
+               weekly: window['weeklyScore_360Aim'],
+               monthly: window['monthlyScore_360Aim']
            });
        }
 
@@ -2729,6 +2765,35 @@
 
        // Check auth state and update UI - runs every time page is loaded
        function checkAuthStateAndUpdateUI() {
+           // First, check if user explicitly logged out
+           const isExplicitlyLoggedOut = localStorage.getItem('aimtrainer_logged_out') === 'true';
+           
+           if (isExplicitlyLoggedOut) {
+               // User explicitly logged out - clear any stale data and show logged out state
+               console.log('User explicitly logged out, clearing cached data');
+               
+               // Clear all aimtrainer data but keep the logged_out flag
+               const keysToRemove = [];
+               for (let i = 0; i < localStorage.length; i++) {
+                   const key = localStorage.key(i);
+                   if (key && key.startsWith('aimtrainer_') && key !== 'aimtrainer_logged_out') {
+                       keysToRemove.push(key);
+                   }
+               }
+               keysToRemove.forEach(key => localStorage.removeItem(key));
+               
+               // Clear weekly/monthly score variables
+               const games = ['360Aim', 'flick', 'bounceTracker', 'reactionTrainer', 'microflick', 'glider', 'staticPrecision', 'jumppeek'];
+               games.forEach(gameId => {
+                   window['weeklyScore_' + gameId] = 0;
+                   window['monthlyScore_' + gameId] = 0;
+               });
+               
+               updateAuthUI(false);
+               return;
+           }
+           
+           // Check Firebase auth state
            if (typeof firebase !== 'undefined' && firebase.auth) {
                const unsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
                    if (user) {
@@ -2740,11 +2805,22 @@
                        const photoURL = localStorage.getItem('aimtrainer_photoURL') || user.photoURL;
                        const coins = parseInt(localStorage.getItem('aimtrainer_coins') || '0');
                        
+                       // Reload weekly/monthly scores for this user
+                       loadWeeklyMonthlyScores();
+                       
                        // Update the auth section manually with user info
                        updateAuthUIWithUserData(username, photoURL, coins);
                    } else {
                        // User is signed out
                        console.log('User signed out');
+                       
+                       // Clear scores and show logged out state
+                       const games = ['360Aim', 'flick', 'bounceTracker', 'reactionTrainer', 'microflick', 'glider', 'staticPrecision', 'jumppeek'];
+                       games.forEach(gameId => {
+                           window['weeklyScore_' + gameId] = 0;
+                           window['monthlyScore_' + gameId] = 0;
+                       });
+                       
                        updateAuthUI(false);
                    }
                    unsubscribe(); // Stop listening after first check
@@ -2752,11 +2828,12 @@
            } else {
                // Firebase not loaded, check localStorage as fallback
                const username = localStorage.getItem('aimtrainer_username');
-               const isExplicitlyLoggedOut = localStorage.getItem('aimtrainer_logged_out') === 'true';
                
-               if (username && !isExplicitlyLoggedOut) {
+               if (username) {
                    // User was logged in before, show their info
                    const coins = parseInt(localStorage.getItem('aimtrainer_coins') || '0');
+                   // Reload scores
+                   loadWeeklyMonthlyScores();
                    updateAuthUIWithUserData(username, null, coins);
                } else {
                    // User is not logged in

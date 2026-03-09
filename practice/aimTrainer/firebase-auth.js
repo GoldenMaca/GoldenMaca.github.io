@@ -499,16 +499,43 @@ async function logOut() {
     // Mark as explicitly logged out so we don't try to auto-restore
     localStorage.setItem('aimtrainer_logged_out', 'true');
     
+    // First, sign out from Firebase to clear the cached session
     if (firebaseReady && auth) {
         try {
             await firebase.auth().signOut();
+            console.log('Firebase session cleared');
         } catch (e) {
-            console.log('Logout error:', e);
+            console.log('Firebase logout error:', e);
         }
     }
+    
+    // Clear all user-specific localStorage data when logging out
+    // This prevents old account data from showing on new accounts
+    const keysToRemove = [];
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('aimtrainer_')) {
+            keysToRemove.push(key);
+        }
+    }
+    
+    // Remove all aimtrainer keys
+    keysToRemove.forEach(key => {
+        localStorage.removeItem(key);
+    });
+    
+    // Re-set the logged_out flag after clearing
+    localStorage.setItem('aimtrainer_logged_out', 'true');
+    
+    // Reset all global variables
     currentUser = null;
     userProfile = null;
+    
+    // Update UI to show logged out state
     updateAuthUI(false);
+    
+    // Reload the page to ensure clean state
+    window.location.reload();
 }
 
 // Show profile modal
