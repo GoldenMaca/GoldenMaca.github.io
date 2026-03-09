@@ -41,16 +41,17 @@ function locationB() {
     print("\nYou are in the Cafeteria!");
     print("\nWould you like to get some food?");
     print("\nWhere do you want to go next? Say one of these choices:" +
-        "\n\tGet food\n\tBridge\n\tDeck");
+        "\n\tGet_food\n\tBridge\n\tDeck");
     
     function processInput(input){
-        if (input.toLowerCase() === "get food") {
+        if (input.toLowerCase() === "get_food") {
             food = true;
             locationB();
         }
-        if (input.toLowerCase() === "engine room") {
-            locationC();
+        if (input.toLowerCase() === "bridge") {
+            locationA();
         }
+        
         if (input.toLowerCase() === "deck") {
             locationD();
         } else {

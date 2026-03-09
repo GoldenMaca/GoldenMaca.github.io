@@ -103,12 +103,41 @@
            margin-bottom: 18px;
            display: flex;
            align-items: center;
+           width: 100% !important;
+           min-width: 100% !important;
+           max-width: 100% !important;
+           box-sizing: border-box;
+           flex-shrink: 0;
+           align-self: stretch;
+           height: auto;
+       }
+
+       /* Password input wrapper - ensure full width */
+       .input-wrapper:has(.password-toggle) {
+           width: 100% !important;
+           min-width: 100% !important;
+           max-width: 100% !important;
+           flex-shrink: 0;
+           align-self: stretch;
+           height: auto;
+       }
+
+       #auth-form {
+           display: flex;
+           flex-direction: column;
            width: 100%;
+           box-sizing: border-box;
+       }
+
+       #auth-form .input-wrapper {
+           width: 100% !important;
        }
 
        .input-wrapper input {
-           width: 100%;
-           padding: 16px 48px 16px 48px;
+           width: 100% !important;
+           min-width: 100% !important;
+           max-width: 100% !important;
+           padding: 16px 40px 16px 48px;
            background: rgba(0, 0, 0, 0.4);
            border: 2px solid #2a2a4a;
            border-radius: 12px;
@@ -116,7 +145,14 @@
            font-size: 15px;
            transition: all 0.3s ease;
            line-height: 1;
-           box-sizing: border-box;
+           box-sizing: border-box !important;
+           flex: 1 1 100% !important;
+           margin: 0;
+       }
+
+       .input-wrapper:has(.password-toggle) input {
+           padding-right: 40px !important;
+           flex: 1 1 100% !important;
        }
 
        .input-wrapper input::placeholder {
@@ -182,7 +218,7 @@
        /* Password toggle */
        .password-toggle {
            position: absolute;
-           right: 16px;
+           right: 12px;
            top: 0;
            bottom: 0;
            display: flex;
@@ -194,6 +230,8 @@
            font-size: 16px;
            padding: 4px;
            transition: color 0.3s;
+           width: 32px;
+           justify-content: center;
        }
 
        .password-toggle:hover {
