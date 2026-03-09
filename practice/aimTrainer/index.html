@@ -2501,11 +2501,18 @@
        // Check auth state and update UI - runs every time page is loaded
        function checkAuthStateAndUpdateUI() {
            if (typeof firebase !== 'undefined' && firebase.auth) {
-               const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+               const unsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
                    if (user) {
-                       // User is signed in
+                       // User is signed in - wait for profile to load then update UI
                        console.log('User signed in:', user.email);
-                       updateAuthUI(true);
+                       
+                       // Get profile data from localStorage (set by firebase-auth.js)
+                       const username = localStorage.getItem('aimtrainer_username') || user.displayName || user.email?.split('@')[0] || 'Player';
+                       const photoURL = localStorage.getItem('aimtrainer_photoURL') || user.photoURL;
+                       const coins = parseInt(localStorage.getItem('aimtrainer_coins') || '0');
+                       
+                       // Update the auth section manually with user info
+                       updateAuthUIWithUserData(username, photoURL, coins);
                    } else {
                        // User is signed out
                        console.log('User signed out');
@@ -2521,7 +2528,7 @@
                if (username && !isExplicitlyLoggedOut) {
                    // User was logged in before, show their info
                    const coins = parseInt(localStorage.getItem('aimtrainer_coins') || '0');
-                   updateAuthUIWithLocalData(username, coins);
+                   updateAuthUIWithUserData(username, null, coins);
                } else {
                    // User is not logged in
                    updateAuthUI(false);
@@ -2529,13 +2536,12 @@
            }
        }
 
-       // Update auth UI with local data (fallback when Firebase isn't ready)
-       function updateAuthUIWithLocalData(username, coins) {
+       // Update auth UI with user data (called when user is logged in)
+       function updateAuthUIWithUserData(username, photoURL, coins) {
            const authSection = document.getElementById('auth-section');
            if (!authSection) return;
            
            const displayName = username || 'Player';
-           const photoURL = localStorage.getItem('aimtrainer_photoURL');
            
            let avatarHTML = '';
            if (photoURL) {
@@ -2964,19 +2970,23 @@
               return;
           }
           
-          // Try to load from Firebase based on current period
+          // Show loading state
+          leaderboardEl.innerHTML = '<p class="no-leaderboard">Loading scores...</p>';
+          
+          // Try to load from Firebase
           try {
               let scores = [];
               
-              if (currentLeaderboardPeriod === 'alltime') {
+              // Use the correct functions from firebase-auth.js
+              if (currentLeaderboardPeriod === 'alltime' && typeof getAllTimeLeaderboard === 'function') {
                   scores = await getAllTimeLeaderboard(gameId, 5);
-              } else if (currentLeaderboardPeriod === 'monthly') {
+              } else if (currentLeaderboardPeriod === 'monthly' && typeof getMonthlyLeaderboard === 'function') {
                   scores = await getMonthlyLeaderboard(gameId, 5);
-              } else if (currentLeaderboardPeriod === 'weekly') {
+              } else if (currentLeaderboardPeriod === 'weekly' && typeof getWeeklyLeaderboard === 'function') {
                   scores = await getWeeklyLeaderboard(gameId, 5);
               }
               
-              if (scores.length === 0) {
+              if (!scores || scores.length === 0) {
                   leaderboardEl.innerHTML = '<p class="no-leaderboard">No scores yet. Be the first to play!</p>';
               } else {
                   const gameName = gameNames[gameId] || gameId;
@@ -2986,7 +2996,7 @@
                       <h3>🏆 ${gameName} - Top Players (${periodTitle})</h3>
                       ${scores.map((entry, i) => `
                           <div class="leaderboard-row ${i < 3 ? 'top-3' : ''}">
-                              <span class="rank ${i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : ''}">${i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '#' + entry.rank}</span>
+                              <span class="rank ${i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : ''}">${i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '#' + (entry.rank || i + 1)}</span>
                               <span class="username">${escapeHtml(entry.username)}${entry.isMe ? ' (You)' : ''}</span>
                               <span class="score ${i < 3 ? 'high' : ''}">${entry.score}</span>
                           </div>
@@ -3006,7 +3016,7 @@
               }
           } catch (e) {
               console.error('Leaderboard error:', e);
-              leaderboardEl.innerHTML = '<p class="no-leaderboard">Unable to load leaderboard</p>';
+              leaderboardEl.innerHTML = '<p class="no-leaderboard">Unable to load leaderboard. Make sure you\'re signed in.</p>';
           }
       }
 
