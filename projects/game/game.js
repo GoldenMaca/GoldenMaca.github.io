@@ -6,7 +6,66 @@ var food = false;
 var ID = false;
 var key = false;
 
+let bridgeDiscovered = true;
+let cafeteriaDiscovered = true;
+let engineRoomDiscovered = true;
+let libraryDiscovered = true;
+let deckDiscovered = false;
+let allowMap = false;
+
 //If you need, add any "helper" functions here
+
+function drawMap(){
+    let map = ``;
+
+    if(bridgeDiscovered){
+        map += `
+                                         ----------
+                                         | Bridge |
+                                         ----------
+                                             |`;
+    }
+    if(libraryDiscovered && cafeteriaDiscovered && engineRoomDiscovered){
+        map += `
+        -----------    -------------     --------------
+        | Library |----| Cafeteria |----| Engine Room |
+        -----------    -------------     --------------
+                           |`;
+    }else if(libraryDiscovered && bridgeDiscovered){
+        map += `
+        -----------    -----------
+        | Library |----| Bridge |
+        -----------    -----------
+                           |`;
+    }else if(engineRoomDiscovered && bridgeDiscovered){
+        map += `
+                       -----------    -------------
+                       | Bridge |----| Engine Room |
+                       -----------    -------------
+                           |`;
+    }else{
+        map += `
+                       -----------
+                       | Bridge |
+                       -----------
+                           |`;
+    }
+    map += `
+                      --------
+                      | Deck |
+                      --------`;
+    
+
+    
+        printAscii(map);
+    
+}
+
+
+
+
+
+
 
 //Make one function for each location
 function locationA() {
@@ -21,7 +80,7 @@ function locationA() {
         clear();
         print("\t\nYou are in the Bridge!");
         print("\t\nWhere do you want to go next? Say one of these choices:" +
-            "\t\nCafeteria\t\nEngineRoom\t\nLibrary");
+            "\t\nCafeteria\t\nEngineRoom\t\nLibrary\t\nMap (to see discovered rooms)");
         
         function processInput(input){
             if (input.toLowerCase() === "cafeteria") {
@@ -30,7 +89,15 @@ function locationA() {
                 locationC();
             }else if (input.toLowerCase() === "library") {
                 locationE();
-            } else {
+            } else if (input.toLowerCase() === "map"){
+                if (allowMap == true) {
+                    drawMap();
+                } else {
+                    print("\t\nYou don't have a map yet! Explore the ship to find it.");
+                    stayHere();
+                    waitThenCall(locationA);
+                }
+            }else {
                 stayHere();
                 waitThenCall(locationA);
             }
@@ -45,7 +112,7 @@ function locationB() {
     print("\t\nWould you like to get some food?");
     print("\t\nWhere do you want to go next? Say one of these choices:" +
         "\t\n\t\tget food\t\n\t\tBridge\t\n\t\tDeck");
-    
+    deckDiscovered = true;
     function processInput(input){
         if (input.toLowerCase() === "get food" || input.toLowerCase() === "getfood") {
             food = true;
@@ -55,7 +122,16 @@ function locationB() {
             locationA();
         } else if (input.toLowerCase() === "deck") {
             locationD();
-        } else {
+        } else if (input.toLowerCase() === "map"){
+            if (allowMap == true) {
+                drawMap();
+            } else {
+                print("\t\nYou don't have a map yet! Explore the ship to find it.");
+                stayHere();
+                waitThenCall(locationB);
+            }
+                            
+        }else {
             stayHere();
             waitThenCall(locationB);
         }
@@ -78,6 +154,15 @@ function locationC() {
             locationA();
         }else if (input.toLowerCase() === "library") {
             locationE();
+        } else if (input.toLowerCase() === "map"){
+            if (allowMap == true) {
+                drawMap();
+            } else {  
+                print("\t\nYou don't have a map yet! Explore the ship to find it.");
+                stayHere();
+                waitThenCall(locationC);
+            }  
+                
         }else {
             stayHere();
             waitThenCall(locationC);
@@ -99,7 +184,15 @@ function locationD() {
             locationD();
         }else if (input.toLowerCase() === "cafeteria") {
             locationB();
-        } else {
+        } else if (input.toLowerCase() === "map"){
+            if (allowMap == true) {
+                drawMap();
+            }
+            else {
+                print("\t\nYou don't have a map yet! Explore the ship to find it.");
+                stayHere();
+                waitThenCall(locationD);
+            }  
             stayHere();
             waitThenCall(locationD);
         }
@@ -116,9 +209,19 @@ function locationE() {
     function processInput(input){
         if (input.toLowerCase() === "lookaround") {
             print("\nYou look around the library and find a book about the ship. Inside, you find a map of the ship that shows where all the rooms are!");
+            allowMap = true;
             locationE();
         }else if (input.toLowerCase() === "engineroom") {
             locationC();
+        } else if (input.toLowerCase() === "map"){
+            if (allowMap == true) {
+                drawMap();
+            }
+                else {
+                    print("\t\nYou don't have a map yet! Explore the ship to find it.");
+                    stayHere();
+                    waitThenCall(locationE);
+                }
         } else {
             stayHere();
             waitThenCall(locationE);

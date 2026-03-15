@@ -1,0 +1,276 @@
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1f2937, #111827);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #111827;
+  display: flex;
+  flex-direction: column;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0 auto;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+}
+
+table, th, td {
+  padding: 4px 8px;
+  text-align: center;
+  font-size: clamp(0.8rem, 2vw, 1.2rem);
+}
+
+tbody tr:nth-child(even) {
+  background: #f9fafb;
+}
+
+th {
+  background: #374151;
+  color: white;
+  font-weight: 600;
+}
+
+td {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+table h2, #stats h2 {
+  margin: 0;
+  font-weight: 700;
+  color: #111827;
+  font-size: clamp(0.75rem, 1.8vw, 1.1rem);
+}
+
+#map {
+  flex: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url(map.png);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+#bar {
+  flex: 40vh;
+  display: flex;
+  gap: 0;
+  background: #111827;
+}
+
+#stats {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: rgba(255,255,255,0.05);
+}
+
+#stats > div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2px;
+  background: #ffffff;
+}
+
+#money {
+  background: linear-gradient(135deg, #059669, #047857);
+}
+
+#year, #month, #fans {
+  background: #f3f4f6;
+}
+
+#inventory {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: rgba(255,255,255,0.05);
+}
+
+#inv {
+  flex: 1;
+  overflow: auto;
+  display: none;
+}
+
+#inv table {
+  height: 100%;
+  margin-bottom: 4px;
+}
+
+#inventory .car-buttons {
+  display: flex;
+  gap: 4px;
+  height: 28px;
+}
+
+#inventory .car-buttons button {
+  flex: 1;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  height: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#buysellmenu {
+  flex: 1;
+  display: flex;
+  background: #f8fafc;
+  padding: 2px;
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+#items {
+  display: contents;
+}
+
+#items tr {
+  display: flex;
+  height: 28%;
+  gap: 0;
+}
+
+#items td {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  border: none;
+}
+
+#items button {
+  flex: 1;
+  height: 100%;
+  font-size: clamp(0.6rem, 1.2vw, 0.75rem);
+  padding: 1px 2px;
+  border: 1px solid #d1d5db;
+  background: #f3f4f6;
+  color: #374151;
+  cursor: pointer;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#items button:hover {
+  background: #e5e7eb;
+}
+
+#items input {
+  flex: 1;
+  height: 100%;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  text-align: center;
+  font-size: clamp(0.8rem, 1.5vw, 1rem);
+  font-weight: 700;
+  color: #111827;
+  padding: 0 4px;
+}
+
+button {
+  background: #059669;
+  color: white;
+  border: 1px solid #059669;
+  padding: 4px 8px;
+  font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  margin: 1px;
+  border-radius: 3px;
+  transition: background 0.2s;
+}
+
+button:hover {
+  background: #047857;
+}
+
+#inventory-popup {
+  position: fixed;
+  top: 0;
+  right: -400px;
+  width: 400px;
+  height: 100vh;
+  background: rgba(17, 24, 39, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: -4px 0 20px rgba(0,0,0,0.5);
+  z-index: 1000;
+  transition: right 0.3s ease;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+#inventory-popup.open {
+  right: 0;
+}
+
+#inventory-popup table {
+  flex: 1;
+  margin: 20px 0;
+}
+
+#inventory-popup .popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+  padding-bottom: 10px;
+}
+
+#inventory-popup h3 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+#inventory-popup .car-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+  #bar {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  #stats, #inventory, #buysellmenu {
+    width: 100%;
+    padding: 8px;
+  }
+  
+  #items tr {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  #items td {
+    height: 25%;
+  }
+}
