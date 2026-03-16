@@ -19,6 +19,7 @@ let deckDiscovered = false;
 let allowMap = false;
 let coldMoves = 0;
 let cold = false;
+let randomKill = 0;
 
 //If you need, add any "helper" functions here
 
@@ -78,7 +79,7 @@ function drawMap(){
 function locationA() {
     if (cold){
         coldMoves++;
-        if (coldMoves >= 3){
+        if (coldMoves >= 4){
             print("\t\nYou have been exposed to the cold for too long and have died of hypothermia. You lose!");
             food = false;
             ID = false;
@@ -128,7 +129,7 @@ function locationA() {
 function locationB() {
     if (cold){
         coldMoves++;
-        if (coldMoves >= 3){
+        if (coldMoves >= 4){
             print("\t\nYou have been exposed to the cold for too long and have died of hypothermia. You lose!");
             food = false;
             ID = false;
@@ -183,7 +184,7 @@ function locationC() {
     }
     if (cold){
         coldMoves++;
-        if (coldMoves >= 3){
+        if (coldMoves >= 4){
             print("\t\nYou have been exposed to the cold for too long and have died of hypothermia. You lose!");
             food = false;
             ID = false;
@@ -226,7 +227,7 @@ function locationC() {
 function locationD() {
     if (cold){
         coldMoves++;
-        if (coldMoves >= 3){
+        if (coldMoves >= 4){
             print("\t\nYou have been exposed to the cold for too long and have died of hypothermia. You lose!");
             food = false;
             ID = false;
@@ -240,6 +241,15 @@ function locationD() {
         "\t\n\t\tExplore\t\n\t\tCafeteria\t\n\t\nMap (to see discovered rooms)\t\n\t\nSwim (to get a fishing rod)");
             
     function processInput(input){
+        randomKill = Math.floor(Math.random() * 5);
+        if (randomKill === 0){
+            print("\t\nA sudden storm hits the ship and you get swept overboard and drown. You lose!");
+            food = false;
+            ID = false;
+            key = false;
+            waitThenCall(start);
+        }
+        
         if (input.toLowerCase() === "explore") {
             print("\nYou look around the deck and around the cargo. After a while, you see something shiny wedged under a metal panel. You found the key! You can now escape the ship!");
             key = true;
@@ -274,7 +284,7 @@ function locationD() {
 function locationE() {
     if (cold){
         coldMoves++;
-        if (coldMoves >= 3){
+        if (coldMoves >= 4){
             print("\t\nYou have been exposed to the cold for too long and have died of hypothermia. You lose!");
             food = false;
             ID = false;
