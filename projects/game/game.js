@@ -17,6 +17,8 @@ let engineRoomDiscovered = true;
 let libraryDiscovered = true;
 let deckDiscovered = false;
 let allowMap = false;
+let coldMoves = 0;
+let cold = false;
 
 //If you need, add any "helper" functions here
 
@@ -74,7 +76,16 @@ function drawMap(){
 
 //Make one function for each location
 function locationA() {
-
+    if (cold){
+        coldMoves++;
+        if (coldMoves >= 3){
+            print("\t\nYou have been exposed to the cold for too long and have died of hypothermia. You lose!");
+            food = false;
+            ID = false;
+            key = false;
+            waitThenCall(start);
+        }
+    }
     if (food && ID && key) {
         clear();
         print("\t\nYou have all the items you need to escape the ship! You use the key to open the escape pod and get out of the ship.");
@@ -105,6 +116,9 @@ function locationA() {
             }else {
                 stayHere();
                 waitThenCall(locationA);
+                if (cold){
+                    coldMoves--;
+                }
             }
         }
         waitForInput(processInput);
@@ -112,6 +126,16 @@ function locationA() {
 }
 
 function locationB() {
+    if (cold){
+        coldMoves++;
+        if (coldMoves >= 3){
+            print("\t\nYou have been exposed to the cold for too long and have died of hypothermia. You lose!");
+            food = false;
+            ID = false;
+            key = false;
+            waitThenCall(start);
+        }
+    }
     clear();
     print("\t\nYou are in the Cafeteria!");
     print("\t\nWould you like to get some food?");
@@ -120,7 +144,9 @@ function locationB() {
     deckDiscovered = true;
     function processInput(input){
         if (input.toLowerCase() === "get food" || input.toLowerCase() === "getfood") {
-            food = true;
+            if (!food) {
+                food = true;
+            }
             print("\t\nYou pick up some food! (food obtained)");
             locationB();
         } else if (input.toLowerCase() === "bridge") {
@@ -139,14 +165,32 @@ function locationB() {
         }else {
             stayHere();
             waitThenCall(locationB);
+            if (cold){
+                coldMoves--;    
+            }
         }
     }
     waitForInput(processInput);
 }
 
 function locationC() {
+    
     clear();
     print("\t\nYou are in the Engine Room!")
+    if (cold){
+        print("\t\nBy a spark of luck, the engines are still hot and provide some heat to warm you up, you are no longer cold.")
+        cold = false;
+    }
+    if (cold){
+        coldMoves++;
+        if (coldMoves >= 3){
+            print("\t\nYou have been exposed to the cold for too long and have died of hypothermia. You lose!");
+            food = false;
+            ID = false;
+            key = false;
+            waitThenCall(start);
+        }
+    }
     print("\t\nWhere do you want to go next? Say one of these choices:" +
         "\t\n\t\tLookAround\t\n\t\tBridge\t\n\t\tLibrary");
             
@@ -171,12 +215,25 @@ function locationC() {
         }else {
             stayHere();
             waitThenCall(locationC);
+            if (cold){
+                coldMoves--;    
+            }
         }
     }
     waitForInput(processInput);
 }
 
 function locationD() {
+    if (cold){
+        coldMoves++;
+        if (coldMoves >= 3){
+            print("\t\nYou have been exposed to the cold for too long and have died of hypothermia. You lose!");
+            food = false;
+            ID = false;
+            key = false;
+            waitThenCall(start);
+        }
+    }
     clear();
     print("\t\nYou are on the Deck!");
     print("\t\nWhere do you want to go next? Say one of these choices:" +
@@ -198,14 +255,16 @@ function locationD() {
                 print("\t\nYou don't have a map yet! Explore the ship to find it.");
                 stayHere();
                 waitThenCall(locationD);
+                if (cold){
+                    coldMoves--;
+                }
             }
         } else {
-            print("\t\nYou don't have a map yet! Explore the ship to find it.");
             stayHere();
             waitThenCall(locationD);
-        }  
-            stayHere();
-            waitThenCall(locationD);
+            if (cold){
+                coldMoves--;    
+            }
         }
         waitForInput(processInput);
     }
@@ -213,6 +272,16 @@ function locationD() {
     
 
 function locationE() {
+    if (cold){
+        coldMoves++;
+        if (coldMoves >= 3){
+            print("\t\nYou have been exposed to the cold for too long and have died of hypothermia. You lose!");
+            food = false;
+            ID = false;
+            key = false;
+            waitThenCall(start);
+        }
+    }
     clear();
     print("\t\nYou are in the Library!");
     print("\t\nWhere do you want to go next? Say one of these choices:" +
@@ -236,10 +305,16 @@ function locationE() {
                     print("\t\nYou don't have a map yet! Explore the ship to find it.");
                     stayHere();
                     waitThenCall(locationE);
+                    if (cold){
+                        coldMoves--;
+                    }
                 }
         } else {
             stayHere();
             waitThenCall(locationE);
+            if (cold){
+                coldMoves--;    
+            }
         }
     }
     waitForInput(processInput);
@@ -298,8 +373,13 @@ function takeASwim(){
     print("\t\nA or B?")
     if (input.toLowerCase() === "a"){
         print("\t\nYou swim to the fishing rod and grab it. You can now use it to catch some fish for food!");
-        food = true;
+        if (!food) {
+            food = true;
+        }
+        print("\t\nYou swim back to the ship with the fishing rod. The only issue is that you are now freezing and need to find a source of heat, and hurry!");
+
         locationD();
+        cold = true;
     } else if (input.toLowerCase() === "b"){
         print("\t\nYou swim back to the ship, but you get caught in some fishing nets and drown. You lose!");
         food = false;
@@ -310,4 +390,5 @@ function takeASwim(){
         stayHere();
         waitThenCall(takeASwim);
     }
+}
 }
