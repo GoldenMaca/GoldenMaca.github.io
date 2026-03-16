@@ -180,7 +180,7 @@ function locationD() {
     clear();
     print("\t\nYou are on the Deck!");
     print("\t\nWhere do you want to go next? Say one of these choices:" +
-        "\t\n\t\tExplore\t\n\t\tCafeteria");
+        "\t\n\t\tExplore\t\n\t\tCafeteria\t\n\t\nMap (to see discovered rooms)\t\n\t\nSwim (to get a fishing rod)");
             
     function processInput(input){
         if (input.toLowerCase() === "explore") {
@@ -189,21 +189,28 @@ function locationD() {
             locationD();
         }else if (input.toLowerCase() === "cafeteria") {
             locationB();
-        } else if (input.toLowerCase() === "map"){
+        } else if (input.toLowerCase() === "swim") {
+            takeASwim();
+        } else if (input.toLowerCase() === "map") {
             if (allowMap == true) {
                 drawMap();
-            }
-            else {
+            } else {
                 print("\t\nYou don't have a map yet! Explore the ship to find it.");
                 stayHere();
                 waitThenCall(locationD);
-            }  
+            }
+        } else {
+            print("\t\nYou don't have a map yet! Explore the ship to find it.");
+            stayHere();
+            waitThenCall(locationD);
+        }  
             stayHere();
             waitThenCall(locationD);
         }
+        waitForInput(processInput);
     }
-    waitForInput(processInput);
-}
+    
+    
 
 function locationE() {
     clear();
@@ -283,4 +290,24 @@ function endgame() {
         }
     }
     waitForInput(processInput);
+}
+
+function takeASwim(){
+    print("\t\nYou jump off of the deck into the ocean. The water is freezing and you start to shiver. You catch sight of the fishing rod");
+    print("\t\nSwim to it or Swim back to the ship?");
+    print("\t\nA or B?")
+    if (input.toLowerCase() === "a"){
+        print("\t\nYou swim to the fishing rod and grab it. You can now use it to catch some fish for food!");
+        food = true;
+        locationD();
+    } else if (input.toLowerCase() === "b"){
+        print("\t\nYou swim back to the ship, but you get caught in some fishing nets and drown. You lose!");
+        food = false;
+        ID = false;
+        key = false;
+        waitThenCall(start);
+    } else {
+        stayHere();
+        waitThenCall(takeASwim);
+    }
 }
