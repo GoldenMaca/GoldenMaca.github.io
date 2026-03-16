@@ -6,6 +6,11 @@ var food = false;
 var ID = false;
 var key = false;
 
+//BUGS 
+//Look around function doesnt work for any of them, library, deck, or engine room.
+//Idk if map works or not, but it should work fine. Idk because I cant find it in library.
+//get food doesnt work in cafeteria.
+
 let bridgeDiscovered = true;
 let cafeteriaDiscovered = true;
 let engineRoomDiscovered = true;
@@ -204,13 +209,16 @@ function locationE() {
     clear();
     print("\t\nYou are in the Library!");
     print("\t\nWhere do you want to go next? Say one of these choices:" +
-        "\t\n\t\tLookaround\t\n\t\tEngineRoom");
+        "\t\n\t\tLookaround\t\n\t\tEngineRoom\t\n\t\tBridge");
     
     function processInput(input){
         if (input.toLowerCase() === "lookaround") {
             print("\nYou look around the library and find a book about the ship. Inside, you find a map of the ship that shows where all the rooms are!");
             allowMap = true;
             locationE();
+        }else if (input.toLowerCase() === "bridge") {
+            locationA();
+        
         }else if (input.toLowerCase() === "engineroom") {
             locationC();
         } else if (input.toLowerCase() === "map"){
@@ -250,13 +258,22 @@ function endgame() {
     function processInput(input){
         if (input.toLowerCase() === "north") {
             print("\t\nYou set the course to North, but you end up crashing into an iceberg and sinking. You lose!");
-            gameActive = false;
+            food = false;
+            ID = false;
+            key = false;
+            waitThenCall(start);
         }else if (input.toLowerCase() === "south") {
             print("\t\nYou set the course to South, but you end up crashing into a reef and sinking. You lose!");
-            gameActive = false;
+            food = false;
+            ID = false;
+            key = false;
+            waitThenCall(start);
         }else if (input.toLowerCase() === "east") {
             print("\t\nYou set the course to East, but you end up crashing into a pirate ship and getting captured. You lose!");
-            gameActive = false;
+            food = false;
+            ID = false;
+            key = false;
+            waitThenCall(start);
         }else if (input.toLowerCase() === "west") {
             print("\t\nYou set the course to West, and you end up finding a nearby island where you find an airstrip! You find a plane and escape. You win!");
             gameActive = false;

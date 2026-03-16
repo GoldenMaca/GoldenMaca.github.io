@@ -14,22 +14,7 @@ let rm511Discovered = false;
 let bathroomDiscovered = false; 
 
 
-// Game functions
-function check_time() {
-    clear();
-    minutes++;
-    
-    if (minutes >= 15) {
-        tardy();
-        return false;
-    } else {
-        drawMap();
-        print("---");
-        print("It is 7:" + (45+minutes) + ". Class starts in " + (15 - minutes) + " minutes");
-        print("---");
-        return true;
-    }
-}
+
 
 function drawMap(){
     let map = ``;
