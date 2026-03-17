@@ -1,3 +1,20 @@
+var food = false; - If you have the food to survive the trip
+var ID = false;
+var key = false;
+
+let bridgeDiscovered = true;
+let cafeteriaDiscovered = true;
+let engineRoomDiscovered = true;
+let libraryDiscovered = true;
+let deckDiscovered = false;
+let allowMap = false;
+let coldMoves = 0;
+let cold = false;
+let randomKill = 0;
+
+
+
+
 #Day 1
 Today, started by adding all the necessary files and folders to the projects page. This mainly consisted of copy and pasting the code from Mr Chris' file. This was all I did today.
 
@@ -35,3 +52,6 @@ I figured out an issue with my 'get food' input in the cafeteria, I thought it w
 I noticed my commits arent working but Mr Chris reassured me they would be saved locally. 
 I still havent solved some of the errors, mostly having to do with the input 'swim' on the deck leading to the 'takeASwim();' funciton. Pretty much ALL of the 'look around' inputs are broken and Im not sure how to fix it.
 I am going to submit it as is, but I hope that I can fix these issues because I want to play my game.
+
+#Day 7(after submission)
+I think I fixed some of my issues and i added a parameter to 'waitThenCall();' that allows to wait longer, for example if I have a longer text.  There are a bunch of issues that Im so confused on and I am going to ask Mr Chris and Ethan for help.
