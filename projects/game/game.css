@@ -1,11 +1,12 @@
 body {
     margin: 0;
     padding: 20px;
-    background-color: #1e1e1e;
+    background-color: #25338f;
     font-family: 'Courier New', monospace;
-    color: #009dff;
+    color: #000000;
     height: 100vh;
     box-sizing: border-box;
+    font-weight: 700;
 }
 
 h1{
@@ -16,6 +17,7 @@ h1{
     background-color:aqua;
     color: black;
     border-radius:5px;
+    font-weight: 700;
 }
 
 #terminal {
@@ -24,9 +26,9 @@ h1{
     flex-direction: column;
     max-width: 80%;
     margin: 0 auto;
-    border: 2px solid #004cff;
+    border: 2px solid #000000;
     padding: 20px;
-    background-color: #000;
+    background-image: url('tanker.jpg');
     overflow: hidden;
 }
 
@@ -43,12 +45,13 @@ h1{
 #input-line {
     display: flex;
     align-items: center;
-    border-top: 1px solid #009dff;
+    border-top: 1px solid #000000;
     padding-top: 10px;
+    font-weight: 700;
 }
 
 .prompt {
-    color: #0b6bb9;
+    color: #000000;
     margin-right: 10px;
     font-weight: bold;
 }
@@ -57,14 +60,16 @@ h1{
     flex: 1;
     background: transparent;
     border: none;
-    color: #009dff;
+    color: #000000;
     font-family: 'Courier New', monospace;
     font-size: 16px;
     outline: none;
+    font-weight: 700;
 }
 
 #user-input::placeholder {
-    color: #0489cb;
+    color: #000000;
+    font-weight: 700;
 }
 
 .ascii-art {

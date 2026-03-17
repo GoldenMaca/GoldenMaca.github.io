@@ -89,21 +89,35 @@ function locationA() {
         print("\t\nYou have all the items you need to escape the ship! You use the key to open the escape pod and get out of the ship.");
         endgame();
         
-    }
-    else {
+    }else if (food && ID) {
+        clear();
+        print("\t\nYou have the food and the ID card, but you still need the key to escape. Keep exploring!");
+        stayHere();
+        waitThenCall(locationB);
+    } else if (food && key) {
+        clear();
+        print("\t\nYou have the food and the key, but you still need the ID card to escape. Keep exploring!");
+        stayHere();
+        waitThenCall(locationB);
+    }else if (ID && key) {
+        clear();
+        print("\t\nYou have the ID card and the key, but you still need the food to escape. Keep exploring!");
+        stayHere();
+        waitThenCall(locationB);
+    }else {
         clear();
         print("\t\nYou are in the Bridge!");
         print("\t\nWhere do you want to go next? Say one of these choices:" +
             "\t\nCafeteria\t\nEngineRoom\t\nLibrary\t\nMap (to see discovered rooms)");
         
         function processInput(input){
-            if (input.toLowerCase() === "cafeteria") {
+            if (input.toLowerCase() == "cafeteria") {
                 locationB();
-            }else if (input.toLowerCase() === "engineroom") {
+            }else if (input.toLowerCase() == "engineroom") {
                 locationC();
-            }else if (input.toLowerCase() === "library") {
+            }else if (input.toLowerCase() == "library") {
                 locationE();
-            } else if (input.toLowerCase() === "map"){
+            } else if (input.toLowerCase() == "map"){
                 if (allowMap == true) {
                     drawMap();
                 } else {
@@ -141,20 +155,20 @@ function locationB() {
         "\t\n\t\tget food\t\n\t\tBridge\t\n\t\tDeck");
     deckDiscovered = true;
     function processInput(input){
-        if (input.toLowerCase() === "get food" || input.toLowerCase() === "getfood") {
+        if (input.toLowerCase() == "get food" || input.toLowerCase() == "getfood") {
             
-            if (!food === true) {
+            if (!food == true) {
                 food = true;
                 print("\t\nYou pick up some food! (food obtained)");
             }else {
                 print("\t\nYou already have food, you don't need to get more!");
             }
             waitThenCall(locationB);
-        } else if (input.toLowerCase() === "bridge") {
+        } else if (input.toLowerCase() == "bridge") {
             locationA();
-        } else if (input.toLowerCase() === "deck") {
+        } else if (input.toLowerCase() == "deck") {
             locationD();
-        } else if (input.toLowerCase() === "map"){
+        } else if (input.toLowerCase() == "map"){
             if (allowMap == true) {
                 drawMap();
             } else {
@@ -196,15 +210,15 @@ function locationC() {
         "\t\n\t\tLookAround\t\n\t\tBridge\t\n\t\tLibrary");
             
     function processInput(input){
-        if (input.toLowerCase() === "lookaround") {
+        if (input.toLowerCase() == "lookaround") {
             print("\nYou look around the engine room and find a small panel that you can open. Inside, you find the captain ID card!");
             ID = true;
-            locationC();
-        }else if (input.toLowerCase() === "bridge") {
+            waitThenCall(locationC);
+        }else if (input.toLowerCase() == "bridge") {
             locationA();
-        }else if (input.toLowerCase() === "library") {
+        }else if (input.toLowerCase() == "library") {
             locationE();
-        } else if (input.toLowerCase() === "map"){
+        } else if (input.toLowerCase() == "map"){
             if (allowMap == true) {
                 drawMap();
             } else {  
@@ -235,36 +249,37 @@ function locationD() {
             waitThenCall(start);
         }
     }
+    
+    randomKill = Math.floor(Math.random() * 5);
+    if (randomKill == 0){
+        print("\t\nA sudden storm hits the ship and you get swept overboard and drown. You lose!");
+        food = false;
+        ID = false;
+        key = false;
+        waitThenCall(start);
+    }
     clear();
     print("\t\nYou are on the Deck!");
     print("\t\nWhere do you want to go next? Say one of these choices:" +
         "\t\n\t\tExplore\t\n\t\tCafeteria\t\n\t\nMap (to see discovered rooms)\t\n\t\nSwim (to get a fishing rod)");
             
     function processInput(input){
-        randomKill = Math.floor(Math.random() * 5);
-        if (randomKill === 0){
-            print("\t\nA sudden storm hits the ship and you get swept overboard and drown. You lose!");
-            food = false;
-            ID = false;
-            key = false;
-            waitThenCall(start);
-        }
         
-        if (input.toLowerCase() === "explore") {
+        if (input.toLowerCase() == "explore") {
             print("\nYou look around the deck and around the cargo. After a while, you see something shiny wedged under a metal panel. You found the key! You can now escape the ship!");
             key = true;
             waitThenCall(locationD);
-        }else if (input.toLowerCase() === "cafeteria") {
+        }else if (input.toLowerCase() == "cafeteria") {
             locationB();
-        } else if (input.toLowerCase() === "swim") {
+        } else if (input.toLowerCase() == "swim") {
             takeASwim();
-        } else if (input.toLowerCase() === "map") {
+        } else if (input.toLowerCase() == "map") {
             if (allowMap == true) {
                 drawMap();
             } else {
                 print("\t\nYou don't have a map yet! Explore the ship to find it.");
                 stayHere();
-                waitThenCall(locationD());
+                waitThenCall(locationD);
                 if (cold){
                     coldMoves--;
                 }
@@ -297,16 +312,16 @@ function locationE() {
         "\t\n\t\tLookaround\t\n\t\tEngineRoom\t\n\t\tBridge");
     
     function processInput(input){
-        if (input.toLowerCase() === "lookaround") {
+        if (input.toLowerCase() == "lookaround") {
             print("\nYou look around the library and find a book about the ship. Inside, you find a map of the ship that shows where all the rooms are!");
             allowMap = true;
             waitThenCall(locationE);
-        }else if (input.toLowerCase() === "bridge") {
+        }else if (input.toLowerCase() == "bridge") {
             locationA();
         
-        }else if (input.toLowerCase() === "engineroom") {
+        }else if (input.toLowerCase() == "engineroom") {
             locationC();
-        } else if (input.toLowerCase() === "map"){
+        } else if (input.toLowerCase() == "map"){
             if (allowMap == true) {
                 drawMap();
             } else {
@@ -346,25 +361,25 @@ function endgame() {
     print("\t\nYou now have control of the vessel, you can set the course, but which direction will you go? North, South, East, or West?");
     
     function processInput(input){
-        if (input.toLowerCase() === "north") {
+        if (input.toLowerCase() == "north") {
             print("\t\nYou set the course to North, but you end up crashing into an iceberg and sinking. You lose!");
             food = false;
             ID = false;
             key = false;
             waitThenCall(start);
-        }else if (input.toLowerCase() === "south") {
+        }else if (input.toLowerCase() == "south") {
             print("\t\nYou set the course to South, but you end up crashing into a reef and sinking. You lose!");
             food = false;
             ID = false;
             key = false;
             waitThenCall(start);
-        }else if (input.toLowerCase() === "east") {
+        }else if (input.toLowerCase() == "east") {
             print("\t\nYou set the course to East, but you end up crashing into a pirate ship and getting captured. You lose!");
             food = false;
             ID = false;
             key = false;
             waitThenCall(start);
-        }else if (input.toLowerCase() === "west") {
+        }else if (input.toLowerCase() == "west") {
             print("\t\nYou set the course to West, and you end up finding a nearby island where you find an airstrip! You find a plane and escape. You win!");
             gameActive = false;
         }else {
@@ -381,7 +396,7 @@ function takeASwim(){
     print("\t\nA or B?");
     
     function processInput(input) {
-        if (input.toLowerCase() === "a"){
+        if (input.toLowerCase() == "a"){
             print("\t\nYou swim to the fishing rod and grab it. You can now use it to catch some fish for food!");
             if (!food) {
                 food = true;
@@ -389,7 +404,7 @@ function takeASwim(){
             print("\t\nYou swim back to the ship with the fishing rod. The only issue is that you are now freezing and need to find a source of heat, and hurry!");
             cold = true;
             locationD();
-        } else if (input.toLowerCase() === "b"){
+        } else if (input.toLowerCase() == "b"){
             print("\t\nYou swim back to the ship, but you get caught in some fishing nets and drown. You lose!");
             food = false;
             ID = false;
