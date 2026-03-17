@@ -63,10 +63,7 @@ function drawMap(){
                       | Deck |
                       --------`;
     
-
-    
-        printAscii(map);
-    
+    printAscii(map);
 }
 
 
@@ -145,11 +142,14 @@ function locationB() {
     deckDiscovered = true;
     function processInput(input){
         if (input.toLowerCase() === "get food" || input.toLowerCase() === "getfood") {
-            if (!food) {
+            
+            if (!food === true) {
                 food = true;
+                print("\t\nYou pick up some food! (food obtained)");
+            }else {
+                print("\t\nYou already have food, you don't need to get more!");
             }
-            print("\t\nYou pick up some food! (food obtained)");
-            locationB();
+            waitThenCall(locationB);
         } else if (input.toLowerCase() === "bridge") {
             locationA();
         } else if (input.toLowerCase() === "deck") {
@@ -253,7 +253,7 @@ function locationD() {
         if (input.toLowerCase() === "explore") {
             print("\nYou look around the deck and around the cargo. After a while, you see something shiny wedged under a metal panel. You found the key! You can now escape the ship!");
             key = true;
-            locationD();
+            waitThenCall(locationD);
         }else if (input.toLowerCase() === "cafeteria") {
             locationB();
         } else if (input.toLowerCase() === "swim") {
@@ -264,7 +264,7 @@ function locationD() {
             } else {
                 print("\t\nYou don't have a map yet! Explore the ship to find it.");
                 stayHere();
-                waitThenCall(locationD);
+                waitThenCall(locationD());
                 if (cold){
                     coldMoves--;
                 }
@@ -276,10 +276,9 @@ function locationD() {
                 coldMoves--;    
             }
         }
-        waitForInput(processInput);
+    waitForInput(processInput);
     }
-    
-    
+}
 
 function locationE() {
     if (cold){
@@ -301,7 +300,7 @@ function locationE() {
         if (input.toLowerCase() === "lookaround") {
             print("\nYou look around the library and find a book about the ship. Inside, you find a map of the ship that shows where all the rooms are!");
             allowMap = true;
-            locationE();
+            waitThenCall(locationE);
         }else if (input.toLowerCase() === "bridge") {
             locationA();
         
@@ -310,15 +309,14 @@ function locationE() {
         } else if (input.toLowerCase() === "map"){
             if (allowMap == true) {
                 drawMap();
-            }
-                else {
-                    print("\t\nYou don't have a map yet! Explore the ship to find it.");
-                    stayHere();
-                    waitThenCall(locationE);
-                    if (cold){
-                        coldMoves--;
-                    }
+            } else {
+                print("\t\nYou don't have a map yet! Explore the ship to find it.");
+                stayHere();
+                waitThenCall(locationE);
+                if (cold){
+                    coldMoves--;
                 }
+            }
         } else {
             stayHere();
             waitThenCall(locationE);
@@ -380,25 +378,27 @@ function endgame() {
 function takeASwim(){
     print("\t\nYou jump off of the deck into the ocean. The water is freezing and you start to shiver. You catch sight of the fishing rod");
     print("\t\nSwim to it or Swim back to the ship?");
-    print("\t\nA or B?")
-    if (input.toLowerCase() === "a"){
-        print("\t\nYou swim to the fishing rod and grab it. You can now use it to catch some fish for food!");
-        if (!food) {
-            food = true;
+    print("\t\nA or B?");
+    
+    function processInput(input) {
+        if (input.toLowerCase() === "a"){
+            print("\t\nYou swim to the fishing rod and grab it. You can now use it to catch some fish for food!");
+            if (!food) {
+                food = true;
+            }
+            print("\t\nYou swim back to the ship with the fishing rod. The only issue is that you are now freezing and need to find a source of heat, and hurry!");
+            cold = true;
+            locationD();
+        } else if (input.toLowerCase() === "b"){
+            print("\t\nYou swim back to the ship, but you get caught in some fishing nets and drown. You lose!");
+            food = false;
+            ID = false;
+            key = false;
+            waitThenCall(start);
+        } else {
+            stayHere();
+            waitThenCall(takeASwim);
         }
-        print("\t\nYou swim back to the ship with the fishing rod. The only issue is that you are now freezing and need to find a source of heat, and hurry!");
-
-        locationD();
-        cold = true;
-    } else if (input.toLowerCase() === "b"){
-        print("\t\nYou swim back to the ship, but you get caught in some fishing nets and drown. You lose!");
-        food = false;
-        ID = false;
-        key = false;
-        waitThenCall(start);
-    } else {
-        stayHere();
-        waitThenCall(takeASwim);
     }
-}
+    waitForInput(processInput);
 }
