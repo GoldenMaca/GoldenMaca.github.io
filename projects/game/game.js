@@ -87,7 +87,9 @@ function locationA() {
     if (food && ID && key) {
         clear();
         print("\t\nYou have all the items you need to escape the ship! You use the key to open the escape pod and get out of the ship.");
+
         endgame();
+        waitForInput(processInput)
         
     }else if (food && ID) {
         clear();
@@ -168,6 +170,8 @@ function locationB() {
             locationA();
         } else if (input.toLowerCase() == "deck") {
             locationD();
+        }else if (input.toLowerCase() == "engineroom") {
+            locationC();
         } else if (input.toLowerCase() == "map"){
             if (allowMap == true) {
                 drawMap();
