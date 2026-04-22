@@ -9,17 +9,22 @@ let y = Math.random()*800 + 5;
 let x2 = Math.random()*800;
 let y2 = Math.random()*800 + 5;
 
+const balls = [];
 
 let dx = 2;
 let dy = -2;
 let dx2 = 2;
 let dy2 = -2;
 
-const ball = {
-    x: Math.random()*800,
-    y: Math.random()*800 + 5,
-    dx: 2,
-    dy: -2
+for(i = 0; i < 100; i++){
+    const ball = {
+        x: Math.random()*800,
+        y: Math.random()*800 + 5,
+        dx: 2,
+        dy: -2
+    }
+
+    balls.push(ball);
 }
 
 const paddleHeight = 10;
@@ -69,10 +74,13 @@ document.addEventListener("keydown", keyDownHandler);
 document.addEventListener("keyup", keyUpHandler);
 
 function drawBall() {
-  ctx.beginPath();
-  ctx.arc(ball.x, ball.y, ballRadius, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.closePath();
+  for(const ball of balls){
+    ctx.beginPath();
+    ctx.arc(ball.x, ball.y, ballRadius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.closePath();
+  }
+  
 }
 function drawBall2() {
   ctx.beginPath();
@@ -88,21 +96,13 @@ function drawPaddle() {
 }
 
 function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  for(i = 0; i < 100; i++){
-    drawBall();
-  }
+
   drawBall();
   drawBall2();
   drawPaddle();
   drawBricks();
 
-  if (ball.x + ball.dx > canvas.width - ballRadius || ball.x + ball.dx < ballRadius) {
-    ball.dx = -ball.dx;
-  }
-  if (ball.y + ball.dy < ballRadius || ball.y +ball.dy > canvas.height - ballRadius) {
-    ball.dy = -ball.dy;
-  }
+  
   if (x2 + dx2 > canvas.width - ballRadius || x2 + dx2 < ballRadius) {
     dx2 = -dx2;
   }
@@ -116,9 +116,19 @@ function draw() {
     paddleX -= 7;
   }
 
+  for(const ball of balls){
+
+    if (ball.x + ball.dx > canvas.width - ballRadius || ball.x + ball.dx < ballRadius) {
+    ball.dx = -ball.dx;
+  }
+  if (ball.y + ball.dy < ballRadius || ball.y +ball.dy > canvas.height - ballRadius) {
+    ball.dy = -ball.dy;
+  }
+    ball.x += ball.dx;
+    ball.y += ball.dy;
+  }
   //move the ball
-  ball.x += ball.dx;
-  ball.y += ball.dy;
+  
 
   x2 += dx2;
   y2 += dy2;

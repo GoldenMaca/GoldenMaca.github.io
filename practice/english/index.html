@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Site - Group Members, Goal &amp; Why Care</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <div class="topnav">
+            <div class="link-holder active" onclick="switchTab('members')">
+                <a href="#">Group Members (3)</a>
+            </div>
+            <div class="link-holder" onclick="switchTab('goal')">
+                <a href="#">Our Goal</a>
+            </div>
+            <div class="link-holder" onclick="switchTab('care')">
+                <a href="#">Why You Should Care</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Group Members Tab -->
+        <div id="members" class="tab-content active">
+            <h1>Meet Our Group Members</h1>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            
+            <div class="placeholder-grid">
+                <div class="member-card">
+                    <h3>Member 1: John Doe</h3>
+                    <p><strong>Role:</strong> Lead Developer</p>
+                    <p><strong>Background:</strong> 5+ years in web development, specializes in responsive design.</p>
+                    <p><strong>Fun Fact:</strong> Avid hiker and open-source contributor.</p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam.</p>
+                </div>
+                <div class="member-card">
+                    <h3>Member 2: Jane Smith</h3>
+                    <p><strong>Role:</strong> Designer</p>
+                    <p><strong>Background:</strong> Expert in UI/UX with Adobe Creative Suite proficiency.</p>
+                    <p><strong>Fun Fact:</strong> Coffee enthusiast and digital artist.</p>
+                    <p>Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                </div>
+                <div class="member-card">
+                    <h3>Member 3: Alex Johnson</h3>
+                    <p><strong>Role:</strong> Project Manager</p>
+                    <p><strong>Background:</strong> Agile certified, experienced in team coordination.</p>
+                    <p><strong>Fun Fact:</strong> Marathon runner and productivity hacker.</p>
+                    <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Our Goal Tab -->
+        <div id="goal" class="tab-content">
+            <h1>Our Goal</h1>
+            <p><strong>Primary Objective:</strong> To revolutionize [industry/problem] by delivering innovative solutions that address key challenges faced by our users today.</p>
+            
+            <h2>Key Milestones</h2>
+            <ul>
+                <li>Complete MVP in Q1 2026 with core features implemented.</li>
+                <li>Acquire 10k beta users through targeted outreach.</li>
+                <li>Secure Series A funding based on user growth metrics.</li>
+                <li>Expand to international markets by end of year 2.</li>
+                <li>Achieve profitability within 3 years.</li>
+            </ul>
+            
+            <h2>Vision Statement</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. We envision a world where [vision description]. Our goal is to bridge the gap between [current state] and [future state] through cutting-edge technology and user-centric design. Duis aute irure dolor in reprehenderit.</p>
+            
+            <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        </div>
+
+        <!-- Why You Should Care Tab -->
+        <div id="care" class="tab-content">
+            <h1>Why You Should Care</h1>
+            <p><strong>This matters because:</strong></p>
+            
+            <h2>Problem We're Solving</h2>
+            <p>Today, millions struggle with [specific problem]. Current solutions are inadequate because [reasons]. Our approach changes that by [unique value prop].</p>
+            
+            <h2>Benefits for You</h2>
+            <ul>
+                <li><strong>Save Time:</strong> Automate [task] that currently takes hours.</li>
+                <li><strong>Reduce Costs:</strong> Cut operational expenses by up to 70%.</li>
+                <li><strong>Improve Results:</strong> Achieve [metric improvement]% better outcomes.</li>
+                <li><strong>Future-Proof:</strong> Stay ahead with scalable, adaptable technology.</li>
+                <li><strong>Join Early:</strong> Be part of the next big thing from day one.</li>
+            </ul>
+            
+            <h2>Real Impact</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Imagine a world where [benefit description]. That's what we're building. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</p>
+            
+            <h2>Call to Action</h2>
+            <p><strong>Get involved now:</strong> Sign up for early access, follow our journey, or reach out to collaborate. This is your opportunity to shape the future.</p>
+        </div>
+    </main>
+
+    <footer>
+        <p>&amp;copy; 2025 Your Group Project. All rights reserved. | <a href="#">Contact</a> | <a href="#">Privacy</a></p>
+    </footer>
+
+    <script>
+        function switchTab(tabName) {
+            // Remove active from all
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.link-holder').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Add active to selected
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+            
+            // Update URL hash
+            window.location.hash = tabName;
+        }
+        
+        // Handle hash change for direct links
+        window.addEventListener('hashchange', () => {
+            const tabName = window.location.hash.substring(1);
+            if (tabName) {
+                switchTab(tabName);
+            }
+        });
+        
+        // Init from hash
+        if (window.location.hash) {
+            switchTab(window.location.hash.substring(1));
+        }
+    </script>
+</body>
+</html>
