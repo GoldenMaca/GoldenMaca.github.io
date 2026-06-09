@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0b0f1a" />
+
+  <title>Bio — Colin S</title>
+  <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
+
+  <link rel="stylesheet" href="styles.css" />
+  <script src="script.js" defer></script>
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header" id="top">
+    <nav class="nav" aria-label="Primary">
+      <div class="nav__inner">
+        <a class="brand" href="index.html" aria-label="Go to top">
+          <span class="brand__mark" aria-hidden="true"></span>
+          <span class="brand__text">Colin S</span>
+        </a>
+
+        <button class="nav__toggle" type="button" aria-label="Open menu" aria-expanded="false">
+          <span class="nav__toggle-lines" aria-hidden="true"></span>
+        </button>
+
+        <div class="nav__links" role="navigation">
+          <a class="nav__link" href="index.html#about">About</a>
+          <a class="nav__link" href="projects.html">Projects</a>
+          <a class="nav__link" href="bio.html">Bio</a>
+        </div>
+      </div>
+
+      <div class="nav__progress" aria-hidden="true">
+        <div class="nav__progress-bar" id="navProgress"></div>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="section" aria-labelledby="bioPageTitle">
+      <div class="container">
+        <div class="section__head reveal">
+          <h1 class="section__title" id="bioPageTitle">Deeper Bio</h1>
+          <p class="section__desc">
+            Future path, classes I’m taking, and hobbies—written in a personal timeline style.
+          </p>
+        </div>
+
+        <div class="split" style="align-items:start;">
+          <div class="split__left reveal">
+            <div class="card">
+              <h3 class="card__title">Future path</h3>
+              <p class="card__text">
+                My next step is building stronger foundations in programming and advanced math, then using that
+                knowledge to make more interactive projects with polished front-end experiences.
+              </p>
+
+              <div class="divider"></div>
+
+              <h3 class="card__title">Classes I’m taking</h3>
+              <ul class="bullets">
+                <li>Programming (Python / JS fundamentals + projects)</li>
+                <li>Advanced math (problem solving + reasoning)</li>
+                <li>Front-end / UI development (layout, accessibility, responsiveness)</li>
+              </ul>
+
+              <div class="divider"></div>
+
+              <h3 class="card__title">Hobbies</h3>
+              <ul class="bullets">
+                <li>Football</li>
+                <li>Ultimate frisbee</li>
+                <li>Gaming + exploring how mechanics work</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="split__right reveal">
+            <div class="card">
+              <h3 class="card__title">Timeline</h3>
+              <div class="timeline" style="margin-top:12px;">
+                <div class="timeline__item">
+                  <div class="timeline__marker" aria-hidden="true"></div>
+                  <div class="timeline__content">
+                    <p class="timeline__title">Now</p>
+                    <p class="timeline__meta">Practice + improving structure</p>
+                    <p class="timeline__text">
+                      Shipping small demos, tightening UI/UX, and learning deeper programming patterns.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="timeline__item">
+                  <div class="timeline__marker" aria-hidden="true"></div>
+                  <div class="timeline__content">
+                    <p class="timeline__title">Next</p>
+                    <p class="timeline__meta">Math + interactive projects</p>
+                    <p class="timeline__text">
+                      Using advanced math to improve game physics/logic, then translating it into clean visuals.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="timeline__item">
+                  <div class="timeline__marker" aria-hidden="true"></div>
+                  <div class="timeline__content">
+                    <p class="timeline__title">Long-term</p>
+                    <p class="timeline__meta">Full-stack capability</p>
+                    <p class="timeline__text">
+                      Building complete apps—front-end UI, APIs, and back-end logic—while keeping performance in mind.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="divider"></div>
+
+              <details class="project__details" open>
+                <summary class="project__summaryLink">Fun fact (click)</summary>
+                <p class="project__detailsText" style="margin-top:10px;">
+                  I got into a train crash two summers ago.
+                </p>
+              </details>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container footer__inner">
+        <p class="footer__text" id="footerText">© <span id="year"></span> Your Name. Built with HTML • CSS • JavaScript.</p>
+        <div class="footer__mini">
+          <a class="link" href="index.html#top">Back to top</a>
+          <span class="sep" aria-hidden="true">•</span>
+          <a class="link" href="projects.html">Projects</a>
+        </div>
+      </div>
+    </footer>
+  </main>
+</body>
+</html>
+

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+console.log('JS runs');
+const canvas = document.createElement('canvas');
+document.body.appendChild(canvas);
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+const ctx = canvas.getContext('2d');
+ctx.fillStyle = 'lime';
+ctx.fillRect(0,0,canvas.width,canvas.height);
+ctx.fillStyle = 'white';
+ctx.font = '48px Arial';
+ctx.fillText('GREEN SCREEN TEST', 100, 100);
+console.log('Canvas test complete');
+</script>
+</body>
+</html>

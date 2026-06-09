@@ -1,148 +1,332 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Index.html</title>
+	<title>Resume</title>
 	<link rel="stylesheet" href="practice/style.css">
 
 	<link rel="icon" type="image/x-icon" href="/images/favicon.ico">
-	
-<script>
-	//alert("Your computer is going to be permanantly destroyed if you do not pay, you have 24 hours...");	
-</script>
 
+	<script>
+		//alert("Your computer is going to be permanantly destroyed if you do not pay, you have 24 hours...");	
+	</script>
 
-<style>
+	<style>
+		nav {
+			position: sticky;
+			top: 0;
+		}
 
-	nav {
-		position: sticky;
-		top: 0;
-	}
+		.topnav {
+			margin-top: 0;
+			overflow: hidden;
+			position: sticky;
+ 			top: 0;
+			background-color: #ffffff;
+			border-radius: 5px;
+			border: solid 2px #000000;
+			padding: 20px;
+			gap: 40px;
+			display: flex;
+			justify-content: center;
+		}
 
-	.topnav {
-		margin-top: 0;
-		overflow: hidden;
-		position: sticky;
- 		top: 0;
-		background-color: #ffffff;
-		border-radius: 5px;
-		border: solid 2px #000000;
-		padding: 20px;
-		gap: 40px;
-		display: flex;
-		justify-content: center;	
-		
- 
-	}
+		a {
+			color: #000000;
+			text-align: center;
+			text-decoration: none;
+			font-size: 1.5rem;
+			font-family: "Funnel Sans", sans-serif;
+			font-weight: bold;
+		}
 
-	a {
-		color: #000000;
-		text-align: center;
-		text-decoration: none;
-		font-size: 1.5rem;
-		font-family: "Funnel Sans", sans-serif;
-		font-weight: bold;
-	}
+		a:hover {
+			text-decoration: underline;
+			color: darkblue;
+		}
 
-	a:hover {
-		text-decoration: underline;
-		color: darkblue;
-	}
+		.link-holder {
+			align-items: center;
+			justify-content: center;
+			background-color: white;
+			border: 2px solid black;
+			border-radius: 10px;
+			padding: 5px;
 
+			transition: background-color 0.2s ease;
+		}
 
-	.link-holder {
-         align-items: center;
-         justify-content: center;
-         background-color: white;
-         border: 2px solid black;
-         border-radius: 10px;
-		 padding: 5px;
+		.link-holder:hover {
+			transform: background-color 0.2s ease;
+		}
 
-		transition: background-color 0.2s ease;
+		/* Resume layout (simple, no advanced framework) */
+		.page {
+			max-width: 1000px;
+			margin: 0 auto;
+			padding: 20px;
+		}
 
-      }
+		.hero {
+			margin-top: 20px;
+			border: 2px solid #000;
+			border-radius: 10px;
+			padding: 20px;
+			background: #fff;
+		}
 
-	  .link-holder:hover {
-		transform: background-color 0.2s ease;
+		h1 {
+			font-size: 2.2rem;
+			margin: 0 0 10px 0;
+			font-family: "Funnel Sans", sans-serif;
+		}
 
-	  }
+		.sub {
+			margin: 0;
+			font-size: 1.1rem;
+			font-family: "Funnel Sans", sans-serif;
+		}
 
+		.section {
+			margin-top: 18px;
+			border: 2px solid #000;
+			border-radius: 10px;
+			padding: 18px;
+			background: #fff;
+		}
 
-</style>
+		.section h2 {
+			margin: 0 0 10px 0;
+			font-family: "Funnel Sans", sans-serif;
+		}
+
+		.row {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 14px;
+		}
+
+		@media (max-width: 800px) {
+			.row {
+				grid-template-columns: 1fr;
+			}
+		}
+
+		textarea {
+			width: 100%;
+			min-height: 110px;
+			border: 2px solid #000;
+			border-radius: 8px;
+			padding: 12px;
+			font-size: 1rem;
+			font-family: inherit;
+			resize: vertical;
+			outline: none;
+		}
+
+		.small-text {
+			font-size: 0.95rem;
+			margin-top: 6px;
+		}
+
+		.badge {
+			display: inline-block;
+			border: 2px solid #000;
+			border-radius: 999px;
+			padding: 6px 12px;
+			margin: 6px 8px 0 0;
+			font-family: "Funnel Sans", sans-serif;
+			font-weight: bold;
+			background: #fff;
+		}
+
+		.project-grid {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 12px;
+		}
+
+		@media (max-width: 700px) {
+			.project-grid {
+				grid-template-columns: 1fr;
+			}
+		}
+
+		.project-card {
+			border: 2px solid #000;
+			border-radius: 10px;
+			padding: 12px;
+			background: #fff;
+		}
+
+		.project-card h3 {
+			margin: 0 0 6px 0;
+			font-family: "Funnel Sans", sans-serif;
+		}
+
+		.project-card p {
+			margin: 0;
+			line-height: 1.4;
+		}
+
+		.project-card a {
+			font-size: 1rem;
+			font-family: "Funnel Sans", sans-serif;
+		}
+
+		.btn-row {
+			margin-top: 10px;
+			display: flex;
+			gap: 10px;
+			flex-wrap: wrap;
+		}
+
+		button {
+			border: 2px solid #000;
+			background: #fff;
+			border-radius: 10px;
+			padding: 10px 14px;
+			font-size: 1rem;
+			font-family: "Funnel Sans", sans-serif;
+			font-weight: bold;
+			cursor: pointer;
+		}
+
+		button:hover {
+			text-decoration: underline;
+			color: darkblue;
+		}
+	</style>
 </head>
 <body>
-
 	<nav>
 		<div class="topnav">
-			<div class="link-holder"><a href="https://goldenmaca.github.io">Home</a></div>
-			<div class="link-holder"><a href="https://goldenmaca.github.io/about.html">About</a></div>
-			<div class="link-holder"><a href="https://goldenmaca.github.io/projects/recipes/index.html">Recipes</a></div>
-			<div class="link-holder"><a href="https://goldenmaca.github.io/contact.html">Contact</a></div>
-			<div class="link-holder"><a href="https://goldenmaca.github.io/blog.html">Blog</a></div>
+			<div class="link-holder"><a href="#top">Resume</a></div>
+			<div class="link-holder"><a href="#projects">Projects</a></div>
+			<div class="link-holder"><a href="#experience">Experience</a></div>
+			<div class="link-holder"><a href="#contact">Contact</a></div>
 		</div>
 	</nav>
 
+	<div class="page" id="top">
+		<div class="hero">
+			<h1 id="nameOut">Your Name</h1>
+			<p class="sub" id="taglineOut">What you do • What you build • (short tagline)</p>
 
-	<h1>Welcome to my website</h1>
-	<hr>
+			<p class="small-text">Edit mode: type below, then click “Apply”. (No advanced storage—stays on this page.)</p>
 
-	<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/hBuIWNralII?si=U0e9s7T3m2vP0Q4T&amp;start=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-	<p>I like playing football, and ultimate frisbee(which I play for the school team). I like taking vacations with my family</p>
-	<p>I have two <del>dogs</del> cats</p>
-	<p><u>This Word</u> is underlined</p>
-	<hr>
-	<p>This is superscript (2<sup>nd</sup>)</p>
-	<p>This is subscript (O<sub>2</sub>)</p>
-	<hr>
-	<p>When you try to access a non-existent file, you might see the following message: <samp>Error: File not found</samp>.</p>
-	<p><mark>This is highlighted</mark></p>
-	<p><strong>This is bolded</strong></p>
+			<div class="row" style="margin-top: 14px;">
+				<div>
+					<textarea id="nameInput" placeholder="Name">Your Name</textarea>
+					<div class="small-text">Updates the header name.</div>
+				</div>
+				<div>
+					<textarea id="taglineInput" placeholder="Tagline">What you do • What you build • (short tagline)</textarea>
+					<div class="small-text">Updates the sub-header line.</div>
+				</div>
+			</div>
 
-	<div>
+			<div class="btn-row">
+				<button type="button" onclick="applyHeader()">Apply</button>
+				<button type="button" onclick="loadSample()">Load Sample Text</button>
+				<button type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})">Back to top</button>
+			</div>
+		</div>
 
-		<img src="practice/cd.png">
-		<!--Links-->
-		<p><a href="https://goldenmaca.github.io/practice/minimal.html">Check out minimal.html</a></p>
-		<p><a href="https://goldenmaca.github.io/practice/terminal.html">Chech out how to use Terminal</a></p>
+		<div class="section" id="about">
+			<h2>About</h2>
+			<textarea id="aboutInput" placeholder="Write a short intro about yourself...">Write a short intro about yourself here. Mention what you like building, what you’ve learned, and what you want to do next.</textarea>
+			<div class="small-text">Tip: keep it to 3–6 sentences.</div>
+		</div>
+
+		<div class="section" id="projects">
+			<h2>Projects (show off what you made)</h2>
+			<div class="project-grid">
+				<div class="project-card">
+					<h3>Browser-in-Browser (Lumina-style)</h3>
+					<p>True “browser inside browser” using an iframe sandbox UI.</p>
+					<p><a href="browser-vm/lumina-iframe.html" target="_blank">Open</a></p>
+				</div>
+
+				<div class="project-card">
+					<h3>Project #1 Name</h3>
+					<p>One sentence on what it does + why it’s cool.</p>
+					<p><a href="https://goldenmaca.github.io/" target="_blank">Live / Link</a></p>
+				</div>
+				<div class="project-card">
+					<h3>Project #2 Name</h3>
+					<p>One sentence on what it does + what you learned building it.</p>
+					<p><a href="https://goldenmaca.github.io/" target="_blank">Live / Link</a></p>
+				</div>
+				<div class="project-card">
+					<h3>Project #3 Name</h3>
+					<p>One sentence on what it does + any results (users, features, performance, etc.).</p>
+					<p><a href="https://goldenmaca.github.io/" target="_blank">Live / Link</a></p>
+				</div>
+				<div class="project-card">
+					<h3>Project #4 Name</h3>
+					<p>One sentence on what it does + technologies used.</p>
+					<p><a href="https://goldenmaca.github.io/" target="_blank">Live / Link</a></p>
+				</div>
+			</div>
+
+			<div class="small-text" style="margin-top: 12px;">
+				(Replace these cards with your real project names/links.)
+			</div>
+		</div>
+
+		<div class="section" id="experience">
+			<h2>Experience</h2>
+			<div class="row">
+				<div>
+					<textarea id="expInput" placeholder="Jobs / school / freelance / anything...">Write where you’ve worked or what you’ve done (including school projects). Mention responsibilities and achievements.</textarea>
+				</div>
+				<div>
+					<textarea id="skillsInput" placeholder="Skills list">HTML • CSS • JavaScript
+Git • APIs • Game projects • UI/UX basics</textarea>
+				</div>
+			</div>
+		</div>
+
+		<div class="section" id="contact">
+			<h2>Contact</h2>
+			<div class="row">
+				<div>
+					<textarea id="contactInput" placeholder="Email / socials / links...">Email: your@email.com
+LinkedIn: https://...
+GitHub: https://...</textarea>
+				</div>
+				<div>
+					<p class="small-text">Quick tags:</p>
+					<div>
+						<span class="badge">HTML</span>
+						<span class="badge">CSS</span>
+						<span class="badge">JavaScript</span>
+						<span class="badge">Projects</span>
+					</div>
+					<div class="small-text">Replace badges with what you want to be known for.</div>
+				</div>
+			</div>
+		</div>
 	</div>
-		
-	<h1>click at your own expense, i am not responsible for any damages.</h1>
-	<h1>|DEADLY PARROT| ONLY CLICK THIS IF YOU KNOW WHAT YOU ARE DOING</h1>
-	<a href="aspod.py" download>
-  		<img src="/images/parrot.png" alt="W3Schools">
-	</a>
-	
-	<img src="images/elephant.png" usemap="#image-map">
-	
-	<map name="image-map">
-		<area target="" alt="See the Zoo" title="See the Zoo" href="practice/zoo/animals.html" coords="143,70,168,65,197,73,228,69,242,65,264,50,290,45,301,48,314,48,338,42,389,72,407,80,421,87,432,93,442,108,441,129,427,144,412,147,400,133,393,122,348,130,352,147,348,151,305,151,307,188,308,237,281,240,268,196,255,199,253,236,227,241,204,223,164,230,162,242,138,247,135,239,125,245,92,244,97,210,105,189,92,170,85,168,83,153,86,137,100,115,118,90" shape="poly">
-	</map>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
+
+	<script>
+		function applyHeader() {
+			var name = document.getElementById('nameInput').value;
+			var tagline = document.getElementById('taglineInput').value;
+			document.getElementById('nameOut').textContent = name;
+			document.getElementById('taglineOut').textContent = tagline;
+		}
+
+		function loadSample() {
+			document.getElementById('nameInput').value = 'Your Name';
+			document.getElementById('taglineInput').value = 'Front-end builder • JS experiments • Interactive web projects';
+			document.getElementById('aboutInput').value = 'I build simple, interactive web projects and experiments using HTML, CSS, and JavaScript. I like turning ideas into working demos, improving UI details, and learning by shipping. I focus on clean code, readable layouts, and making things that feel fun to use.';
+			document.getElementById('expInput').value = '2022 - Present: Built multiple interactive web projects (games, UI prototypes, tools).\nFocused on: HTML/CSS layout, JavaScript logic, and iterating on features based on feedback.';
+			document.getElementById('skillsInput').value = 'HTML • CSS • JavaScript\nBasic DOM manipulation\nEvent handling\nGame/project experiments\nUI layout + styling';
+			document.getElementById('contactInput').value = 'Email: your@email.com\nGitHub: https://github.com/\nLinkedIn: https://linkedin.com/in/';
+			applyHeader();
+		}
+	</script>
 </body>
 </html>
+

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmos Voyage - Rocket Builder & Space Simulator</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="gameCanvas"></canvas>
+        
+        <!-- Builder UI -->
+        <div id="builder-ui" class="panel hidden">
+            <div class="panel-header">
+                <h2>Vehicle Assembly Building</h2>
+                <button id="launch-btn" class="btn btn-primary">Launch</button>
+            </div>
+            <div class="panel-body">
+                <div id="parts-palette">
+                    <h3>Parts</h3>
+                    <div class="part-category">
+                        <h4>Command</h4>
+                        <div class="part-list" data-category="command"></div>
+                    </div>
+                    <div class="part-category">
+                        <h4>Fuel Tanks</h4>
+                        <div class="part-list" data-category="fuel"></div>
+                    </div>
+                    <div class="part-category">
+                        <h4>Engines</h4>
+                        <div class="part-list" data-category="engine"></div>
+                    </div>
+                    <div class="part-category">
+                        <h4>Structural</h4>
+                        <div class="part-list" data-category="structural"></div>
+                    </div>
+                    <div class="part-category">
+                        <h4>Aero</h4>
+                        <div class="part-list" data-category="aero"></div>
+                    </div>
+                </div>
+                <div id="staging-editor">
+                    <h3>Staging</h3>
+                    <div id="stage-list"></div>
+                    <button id="add-stage-btn" class="btn">Add Stage</button>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <button id="clear-rocket-btn" class="btn btn-danger">Clear</button>
+                <button id="save-rocket-btn" class="btn">Save</button>
+                <button id="load-rocket-btn" class="btn">Load</button>
+            </div>
+        </div>
+
+        <!-- Flight UI -->
+        <div id="flight-ui" class="panel hidden">
+            <div id="navball-container">
+                <canvas id="navball" width="120" height="120"></canvas>
+                <div id="navball-markers"></div>
+            </div>
+            <div id="flight-data">
+                <div class="data-row"><span>Alt:</span> <span id="altitude">0</span> m</div>
+                <div class="data-row"><span>Vel:</span> <span id="velocity">0</span> m/s</div>
+                <div class="data-row"><span>TWR:</span> <span id="twr">0</span></div>
+                <div class="data-row"><span>Fuel:</span> <span id="fuel-pct">100</span>%</div>
+                <div class="data-row"><span>Apo:</span> <span id="apoapsis">0</span> m</div>
+                <div class="data-row"><span>Peri:</span> <span id="periapsis">0</span> m</div>
+            </div>
+            <div id="flight-controls">
+                <div class="throttle-control">
+                    <label>Throttle</label>
+                    <input type="range" id="throttle-slider" min="0" max="100" value="0">
+                    <span id="throttle-value">0%</span>
+                </div>
+                <button id="stage-btn" class="btn btn-primary btn-large">STAGE [Space]</button>
+                <div class="time-warp">
+                    <label>Time Warp</label>
+                    <div class="warp-buttons">
+                        <button data-warp="1">1x</button>
+                        <button data-warp="5">5x</button>
+                        <button data-warp="10">10x</button>
+                        <button data-warp="50">50x</button>
+                        <button data-warp="100">100x</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Map UI -->
+        <div id="map-ui" class="panel hidden">
+            <button id="map-close" class="btn">Close Map [M]</button>
+            <div id="map-info">
+                <div class="data-row"><span>SOI:</span> <span id="soi-body">Kerbin</span></div>
+                <div class="data-row"><span>Apoapsis:</span> <span id="map-apo">0</span> km</div>
+                <div class="data-row"><span>Periapsis:</span> <span id="map-peri">0</span> km</div>
+                <div class="data-row"><span>Period:</span> <span id="map-period">0</span> s</div>
+                <div class="data-row"><span>Inclination:</span> <span id="map-inc">0</span>°</div>
+            </div>
+        </div>
+
+        <!-- Mode Switcher -->
+        <div id="mode-switcher">
+            <button id="mode-builder" class="btn active">Builder [V]</button>
+            <button id="mode-flight" class="btn">Flight</button>
+            <button id="mode-map" class="btn">Map [M]</button>
+        </div>
+
+        <!-- Notification Area -->
+        <div id="notifications"></div>
+
+        <!-- Help Panel -->
+        <div id="help-panel" class="panel">
+            <button id="help-toggle" class="btn">? Help</button>
+            <div id="help-content" class="hidden">
+                <h3>Controls</h3>
+                <p><strong>Builder:</strong> Click part to select, click grid to place. R to rotate. Delete to remove.</p>
+                <p><strong>Flight:</strong> WASD/Arrow keys to rotate. Space to stage. Shift/Ctrl for throttle.</p>
+                <p><strong>Map:</strong> M to toggle. Scroll to zoom time warp.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/constants.js"></script>
+    <script src="js/rocketparts.js"></script>
+    <script src="js/solarsystem.js"></script>
+    <script src="js/physics.js"></script>
+    <script src="js/controls.js"></script>
+    <script src="js/renderer.js"></script>
+    <script src="js/builder.js"></script>
+    <script src="js/game.js"></script>
+</body>
+</html>
+

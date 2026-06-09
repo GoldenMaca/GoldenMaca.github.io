@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Empire - Business Tycoon</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div><h1>Empire <span class="sub">Business Tycoon</span></h1></div>
+  <div class="personal-stats">
+    <div class="p-stat"><span class="lbl">Cash</span><span class="val cash" id="p-cash">$0</span></div>
+    <div class="p-stat"><span class="lbl">Net Worth</span><span class="val worth" id="p-worth">$0</span></div>
+    <div class="p-stat"><span class="lbl">Credit</span><span class="val credit" id="p-credit">720</span></div>
+    <div class="p-stat"><span class="lbl">Date</span><span class="val" id="p-date" style="color:var(--text)">Jan 2024</span></div>
+    <div class="time-control">
+      <button class="time-btn active" data-speed="0">⏸ Pause</button>
+      <button class="time-btn" data-speed="1">▶ 1x</button>
+      <button class="time-btn" data-speed="3">▶▶ 3x</button>
+      <button class="time-btn" data-speed="7">▶▶▶ 7x</button>
+    </div>
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" data-tab="dash">Dashboard</button>
+  <button class="tab-btn" data-tab="biz">Businesses</button>
+  <button class="tab-btn" data-tab="social">Social</button>
+  <button class="tab-btn" data-tab="assets">Assets</button>
+  <button class="tab-btn" data-tab="finance">Finance</button>
+</div>
+
+<div class="container">
+  <!-- DASHBOARD -->
+  <div class="tab-panel active" id="tab-dash">
+    <div class="grid-4" id="dash-stats">
+      <div class="stat-card"><div class="lbl">Daily Revenue</div><div class="val pos" id="d-rev">$0</div></div>
+      <div class="stat-card"><div class="lbl">Daily Expenses</div><div class="val neg" id="d-exp">$0</div></div>
+      <div class="stat-card"><div class="lbl">Total Businesses</div><div class="val" id="d-biz" style="color:var(--blue)">0</div></div>
+      <div class="stat-card"><div class="lbl">Employees</div><div class="val" id="d-staff" style="color:var(--purple)">0</div></div>
+    </div>
+    <div class="grid-2">
+      <div class="panel">
+        <h2>Market News</h2>
+        <div id="dash-news" style="font-size:0.8rem;color:var(--text-dim);line-height:1.5"></div>
+      </div>
+      <div class="panel">
+        <h2>Quick Actions</h2>
+        <div class="flex gap-2 mt-2" style="flex-wrap:wrap">
+          <button class="btn" onclick="game.openModal('newbiz')">+ New Business</button>
+          <button class="btn gold" onclick="game.openModal('loan')">Get Loan</button>
+          <button class="btn secondary" onclick="game.openModal('investor')">Find Investor</button>
+        </div>
+        <div class="mt-3" id="dash-active-loans" style="font-size:0.8rem"></div>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Business Overview</h2>
+      <div id="dash-biz-overview"></div>
+    </div>
+  </div>
+
+  <!-- BUSINESSES -->
+  <div class="tab-panel" id="tab-biz">
+    <div class="biz-layout">
+      <div class="biz-sidebar">
+        <h3>Your Businesses</h3>
+        <div id="biz-list"></div>
+        <button class="btn lg mt-3" onclick="game.openModal('newbiz')">+ Start Business</button>
+      </div>
+      <div class="biz-main" id="biz-main">
+        <div class="empty-state">
+          <div class="icon">🏢</div>
+          <p>Select a business or start a new one</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOCIAL -->
+  <div class="tab-panel" id="tab-social">
+    <div class="grid-2">
+      <div>
+        <div class="post-box">
+          <textarea id="post-content" placeholder="What's happening in the business world? Post to boost your brand..."></textarea>
+          <div class="actions">
+            <select id="post-biz" style="background:var(--bg);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:4px;font-size:0.8rem"></select>
+            <button class="btn" onclick="game.makePost()">Post</button>
+          </div>
+        </div>
+        <div class="panel">
+          <h2>Trending</h2>
+          <div id="trending-tags" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+        </div>
+      </div>
+      <div class="social-feed" id="social-feed"></div>
+    </div>
+  </div>
+
+  <!-- ASSETS -->
+  <div class="tab-panel" id="tab-assets">
+    <div class="grid-2">
+      <div class="panel">
+        <h2>Real Estate</h2>
+        <div class="grid-2" id="asset-homes"></div>
+      </div>
+      <div class="panel">
+        <h2>Vehicles</h2>
+        <div class="grid-3" id="asset-cars"></div>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Owned Assets</h2>
+      <div id="owned-assets"></div>
+    </div>
+  </div>
+
+  <!-- FINANCE -->
+  <div class="tab-panel" id="tab-finance">
+    <div class="grid-2">
+      <div class="panel">
+        <h2>Active Loans</h2>
+        <div id="loan-list"></div>
+      </div>
+      <div class="panel">
+        <h2>Investors</h2>
+        <div id="investor-list"></div>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Bank & Credit</h2>
+      <div class="grid-3">
+        <div class="stat-card"><div class="lbl">Credit Score</div><div class="val" id="f-credit" style="color:var(--blue)">720</div></div>
+        <div class="stat-card"><div class="lbl">Total Debt</div><div class="val neg" id="f-debt">$0</div></div>
+        <div class="stat-card"><div class="lbl">Monthly Payments</div><div class="val neg" id="f-payments">$0</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: New Business -->
+<div class="modal-overlay" id="mod-newbiz">
+  <div class="modal">
+    <button class="close" onclick="game.closeModal()">&times;</button>
+    <h2>Start a New Business</h2>
+    <div class="form-group"><label>Business Type</label>
+      <select id="nb-type" onchange="game.updateNewBizCost()">
+        <option value="coffee">Coffee Shop ($15,000)</option>
+        <option value="restaurant">Restaurant ($40,000)</option>
+        <option value="warehouse">Warehouse & Logistics ($80,000)</option>
+        <option value="ecommerce">E-Commerce Store ($50,000)</option>
+        <option value="tech">Tech Startup ($200,000)</option>
+        <option value="airline">Airline ($5,000,000)</option>
+        <option value="manufacturing">Manufacturing ($300,000)</option>
+        <option value="realestate">Real Estate Firm ($250,000)</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Company Name</label><input type="text" id="nb-name" placeholder="e.g. Blue Bean Coffee"></div>
+    <div class="form-group"><label>Location Tier</label>
+      <select id="nb-location">
+        <option value="suburban">Suburban (Lower rent, less traffic)</option>
+        <option value="urban">Urban (Medium rent, good traffic)</option>
+        <option value="prime">Prime Downtown (High rent, max traffic)</option>
+      </select>
+    </div>
+    <p style="font-size:0.8rem;color:var(--text-dim);margin-bottom:12px">Startup includes first month rent, basic equipment, and initial inventory.</p>
+    <button class="btn lg" onclick="game.createBusiness()">Launch Business</button>
+  </div>
+</div>
+
+<!-- MODAL: Loan -->
+<div class="modal-overlay" id="mod-loan">
+  <div class="modal">
+    <button class="close" onclick="game.closeModal()">&times;</button>
+    <h2>Apply for Loan</h2>
+    <div class="form-group"><label>Amount</label><input type="number" id="loan-amt" placeholder="50000" min="1000" step="1000"></div>
+    <div class="form-group"><label>Term (months)</label>
+      <select id="loan-term">
+        <option value="12">12 months (8% APR)</option>
+        <option value="24">24 months (10% APR)</option>
+        <option value="36">36 months (12% APR)</option>
+        <option value="60">60 months (15% APR)</option>
+      </select>
+    </div>
+    <p style="font-size:0.8rem;color:var(--text-dim);margin-bottom:12px" id="loan-calc">Monthly payment: $0</p>
+    <button class="btn lg" onclick="game.takeLoan()">Accept Loan</button>
+  </div>
+</div>
+
+<!-- MODAL: Investor -->
+<div class="modal-overlay" id="mod-investor">
+  <div class="modal">
+    <button class="close" onclick="game.closeModal()">&times;</button>
+    <h2>Find Investor</h2>
+    <p style="font-size:0.85rem;color:var(--text-dim);margin-bottom:12px">Investors provide capital but expect quarterly returns. If you miss payments, they can force a buyout or tank your reputation.</p>
+    <div id="investor-offers"></div>
+  </div>
+</div>
+
+<!-- MODAL: Hire Staff -->
+<div class="modal-overlay" id="mod-hire">
+  <div class="modal">
+    <button class="close" onclick="game.closeModal()">&times;</button>
+    <h2>Hire Staff</h2>
+    <div id="hire-list"></div>
+  </div>
+</div>
+
+<!-- MODAL: Buy Supplies -->
+<div class="modal-overlay" id="mod-supplies">
+  <div class="modal">
+    <button class="close" onclick="game.closeModal()">&times;</button>
+    <h2>Order Supplies</h2>
+    <div id="supplies-list"></div>
+  </div>
+</div>
+
+<div class="nots" id="nots"></div>
+
+<script src="game.js"></script>
+</body>
+</html>
+

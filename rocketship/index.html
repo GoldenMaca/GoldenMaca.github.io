@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rocket Mining Explorer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #000; color: #fff; font-family: 'Courier New', monospace; overflow: hidden; }
+        canvas { display: block; }
+        #ui { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+        #hud { position: absolute; top: 20px; left: 20px; background: rgba(0,0,0,0.8); padding: 15px; border-radius: 5px; pointer-events: auto; }
+        .hud-row { margin: 5px 0; }
+        #mode-switch { position: absolute; bottom: 20px; left: 20px; display: flex; gap: 10px; pointer-events: auto; }
+        button { background: #444; color: #fff; border: 1px solid #666; padding: 10px 15px; cursor: pointer; border-radius: 3px; }
+        button.active { background: #0a0; }
+        button:hover { background: #555; }
+        #inventory { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.8); padding: 15px; border-radius: 5px; max-width: 200px; pointer-events: auto; }
+        #shop { position: absolute; bottom: 100px; right: 20px; background: rgba(0,0,0,0.9); padding: 15px; border-radius: 5px; display: none; pointer-events: auto; }
+        .upgrade { margin: 10px 0; padding: 10px; background: #333; border-radius: 3px; cursor: pointer; }
+        .upgrade:hover { background: #555; }
+        .affordable { border-left: 4px solid #0a0; }
+        .notification { position: absolute; top: 100px; left: 50%; transform: translateX(-50%); background: #0a0; padding: 10px 20px; border-radius: 5px; pointer-events: none; }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div id="ui">
+        <div id="hud">
+            <div class="hud-row">Money: $<span id="money">0</span></div>
+            <div class="hud-row">Hull: <span id="hull">100</span>%</div>
+            <div class="hud-row">Fuel: <span id="fuel">100</span>%</div>
+            <div class="hud-row">Cargo: <span id="cargo">0</span>/<span id="cargoMax">5</span></div>
+            <div class="hud-row">Alt: <span id="altitude">0</span>m Vel: <span id="velocity">0</span>m/s</div>
+            <div class="hud-row">Target: <span id="targetPlanet">Home</span></div>
+        </div>
+        <div id="inventory">
+            <h3>Inventory</h3>
+            <div id="ores"></div>
+            <button id="openShop">Open Shop</button>
+        </div>
+        <div id="shop">
+            <h3>Upgrades</h3>
+            <div id="upgrades"></div>
+            <button id="closeShop">Close</button>
+        </div>
+        <div id="mode-switch">
+            <button id="orbit" class="active">Orbit</button>
+            <button id="surface">Surface</button>
+        </div>
+    </div>
+    <script>
+        // Utils
+        const Vec2 = {
+            add(a, b) { return {x: a.x + b.x, y: a.y + b.y}; },
+            sub(a, b) { return {x: a.x - b.x, y: a.y - b.y}; },
+            mul(v, s) { return {x: v.x * s, y: v.y * s}; },
+            mag(v) { return Math.sqrt(v.x * v.x + v.y * v.y); },
+            norm(v) { const m = Vec2.mag(v); return m > 0 ? Vec2.mul(v, 1/m) : {x:0,y:0}; },
+            dist(a, b) { return Vec2.mag(Vec2.sub(a, b)); },
+            dot(a, b) { return a.x*b.x + a.y*b.y; },
+            angle(v) { return Math.atan2(v.y, v.x); }
+        };
+
+        const lerp = (a, b, t) => a + (b - a) * Math.max(0, Math.min(1, t));
+        const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+        const formatNumber = (n) => n.toLocaleString();
+
+        // Constants
+        const G = 6.67430e-11 * 1e9; // Scaled
+        const SCALE = 1e-6;
+        const PLANETS = [
+            {name: 'Home', mass: 5.3e22 * SCALE, radius: 600, color: '#4a90d9', distance: 0, ores: {iron: 1}, unlocked: true},
+            {name: 'Moon', mass: 1e21 * SCALE, radius: 200, color: '#aaa', distance: 1.2e7, ores: {iron: 0.5}, unlocked: true},
+            {name: 'Mars', mass: 4.5e21 * SCALE, radius: 320, color: '#c1440e', distance: 2e10 * SCALE, ores: {iron: 2, copper: 0.2}, unlocked: false},
+            {name: 'Asteroid', mass: 1e20 * SCALE, radius: 50, color: '#888', distance: 5e10 * SCALE, ores: {copper: 1}, unlocked: false},
+            {name: 'Exo', mass: 1e22 * SCALE, radius: 400, color: '#aa44ff', distance: 1e11 * SCALE, ores: {rare: 0.5}, unlocked: false}
+        ];
+
+        // SolarSystem
+        class SolarSystem {
+            constructor() {
+                this.bodies = PLANETS.map((p, i) => ({...p, pos: {x: i * 2e10, y: 0}, vel: {x:0, y: 8000 / Math.sqrt(i+1)}, angle: 0, index: i})); // Stable orbits
+                this.sun = {pos: {x:0,y:0}, mass: 1.8e27 * SCALE, radius: 1000, color: '#ffaa00'}; // Adjusted scale
+            }
+            getBodyAt(pos) {
+                let closest = null;
+                let minDist = Infinity;
+                this.bodies.forEach(b => {
+                    const d = Vec2.dist(pos, b.pos);
+                    if (d < minDist) {
+                        minDist = d;
+                        closest = b;
+                    }
+                });
+                return closest;
+            }
+            getSurfaceBody(pos) {
+                return this.getBodyAt(pos);
+            }
+            update(dt) {
+                this.bodies.forEach(b => {
+                    const dir = Vec2.sub(this.sun.pos, b.pos);
+                    const dist = Vec2.mag(dir);
+                    const force = G * this.sun.mass * b.mass / (dist * dist);
+                    const acc = Vec2.mul(Vec2.norm(dir), force / b.mass);
+                    b.vel = Vec2.add(b.vel, Vec2.mul(acc, dt));
+                    b.pos = Vec2.add(b.pos, Vec2.mul(b.vel, dt));
+                });
+            }
+        }
+
+        // Physics
+        class Physics {
+            constructor() { this.dt = 0.016; } // 60fps
+            update(ship, solarsys, dt) {
+                const body = solarsys.getBodyAt(ship.pos);
+                if (!body) return;
+
+                const r = Vec2.sub(body.pos, ship.pos);
+                const distSq = r.x*r.x + r.y*r.y;
+                const altitude = Math.sqrt(distSq) - body.radius;
+                ship.altitude = altitude;
+
+                // Gravity
+                const g = G * body.mass / distSq;
+                ship.acc = Vec2.mul(Vec2.norm(r), g);
+
+                // Thrust (simple downward in surface mode)
+                if (ship.thrust > 0) {
+                    const thrustDir = ship.onSurface ? {x:0, y: -ship.maxThrust * ship.thrust / ship.mass} : Vec2.norm({x: Math.sin(ship.angle), y: -Math.cos(ship.angle)});
+                    ship.acc = Vec2.add(ship.acc, Vec2.mul(thrustDir, ship.maxThrust * ship.thrust / ship.mass));
+                }
+
+                // Drag
+                const drag = 0.1 * Vec2.mag(ship.vel) * Vec2.mag(ship.vel);
+                ship.acc = Vec2.sub(ship.acc, Vec2.mul(Vec2.norm(ship.vel), drag / ship.mass));
+
+                // Integrate
+                ship.vel = Vec2.add(ship.vel, Vec2.mul(ship.acc, dt));
+                ship.pos = Vec2.add(ship.pos, Vec2.mul(ship.vel, dt));
+
+                // Ground collision
+                if (altitude < 0) {
+                    ship.pos = Vec2.add(body.pos, Vec2.mul(Vec2.norm(r), body.radius));
+                    ship.vel = Vec2.mul(ship.vel, 0.1); // Bounce damp
+                    if (Vec2.mag(ship.vel) > 20) ship.damage(Math.min(Vec2.mag(ship.vel)/10, 50));
+                    ship.onSurface = true;
+                } else ship.onSurface = false;
+            }
+        }
+
+        // Ship
+        class Ship {
+            constructor() {
+                this.pos = {x: 0, y: -1e9}; // Orbit home
+                this.vel = {x: 7000, y: 0}; // Orbital vel
+                this.angle = 0;
+                this.acc = {x:0,y:0};
+                this.mass = 1000;
+                this.maxThrust = 5000;
+                this.thrust = 0;
+                this.fuel = 100;
+                this.hull = 100;
+                this.cargoMax = 5;
+                this.cargo = {}; // {iron: 2, ...}
+        this.drills = []; // {x, oreRate}
+                this.planetsUnlocked = 2;
+                this.maxRange = 1e11;
+                this.money = 0;
+                this.miningRate = 0.1; // base
+                this.onSurface = false;
+                this.altitude = 0;
+                this.mode = 'orbit';
+                this.targetPlanet = 0;
+            }
+            damage(amount) {
+                this.hull -= amount;
+                if (this.hull <= 0) this.hull = 0;
+            }
+            addOre(type, amt) {
+                this.cargo[type] = (this.cargo[type] || 0) + amt;
+            }
+            upgrade(key) {
+                const upgrades = {
+                    cargo: {cost:1000, effect: () => this.cargoMax += 5},
+                    thrust: {cost:5000, effect: () => this.maxThrust += 2000},
+                    range: {cost:20000, effect: () => {this.maxRange *= 1.5; this.planetsUnlocked = Math.min(5, this.planetsUnlocked+1); }},
+                    drills: {cost:10000, effect: () => this.miningRate *= 1.5}
+                };
+                const u = upgrades[key];
+                if (u && this.money >= u.cost) {
+                    this.money -= u.cost;
+                    u.effect();
+                    localStorage.setItem(key + '_up', (parseInt(localStorage.getItem(key + '_up') || '0') + 1));
+                }
+            }
+            sellCargo() {
+                let value = 0;
+                Object.entries(this.cargo).forEach(([type, amt]) => {
+                    value += amt * (type === 'iron' ? 10 : type === 'copper' ? 50 : 200);
+                    delete this.cargo[type];
+                });
+                this.money += value;
+                return value;
+            }
+            save() { localStorage.setItem('ship', JSON.stringify(this)); }
+            load() {
+                const saved = localStorage.getItem('ship');
+                if (saved) Object.assign(this, JSON.parse(saved));
+            }
+        }
+
+        // Renderer
+        class Renderer {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.camera = {x:0, y: -1e9, zoom: 1e-8}; // Start visible
+            }
+            resize() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+            }
+            render(game) {
+                const {ctx, canvas: {width: w, height: h}} = this;
+                ctx.fillStyle = '#000';
+                ctx.fillRect(0,0,w,h);
+
+// Stars
+                ctx.fillStyle = '#fff';
+                for (let i=0; i<500; i++) {
+                    const sx = (i*17.3 % 10000) - 5000;
+                    const sy = (i*31.7 % 10000) - 5000;
+                    const x = sx * this.camera.zoom + w/2;
+                    const y = sy * this.camera.zoom + h/2;
+                    ctx.fillRect(x, y, 2, 2);
+                }
+
+                // Sun
+                const sunScreen = {x: (game.solarsys.sun.pos.x - this.camera.x)*this.camera.zoom + w/2, y: (game.solarsys.sun.pos.y - this.camera.y)*this.camera.zoom + h/2};
+                const sunR = game.solarsys.sun.radius * this.camera.zoom;
+                const sunG = ctx.createRadialGradient(sunScreen.x, sunScreen.y, 0, sunScreen.x, sunScreen.y, sunR*3);
+                sunG.addColorStop(0, '#ffaa00');
+                sunG.addColorStop(1, 'transparent');
+                ctx.fillStyle = sunG;
+                ctx.beginPath();
+                ctx.arc(sunScreen.x, sunScreen.y, sunR*3, 0, Math.PI*2);
+                ctx.fill();
+
+                // Planets
+                game.solarsys.bodies.forEach((b, i) => {
+                    const screen = {x: (b.pos.x - this.camera.x)*this.camera.zoom + w/2, y: (b.pos.y - this.camera.y)*this.camera.zoom + h/2};
+                    const r = b.radius * this.camera.zoom;
+                    ctx.fillStyle = b.color;
+                    ctx.beginPath();
+                    ctx.arc(screen.x, screen.y, r, 0, Math.PI*2);
+                    ctx.fill();
+                    ctx.fillStyle = '#fff';
+                    ctx.font = '12px sans-serif';
+                    ctx.fillText(b.name, screen.x + r + 5, screen.y);
+                });
+
+
+
+                // Surface terrain if landed
+                if (game.ship.onSurface) {
+                    const body = game.solarsys.getSurfaceBody(game.ship.pos);
+                    if (body) {
+                        ctx.strokeStyle = '#666';
+                        ctx.lineWidth = 3;
+                        ctx.beginPath();
+                        for (let px = 0; px < w; px += 10) {
+                            const wx = (px - w/2) / game.renderer.camera.zoom + game.renderer.camera.x;
+                            const wy = game.ship.pos.y + Math.sin((wx - body.pos.x) * 0.00001) * 100 + body.radius;
+                            const sy = (wy - game.renderer.camera.y) * game.renderer.camera.zoom + h/2;
+                            if (px === 0) ctx.moveTo(px, sy);
+                            else ctx.lineTo(px, sy);
+                        }
+                        ctx.stroke();
+                    }
+                    // Drills
+                    game.ship.drills.forEach(d => {
+                        const dx = (d.x - game.renderer.camera.x) * game.renderer.camera.zoom + w/2;
+                        const dy = (d.y - game.renderer.camera.y) * game.renderer.camera.zoom + h/2;
+                        ctx.fillStyle = '#0f0';
+                        ctx.fillRect(dx - 5, dy - 10, 10, 20);
+                    });
+                }
+
+                // Ship
+                const shipScreen = {x: (game.ship.pos.x - game.renderer.camera.x)*game.renderer.camera.zoom + w/2, y: (game.ship.pos.y - game.renderer.camera.y)*game.renderer.camera.zoom + h/2};
+                ctx.save();
+                ctx.translate(shipScreen.x, shipScreen.y);
+                ctx.rotate(game.ship.angle);
+                ctx.fillStyle = `hsl(60, 100%, ${50 + game.ship.hull/2}%)`;
+                ctx.beginPath();
+                ctx.moveTo(0, -20);
+                ctx.lineTo(-10, 10);
+                ctx.lineTo(10, 10);
+                ctx.closePath();
+                ctx.fill();
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+
+        // Main Game
+        class Game {
+            constructor() {
+                this.canvas = document.getElementById('canvas');
+                this.renderer = new Renderer(this.canvas);
+                this.solarsys = new SolarSystem();
+                this.physics = new Physics();
+                this.ship = new Ship();
+                this.ship.load();
+                this.keys = {};
+                this.mouse = {x:0, y:0, placingDrill: false};
+                this.lastTime = 0;
+                this.notifications = [];
+                this.trajectory = [];
+                this.setup();
+            }
+            setup() {
+                this.renderer.resize();
+                window.addEventListener('resize', () => this.renderer.resize());
+                addEventListener('keydown', e => this.keys[e.code] = true);
+                addEventListener('keyup', e => this.keys[e.code] = false);
+                this.canvas.addEventListener('click', e => {
+                    if (this.ship.onSurface) {
+                        const rect = this.canvas.getBoundingClientRect();
+                        const wx = (e.clientX - rect.left - this.canvas.width/2) / this.renderer.camera.zoom + this.renderer.camera.x;
+                        const wy = (e.clientY - rect.top - this.canvas.height/2) / this.renderer.camera.zoom + this.renderer.camera.y;
+                        this.ship.drills.push({x: wx, y: wy, rate: this.ship.miningRate});
+                        console.log('Drill placed');
+                    }
+                });
+                document.getElementById('openShop').onclick = () => document.getElementById('shop').style.display = 'block';
+                document.getElementById('closeShop').onclick = () => document.getElementById('shop').style.display = 'none';
+                this.updateShop();
+                this.updateInventory();
+                this.updateUI();
+                this.initVisible();
+                this.loop();
+            }
+            update(dt) {
+                if (this.keys['KeyW']) this.ship.thrust = Math.min(1, this.ship.thrust + dt*2);
+                if (this.keys['KeyS']) this.ship.thrust = Math.max(0, this.ship.thrust - dt*2);
+                if (this.keys['KeyA']) this.ship.angle -= dt;
+                if (this.keys['KeyD']) this.ship.angle += dt;
+                if (this.keys['Space'] && this.ship.fuel > 0) {
+                    this.ship.fuel -= dt * 10;
+                    this.ship.thrust = 1;
+                }
+
+                this.solarsys.update(dt);
+                this.physics.update(this.ship, this.solarsys, dt);
+                if (this.ship.onSurface) {
+                    const body = this.solarsys.getSurfaceBody(this.ship.pos);
+                    if (body && body.ores) {
+                        this.ship.drills.forEach(d => {
+                            const randType = Object.keys(body.ores)[Math.floor(Math.random() * Object.keys(body.ores).length)];
+                            this.ship.addOre(randType, d.rate * dt);
+                        });
+                        // Throttled notify
+                        if (Math.random() < 0.01) {
+                            this.notify(`Mining ${this.ship.drills.length} drills on ${body.name}`);
+                        }
+                    }
+                }
+                this.updateCamera();
+                this.updateUI();
+                this.ship.save();
+            }
+            updateCamera() {
+                this.renderer.camera.x += (this.ship.pos.x - this.renderer.camera.x) * 0.05;
+                this.renderer.camera.y += (this.ship.pos.y - this.renderer.camera.y) * 0.05;
+                if (this.ship.onSurface) {
+                    this.renderer.camera.zoom = 1e-5; // Surface zoom
+                    this.renderer.camera.y = this.ship.pos.y + 1000; // Side view
+                } else {
+                    this.renderer.camera.zoom = 5e-10;
+                }
+            }
+            notify(msg) {
+                const div = document.createElement('div');
+                div.className = 'notification';
+                div.textContent = msg;
+                document.body.appendChild(div);
+                setTimeout(() => div.remove(), 2000);
+            }
+            updateUI() {
+                document.getElementById('money').textContent = formatNumber(this.ship.money);
+                document.getElementById('hull').textContent = Math.round(this.ship.hull);
+                document.getElementById('fuel').textContent = Math.round(this.ship.fuel);
+                document.getElementById('cargo').textContent = Object.values(this.ship.cargo).reduce((a,b)=>a+b,0) || 0;
+                document.getElementById('cargoMax').textContent = this.ship.cargoMax;
+                document.getElementById('altitude').textContent = formatNumber(this.ship.altitude);
+                document.getElementById('velocity').textContent = formatNumber(Vec2.mag(this.ship.vel));
+                const body = this.solarsys.getBodyAt(this.ship.pos);
+                document.getElementById('targetPlanet').textContent = body ? body.name : 'Deep Space';
+                if (Math.random() < 0.01) {
+                    this.updateInventory();
+                    this.updateShop();
+                }
+            }
+            updateInventory() {
+                const oresDiv = document.getElementById('ores');
+                oresDiv.innerHTML = Object.entries(this.ship.cargo).map(([t, a]) => `<div>${t}: ${a}</div>`).join('') + '<button id="sellBtn">Sell All</button>';
+                document.getElementById('sellBtn')?.onclick = () => {
+                    const value = this.ship.sellCargo();
+                    this.notify(`Sold for $${formatNumber(value)}`);
+                    this.updateInventory();
+                };
+            }
+            updateShop() {
+                const upsDiv = document.getElementById('upgrades');
+                const keys = ['cargo', 'thrust', 'drills', 'range'];
+                upsDiv.innerHTML = keys.map(k => {
+                    const lv = parseInt(localStorage.getItem(k + '_up') || '0');
+                    const cost = [1000,5000,10000,20000][keys.indexOf(k)];
+                    const cls = this.ship.money >= cost ? 'upgrade affordable' : 'upgrade';
+                    return `<div class="${cls}" style="cursor:pointer" ondblclick="game.ship.upgrade('${k}'); game.updateShop(); game.notify('Upgraded ${k}!');">${k} Lv${lv+1} ($${formatNumber(cost)})</div>`;
+                }).join('');
+                console.log('Shop updated');
+            }
+            loop(time) {
+                const dt = Math.min((time - this.lastTime)/1000, 0.05);
+                this.lastTime = time;
+                this.update(dt);
+                this.renderer.render(this);
+                requestAnimationFrame(t => this.loop(t));
+            }
+            initVisible() {
+                // Force initial visibility
+                this.renderer.camera.x = 0;
+                this.renderer.camera.y = -1e9;
+                this.renderer.camera.zoom = 1e-8;
+                this.updateUI();
+                this.updateInventory();
+                this.updateShop();
+                console.log('Game initialized, camera:', this.renderer.camera);
+            }
+        }
+
+        // Init
+        const game = new Game();
+    </script>
+</body>
+</html>

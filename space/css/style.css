@@ -1,0 +1,437 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #0a0a0f;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+}
+
+#game-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+#gameCanvas {
+    display: block;
+    background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0f 100%);
+}
+
+/* Panels */
+.panel {
+    position: absolute;
+    background: rgba(20, 20, 35, 0.95);
+    border: 1px solid #3a3a5a;
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+}
+
+.panel.hidden {
+    display: none !important;
+}
+
+.panel-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid #3a3a5a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.panel-header h2 {
+    font-size: 16px;
+    color: #88ccff;
+}
+
+.panel-body {
+    padding: 12px;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.panel-footer {
+    padding: 12px;
+    border-top: 1px solid #3a3a5a;
+    display: flex;
+    gap: 8px;
+}
+
+/* Buttons */
+.btn {
+    background: #2a2a4a;
+    color: #e0e0e0;
+    border: 1px solid #4a4a6a;
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+}
+
+.btn:hover {
+    background: #3a3a5a;
+    border-color: #6a6a8a;
+}
+
+.btn-primary {
+    background: #2266aa;
+    border-color: #4488cc;
+}
+
+.btn-primary:hover {
+    background: #3388cc;
+}
+
+.btn-danger {
+    background: #aa2222;
+    border-color: #cc4444;
+}
+
+.btn-danger:hover {
+    background: #cc3333;
+}
+
+.btn-large {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.btn.active {
+    background: #44aa66;
+    border-color: #66cc88;
+}
+
+/* Builder UI */
+#builder-ui {
+    top: 10px;
+    left: 10px;
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+}
+
+#parts-palette h3,
+#staging-editor h3 {
+    font-size: 14px;
+    color: #aaccff;
+    margin-bottom: 8px;
+}
+
+.part-category {
+    margin-bottom: 12px;
+}
+
+.part-category h4 {
+    font-size: 12px;
+    color: #8899bb;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+}
+
+.part-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.part-item {
+    width: 50px;
+    height: 50px;
+    background: #2a2a40;
+    border: 2px solid #4a4a6a;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.part-item:hover {
+    border-color: #88aaff;
+    background: #3a3a50;
+}
+
+.part-item.selected {
+    border-color: #44aa66;
+    background: #2a4a3a;
+}
+
+.part-icon {
+    font-size: 20px;
+}
+
+.part-name {
+    font-size: 8px;
+    text-align: center;
+    margin-top: 2px;
+}
+
+/* Staging */
+#staging-editor {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #3a3a5a;
+}
+
+#stage-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.stage-item {
+    background: #2a2a40;
+    border: 1px solid #4a4a6a;
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.stage-number {
+    color: #88ccff;
+    font-weight: bold;
+}
+
+/* Flight UI */
+#flight-ui {
+    top: 10px;
+    right: 10px;
+    width: 220px;
+}
+
+#navball-container {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 12px;
+    position: relative;
+}
+
+#navball {
+    border-radius: 50%;
+    border: 2px solid #4a4a6a;
+}
+
+#flight-data {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 12px;
+}
+
+.data-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    padding: 3px 0;
+}
+
+.data-row span:first-child {
+    color: #8899bb;
+}
+
+.data-row span:last-child {
+    color: #aaddff;
+    font-family: monospace;
+}
+
+#flight-controls {
+    padding-top: 10px;
+    border-top: 1px solid #3a3a5a;
+}
+
+.throttle-control {
+    margin-bottom: 12px;
+}
+
+.throttle-control label {
+    font-size: 12px;
+    color: #8899bb;
+    display: block;
+    margin-bottom: 4px;
+}
+
+#throttle-slider {
+    width: 100%;
+    height: 6px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: #2a2a40;
+    border-radius: 3px;
+    outline: none;
+}
+
+#throttle-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    background: #2266aa;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#stage-btn {
+    width: 100%;
+    margin-bottom: 12px;
+}
+
+.time-warp label {
+    font-size: 12px;
+    color: #8899bb;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.warp-buttons {
+    display: flex;
+    gap: 4px;
+}
+
+.warp-buttons button {
+    flex: 1;
+    background: #2a2a40;
+    color: #e0e0e0;
+    border: 1px solid #4a4a6a;
+    padding: 4px 0;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 11px;
+}
+
+.warp-buttons button:hover,
+.warp-buttons button.active {
+    background: #2266aa;
+    border-color: #4488cc;
+}
+
+/* Map UI */
+#map-ui {
+    top: 10px;
+    right: 10px;
+    width: 200px;
+}
+
+#map-info {
+    padding: 10px;
+}
+
+/* Mode Switcher */
+#mode-switcher {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    background: rgba(20, 20, 35, 0.9);
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #3a3a5a;
+}
+
+/* Notifications */
+#notifications {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+}
+
+.notification {
+    background: rgba(30, 30, 50, 0.95);
+    border: 1px solid #5a5a7a;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    animation: slideDown 0.3s ease;
+}
+
+.notification.success {
+    border-color: #44aa66;
+    color: #66cc88;
+}
+
+.notification.warning {
+    border-color: #aaaa22;
+    color: #cccc44;
+}
+
+.notification.error {
+    border-color: #aa2222;
+    color: #cc4444;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Help Panel */
+#help-panel {
+    bottom: 20px;
+    right: 20px;
+    background: transparent;
+    border: none;
+}
+
+#help-content {
+    position: absolute;
+    bottom: 50px;
+    right: 0;
+    width: 300px;
+    background: rgba(20, 20, 35, 0.95);
+    border: 1px solid #3a3a5a;
+    border-radius: 8px;
+    padding: 16px;
+}
+
+#help-content h3 {
+    color: #88ccff;
+    margin-bottom: 10px;
+}
+
+#help-content p {
+    font-size: 12px;
+    line-height: 1.6;
+    margin-bottom: 8px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1a1a2e;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #3a3a5a;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #4a4a6a;
+}
+

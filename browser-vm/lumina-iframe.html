@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Browser (inside Browser)</title>
+  <style>
+    :root{
+      --bg:#070a12;
+      --panel:#0e1530;
+      --text:#e8edff;
+      --muted:#a9b3da;
+      --border:rgba(255,255,255,.12);
+      --accent:#6ae4ff;
+      --accent2:#a78bfa;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: radial-gradient(1000px 600px at 20% 10%, rgba(106,228,255,.18), transparent 55%), var(--bg);
+      color:var(--text);
+      display:flex;
+      flex-direction:column;
+    }
+    .topbar{
+      padding:10px 12px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      border-bottom:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+    }
+    .dots{display:flex; gap:6px; align-items:center; margin-right:4px}
+    .dot{width:10px;height:10px;border-radius:50%}
+    .dot.r{background:#ff5f57}
+    .dot.y{background:#febc2e}
+    .dot.g{background:#28c840}
+
+    .addr{
+      flex:1;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:8px 10px;
+      border:1px solid var(--border);
+      border-radius:999px;
+      background: rgba(0,0,0,.22);
+    }
+    .addr label{color:var(--muted); font-size:12px; font-weight:800; letter-spacing:.2px}
+    .addr input{
+      flex:1;
+      background:transparent;
+      border:0;
+      outline:0;
+      color:var(--text);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:13px;
+    }
+    .btn{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color:var(--text);
+      padding:8px 10px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:800;
+    }
+    .btn:hover{border-color: rgba(106,228,255,.55)}
+
+    .frame{
+      flex:1;
+      position:relative;
+      padding:12px;
+    }
+    iframe{
+      width:100%;
+      height:100%;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:#000;
+    }
+
+    .banner{
+      position:absolute;
+      inset:18px;
+      border:1px dashed rgba(255,255,255,.20);
+      border-radius:18px;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background: rgba(0,0,0,.15);
+      color:var(--muted);
+      padding:24px;
+      text-align:center;
+      line-height:1.5;
+    }
+    .banner strong{color:var(--text)}
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
+    <div class="addr">
+      <label>URL</label>
+      <input id="url" value="https://example.com" />
+    </div>
+    <button class="btn" id="go">Go</button>
+  </div>
+
+  <div class="frame">
+    <iframe id="view" sandbox="allow-forms allow-modals allow-scripts allow-same-origin allow-pointer-lock" referrerpolicy="no-referrer" referrerPolicy="no-referrer"></iframe>
+    <div class="banner" id="banner">
+      <div>
+        <strong>Iframe content</strong><br/>
+        This “browser inside browser” demo uses an iframe sandbox.
+        Some websites may not load due to cross-origin restrictions.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const iframe = document.getElementById('view');
+    const urlInput = document.getElementById('url');
+    const banner = document.getElementById('banner');
+    const go = document.getElementById('go');
+
+    function load(url){
+      try{
+        iframe.src = url;
+        banner.style.display='none';
+      }catch(e){
+        banner.style.display='flex';
+      }
+    }
+
+    go.addEventListener('click', ()=> load(urlInput.value.trim()));
+    urlInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter') load(urlInput.value.trim()); });
+
+    // default
+    load('about:blank');
+    // Render a simple internal page by default (so it always works)
+    iframe.srcdoc = `<!doctype html><html><head><meta charset="utf-8"/><title>Inner Page</title><style>body{margin:0;font-family:ui-sans-serif,system-ui;background:#0b1020;color:#e8edff;display:flex;align-items:center;justify-content:center;height:100vh} .card{width:min(760px,92vw);border:1px solid rgba(255,255,255,.12);border-radius:16px;background:rgba(255,255,255,.03);padding:18px} h1{margin:0 0 8px;font-size:20px} p{margin:0;color:#a9b3da;line-height:1.6}</style></head><body><div class="card"><h1>Inner browser page</h1><p>This is the page rendered inside the iframe. You can set a URL and click Go, but some websites may block iframes (X-Frame-Options / CSP).</p></div></body></html>`;
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Seizure warning</title>
+	<link rel="stylesheet" href="practice/style.css">
+
+	<link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+	
+<script>
+	var deg = 90;
+
+	function turn()  {
+		if (deg >= 360) deg = 0;
+		deg += 5;
+		document.body.style.background = "linear-gradient(" + deg + "deg, rgb(221, 0, 255), rgb(0, 119, 255))";
+	}	
+
+	setInterval(turn, 10);
+</script>
+
+
+<style>
+
+	body{
+		background: linear-gradient(90deg, rgb(221, 0, 255), rgb(0, 119, 255));
+		
+	}
+</style>
+</head>
+<body>
+
+	
+</body>
+</html>
