@@ -1,332 +1,306 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Resume</title>
-	<link rel="stylesheet" href="practice/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0b0f1a" />
 
-	<link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+  <title>Colin S — Portfolio</title>
+  <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
 
-	<script>
-		//alert("Your computer is going to be permanantly destroyed if you do not pay, you have 24 hours...");	
-	</script>
-
-	<style>
-		nav {
-			position: sticky;
-			top: 0;
-		}
-
-		.topnav {
-			margin-top: 0;
-			overflow: hidden;
-			position: sticky;
- 			top: 0;
-			background-color: #ffffff;
-			border-radius: 5px;
-			border: solid 2px #000000;
-			padding: 20px;
-			gap: 40px;
-			display: flex;
-			justify-content: center;
-		}
-
-		a {
-			color: #000000;
-			text-align: center;
-			text-decoration: none;
-			font-size: 1.5rem;
-			font-family: "Funnel Sans", sans-serif;
-			font-weight: bold;
-		}
-
-		a:hover {
-			text-decoration: underline;
-			color: darkblue;
-		}
-
-		.link-holder {
-			align-items: center;
-			justify-content: center;
-			background-color: white;
-			border: 2px solid black;
-			border-radius: 10px;
-			padding: 5px;
-
-			transition: background-color 0.2s ease;
-		}
-
-		.link-holder:hover {
-			transform: background-color 0.2s ease;
-		}
-
-		/* Resume layout (simple, no advanced framework) */
-		.page {
-			max-width: 1000px;
-			margin: 0 auto;
-			padding: 20px;
-		}
-
-		.hero {
-			margin-top: 20px;
-			border: 2px solid #000;
-			border-radius: 10px;
-			padding: 20px;
-			background: #fff;
-		}
-
-		h1 {
-			font-size: 2.2rem;
-			margin: 0 0 10px 0;
-			font-family: "Funnel Sans", sans-serif;
-		}
-
-		.sub {
-			margin: 0;
-			font-size: 1.1rem;
-			font-family: "Funnel Sans", sans-serif;
-		}
-
-		.section {
-			margin-top: 18px;
-			border: 2px solid #000;
-			border-radius: 10px;
-			padding: 18px;
-			background: #fff;
-		}
-
-		.section h2 {
-			margin: 0 0 10px 0;
-			font-family: "Funnel Sans", sans-serif;
-		}
-
-		.row {
-			display: grid;
-			grid-template-columns: 1fr 1fr;
-			gap: 14px;
-		}
-
-		@media (max-width: 800px) {
-			.row {
-				grid-template-columns: 1fr;
-			}
-		}
-
-		textarea {
-			width: 100%;
-			min-height: 110px;
-			border: 2px solid #000;
-			border-radius: 8px;
-			padding: 12px;
-			font-size: 1rem;
-			font-family: inherit;
-			resize: vertical;
-			outline: none;
-		}
-
-		.small-text {
-			font-size: 0.95rem;
-			margin-top: 6px;
-		}
-
-		.badge {
-			display: inline-block;
-			border: 2px solid #000;
-			border-radius: 999px;
-			padding: 6px 12px;
-			margin: 6px 8px 0 0;
-			font-family: "Funnel Sans", sans-serif;
-			font-weight: bold;
-			background: #fff;
-		}
-
-		.project-grid {
-			display: grid;
-			grid-template-columns: repeat(2, minmax(0, 1fr));
-			gap: 12px;
-		}
-
-		@media (max-width: 700px) {
-			.project-grid {
-				grid-template-columns: 1fr;
-			}
-		}
-
-		.project-card {
-			border: 2px solid #000;
-			border-radius: 10px;
-			padding: 12px;
-			background: #fff;
-		}
-
-		.project-card h3 {
-			margin: 0 0 6px 0;
-			font-family: "Funnel Sans", sans-serif;
-		}
-
-		.project-card p {
-			margin: 0;
-			line-height: 1.4;
-		}
-
-		.project-card a {
-			font-size: 1rem;
-			font-family: "Funnel Sans", sans-serif;
-		}
-
-		.btn-row {
-			margin-top: 10px;
-			display: flex;
-			gap: 10px;
-			flex-wrap: wrap;
-		}
-
-		button {
-			border: 2px solid #000;
-			background: #fff;
-			border-radius: 10px;
-			padding: 10px 14px;
-			font-size: 1rem;
-			font-family: "Funnel Sans", sans-serif;
-			font-weight: bold;
-			cursor: pointer;
-		}
-
-		button:hover {
-			text-decoration: underline;
-			color: darkblue;
-		}
-	</style>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- script removed: site should work without JavaScript -->
 </head>
+
 <body>
-	<nav>
-		<div class="topnav">
-			<div class="link-holder"><a href="#top">Resume</a></div>
-			<div class="link-holder"><a href="#projects">Projects</a></div>
-			<div class="link-holder"><a href="#experience">Experience</a></div>
-			<div class="link-holder"><a href="#contact">Contact</a></div>
-		</div>
-	</nav>
+  <!-- Skip link for accessibility -->
+  <a class="skip-link" href="#main">Skip to content</a>
 
-	<div class="page" id="top">
-		<div class="hero">
-			<h1 id="nameOut">Your Name</h1>
-			<p class="sub" id="taglineOut">What you do • What you build • (short tagline)</p>
+  <header class="site-header" id="top">
+    <nav class="nav" aria-label="Primary">
+      <div class="nav__inner">
+        <a class="brand" href="#top" aria-label="Go to top">
+          <span class="brand__mark" aria-hidden="true"></span>
+          <span class="brand__text">Colin S</span>
+        </a>
 
-			<p class="small-text">Edit mode: type below, then click “Apply”. (No advanced storage—stays on this page.)</p>
+        <button class="nav__toggle" type="button" aria-label="Open menu" aria-expanded="false">
+          <span class="nav__toggle-lines" aria-hidden="true"></span>
+        </button>
 
-			<div class="row" style="margin-top: 14px;">
-				<div>
-					<textarea id="nameInput" placeholder="Name">Your Name</textarea>
-					<div class="small-text">Updates the header name.</div>
-				</div>
-				<div>
-					<textarea id="taglineInput" placeholder="Tagline">What you do • What you build • (short tagline)</textarea>
-					<div class="small-text">Updates the sub-header line.</div>
-				</div>
-			</div>
+        <div class="nav__links" role="navigation">
+          <a class="nav__link" href="#about">About</a>
+          <a class="nav__link" href="projects.html">Projects</a>
+          <a class="nav__link" href="bio.html">Bio</a>
+        </div>
+      </div>
 
-			<div class="btn-row">
-				<button type="button" onclick="applyHeader()">Apply</button>
-				<button type="button" onclick="loadSample()">Load Sample Text</button>
-				<button type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})">Back to top</button>
-			</div>
-		</div>
+      <div class="nav__progress" aria-hidden="true">
+        <div class="nav__progress-bar" id="navProgress"></div>
+      </div>
+    </nav>
+  </header>
 
-		<div class="section" id="about">
-			<h2>About</h2>
-			<textarea id="aboutInput" placeholder="Write a short intro about yourself...">Write a short intro about yourself here. Mention what you like building, what you’ve learned, and what you want to do next.</textarea>
-			<div class="small-text">Tip: keep it to 3–6 sentences.</div>
-		</div>
+  <main id="main">
+    <!-- HERO (parallax) -->
+    <section class="hero" aria-labelledby="heroTitle">
+      <div class="hero__bg" aria-hidden="true">
+        <div class="parallax-layer" id="parallax-hero-1" data-depth="0.12"></div>
+        <div class="parallax-layer" id="parallax-hero-2" data-depth="0.22"></div>
+        <div class="parallax-layer" id="parallax-hero-3" data-depth="0.35"></div>
+      </div>
 
-		<div class="section" id="projects">
-			<h2>Projects (show off what you made)</h2>
-			<div class="project-grid">
-				<div class="project-card">
-					<h3>Browser-in-Browser (Lumina-style)</h3>
-					<p>True “browser inside browser” using an iframe sandbox UI.</p>
-					<p><a href="browser-vm/lumina-iframe.html" target="_blank">Open</a></p>
-				</div>
+      <div class="container hero__inner">
+        <div class="hero__copy reveal">
+          <p class="kicker" id="heroKicker">Colin S</p>
+          <h1 class="hero__title" id="heroTitle">Portfolio</h1>
+          <p class="hero__subtitle" id="heroSubtitle">
+I’m Colin S — I build interactive games and front-end projects with Python, JavaScript, CSS, and HTML. When I’m not coding, I’m playing football or ultimate frisbee. Right now I’m focused on leveling up my programming and advanced math skills.
+          </p>
 
-				<div class="project-card">
-					<h3>Project #1 Name</h3>
-					<p>One sentence on what it does + why it’s cool.</p>
-					<p><a href="https://goldenmaca.github.io/" target="_blank">Live / Link</a></p>
-				</div>
-				<div class="project-card">
-					<h3>Project #2 Name</h3>
-					<p>One sentence on what it does + what you learned building it.</p>
-					<p><a href="https://goldenmaca.github.io/" target="_blank">Live / Link</a></p>
-				</div>
-				<div class="project-card">
-					<h3>Project #3 Name</h3>
-					<p>One sentence on what it does + any results (users, features, performance, etc.).</p>
-					<p><a href="https://goldenmaca.github.io/" target="_blank">Live / Link</a></p>
-				</div>
-				<div class="project-card">
-					<h3>Project #4 Name</h3>
-					<p>One sentence on what it does + technologies used.</p>
-					<p><a href="https://goldenmaca.github.io/" target="_blank">Live / Link</a></p>
-				</div>
-			</div>
+          <div class="hero__cta">
+          <a class="btn btn--primary" href="./projects.html" id="ctaPrimary">View Projects</a>
+            <a class="btn btn--ghost" href="./bio.html" id="ctaSecondary">Contact Me</a>
+          </div>
 
-			<div class="small-text" style="margin-top: 12px;">
-				(Replace these cards with your real project names/links.)
-			</div>
-		</div>
+          
+        </div>
 
-		<div class="section" id="experience">
-			<h2>Experience</h2>
-			<div class="row">
-				<div>
-					<textarea id="expInput" placeholder="Jobs / school / freelance / anything...">Write where you’ve worked or what you’ve done (including school projects). Mention responsibilities and achievements.</textarea>
-				</div>
-				<div>
-					<textarea id="skillsInput" placeholder="Skills list">HTML • CSS • JavaScript
-Git • APIs • Game projects • UI/UX basics</textarea>
-				</div>
-			</div>
-		</div>
+        
+      </div>
 
-		<div class="section" id="contact">
-			<h2>Contact</h2>
-			<div class="row">
-				<div>
-					<textarea id="contactInput" placeholder="Email / socials / links...">Email: your@email.com
-LinkedIn: https://...
-GitHub: https://...</textarea>
-				</div>
-				<div>
-					<p class="small-text">Quick tags:</p>
-					<div>
-						<span class="badge">HTML</span>
-						<span class="badge">CSS</span>
-						<span class="badge">JavaScript</span>
-						<span class="badge">Projects</span>
-					</div>
-					<div class="small-text">Replace badges with what you want to be known for.</div>
-				</div>
-			</div>
-		</div>
-	</div>
+      <div class="hero__scrollHint" aria-hidden="true">
+        <div class="mouse"></div>
+        <div class="scrollHint__text">Scroll</div>
+      </div>
+    </section>
 
-	<script>
-		function applyHeader() {
-			var name = document.getElementById('nameInput').value;
-			var tagline = document.getElementById('taglineInput').value;
-			document.getElementById('nameOut').textContent = name;
-			document.getElementById('taglineOut').textContent = tagline;
-		}
+    <!-- ABOUT -->
+    <section class="section" id="about" aria-labelledby="aboutTitle">
+      <div class="container">
+        <div class="section__head reveal">
+          <h2 class="section__title" id="aboutTitle">About</h2>
+          <p class="section__desc" id="aboutDesc">
+I love gaming and turning ideas into working demos — especially when I can learn something new in the process. I build with clarity, keep the UI clean, and try to ship features fast.
+          </p>
+        </div>
 
-		function loadSample() {
-			document.getElementById('nameInput').value = 'Your Name';
-			document.getElementById('taglineInput').value = 'Front-end builder • JS experiments • Interactive web projects';
-			document.getElementById('aboutInput').value = 'I build simple, interactive web projects and experiments using HTML, CSS, and JavaScript. I like turning ideas into working demos, improving UI details, and learning by shipping. I focus on clean code, readable layouts, and making things that feel fun to use.';
-			document.getElementById('expInput').value = '2022 - Present: Built multiple interactive web projects (games, UI prototypes, tools).\nFocused on: HTML/CSS layout, JavaScript logic, and iterating on features based on feedback.';
-			document.getElementById('skillsInput').value = 'HTML • CSS • JavaScript\nBasic DOM manipulation\nEvent handling\nGame/project experiments\nUI layout + styling';
-			document.getElementById('contactInput').value = 'Email: your@email.com\nGitHub: https://github.com/\nLinkedIn: https://linkedin.com/in/';
-			applyHeader();
-		}
-	</script>
+        <div class="split">
+          <div class="split__left reveal">
+            <div class="card">
+              <h3 class="card__title" id="aboutCardTitle">Short bio (editable)</h3>
+              <p class="card__text" id="aboutCardText">
+                I’m a developer who enjoys programming in Python and JavaScript, with a focus on interactive projects. I’ve built canvas-style games (including a zombie game), a recipe book project, and client websites. I also like tightening CSS/HTML layouts so everything feels responsive and smooth.
+              </p>
+
+              <div class="divider"></div>
+
+              <div class="list">
+                <div class="list__item">
+                  <span class="list__dot" aria-hidden="true"></span>
+                  <span id="aboutBullet1">What I'm great at: interactive games + front-end UI</span>
+                </div>
+                <div class="list__item">
+                  <span class="list__dot" aria-hidden="true"></span>
+                  <span id="aboutBullet2">What I enjoy building: canvas games, web tools, and websites</span>
+                </div>
+                <div class="list__item">
+                  <span class="list__dot" aria-hidden="true"></span>
+                  <span id="aboutBullet3">What I'm learning: deeper programming + advanced math</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="split__right reveal">
+            <div class="image-stack">
+              <div class="image-stack__frame">
+                <img
+                  class="image-stack__img image-stack__img--1"
+                  id="img-about-1"
+                  src="nature.png"
+                  alt="Nature"
+                  loading="lazy"
+                />
+
+              </div>
+
+
+              <div class="image-stack__frame image-stack__frame--floating">
+                <img
+                  class="image-stack__img image-stack__img--2"
+                  id="img-about-2"
+                  src="jungle.png"
+                  alt="Jungle"
+                  loading="lazy"
+                />
+
+              </div>
+
+
+              <div class="image-stack__note">
+                <p class="note__title" id="aboutNoteTitle">Fun fact</p>
+                <p class="note__text" id="aboutNoteText">
+                  I got into a train crash two summers ago.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    
+
+    <!-- PROJECTS -->
+    <section class="section" id="projects" aria-labelledby="projectsTitle">
+      <div class="container">
+        <div class="section__head reveal">
+          <h2 class="section__title" id="projectsTitle">Projects I’ve built</h2>
+          <p class="section__desc" id="projectsDesc">
+            A good project page shows problem → what you built → results. Fill in the placeholders.
+          </p>
+        </div>
+
+        <div class="projects">
+          <article class="project reveal">
+            <div class="project__media">
+              <img
+                class="project__img"
+                id="project-image-1"
+                src="zombie-game.png"
+                alt="Zombie Game"
+                loading="lazy"
+              />
+
+            </div>
+
+            <div class="project__body">
+              <h3 class="project__title" id="project-title-1">Zombie Game (Canvas JS)</h3>
+              <p class="project__summary" id="project-summary-1">
+            A zombie game built with Canvas-style rendering and real-time game logic. I focused on smooth controls, collisions, and a gameplay loop that feels responsive.
+              </p>
+
+              <div class="tags" id="project-tags-1">
+                <span class="tag">Canvas</span>
+                <span class="tag">JavaScript</span>
+                <span class="tag">Game Loop</span>
+                <span class="tag">Collisions</span>
+              </div>
+
+              <div class="project__links">
+                <a class="link" href="https://gracehoppercenter.github.io/ict/s26/courses/itd210/projects/game/mahnamejoks/" id="project-link-live-1" target="_blank" rel="noopener noreferrer">Live</a>
+                <a class="link" href="#" id="project-link-repo-1">Source</a>
+              </div>
+
+              <details class="project__details">
+                <summary class="project__summaryLink" id="project-details-sum-1">What I did (click)</summary>
+                <p class="project__detailsText" id="project-details-1">
+                  I did the programming for the enemies, and the ui design for the project. I worked with a team (Jacques K, Ethan T, and Angus W) to create this game for our js canvas project.
+                </p>
+              </details>
+            </div>
+          </article>
+
+          <article class="project reveal">
+            <div class="project__media">
+              <img
+                class="project__img"
+                id="project-image-2"
+                src="recipe-project.png"
+                alt="Recipe Book"
+                loading="lazy"
+              />
+
+            </div>
+
+            <div class="project__body">
+              <h3 class="project__title" id="project-title-2">Recipe Book</h3>
+              <p class="project__summary" id="project-summary-2">
+                A structured recipe book project where the goal is clean browsing and easy organization. I worked on layout, readability, and making the UI feel lightweight.
+              </p>
+
+              <div class="tags" id="project-tags-2">
+                <span class="tag">HTML</span>
+                <span class="tag">CSS</span>
+                <span class="tag">UI/UX</span>
+              </div>
+
+              <div class="project__links">
+                <a class="link" href="../projects/recipes/" id="project-link-live-2" target="_blank" rel="noopener noreferrer">Live</a>
+                <a class="link" href="#" id="project-link-repo-2">Source</a>
+              </div>
+
+              <details class="project__details">
+                <summary class="project__summaryLink" id="project-details-sum-2">What I did (click)</summary>
+                <p class="project__detailsText" id="project-details-2">
+                  I made this website when I was first learning HTML and CSS. I wanted to create a recipe book that was easy to navigate and visually appealing. I focused on creating a clean layout and making sure the content was organized in a way that made it easy for users to find what they were looking for.
+                </p>
+              </details>
+            </div>
+          </article>
+
+          <article class="project reveal">
+            <div class="project__media">
+              <img
+                class="project__img"
+                id="project-image-3"
+                src="client-project.png"
+                alt="Client Website"
+                loading="lazy"
+              />
+
+            </div>
+
+            <div class="project__body">
+              <h3 class="project__title" id="project-title-3">Client Website</h3>
+              <p class="project__summary" id="project-summary-3">
+                A website built for a client under <span style="opacity:0.92">projects/client</span>. I focused on layout, responsiveness, and a polished front-end experience.
+              </p>
+
+              <div class="tags" id="project-tags-3">
+                <span class="tag">HTML</span>
+                <span class="tag">CSS</span>
+                <span class="tag">JavaScript</span>
+                <span class="tag">Responsive</span>
+              </div>
+
+              <div class="project__links">
+                <a class="link" href="../projects/client/" id="project-link-live-3" target="_blank" rel="noopener noreferrer">Live</a>
+                <a class="link" href="#" id="project-link-repo-3">Source</a>
+              </div>
+
+              <details class="project__details">
+                <summary class="project__summaryLink" id="project-details-sum-3">What I did (click)</summary>
+                <p class="project__detailsText" id="project-details-3">
+                  I made a website for a client for a school project. I worked on the front-end design and layout, ensuring that the website was responsive and visually appealing. I also implemented some JavaScript to enhance the user experience and make the site more interactive. I tested out some new CSS techniques to create a polished and modern look for the site.
+                </p>
+              </details>
+            </div>
+          </article>
+
+          <!-- Add more projects by copying a <article class="project"> block -->
+        </div>
+      </div>
+    </section>
+
+    
+
+    
+
+    <footer class="footer">
+      <div class="container footer__inner">
+        <p class="footer__text" id="footerText">© <span id="year"></span> Your Name. Built with HTML • CSS • JavaScript.</p>
+        <div class="footer__mini">
+          <a class="link" href="#top">Back to top</a>
+          <span class="sep" aria-hidden="true">•</span>
+          <a class="link" href="#projects">Projects</a>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Template: place images into background via CSS later -->
 </body>
 </html>
 

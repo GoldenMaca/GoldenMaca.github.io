@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0b0f1a" />
+
+  <title>Projects — Colin S</title>
+  <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
+
+  <link rel="stylesheet" href="styles.css" />
+  <script src="script.js" defer></script>
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header" id="top">
+    <nav class="nav" aria-label="Primary">
+      <div class="nav__inner">
+        <a class="brand" href="index.html" aria-label="Go to top">
+          <span class="brand__mark" aria-hidden="true"></span>
+          <span class="brand__text">Colin S</span>
+        </a>
+
+        <button class="nav__toggle" type="button" aria-label="Open menu" aria-expanded="false">
+          <span class="nav__toggle-lines" aria-hidden="true"></span>
+        </button>
+
+        <div class="nav__links" role="navigation">
+          <a class="nav__link" href="index.html#about">About</a>
+          <a class="nav__link" href="projects.html">Projects</a>
+          <a class="nav__link" href="bio.html">Bio</a>
+        </div>
+      </div>
+
+      <div class="nav__progress" aria-hidden="true">
+        <div class="nav__progress-bar" id="navProgress"></div>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="section" aria-labelledby="projectsPageTitle">
+      <div class="container">
+        <div class="section__head reveal">
+          <h1 class="section__title" id="projectsPageTitle">Projects</h1>
+          <p class="section__desc">
+            Each project page below includes: the goal, what I built, a mini code example, my process, and photos.
+          </p>
+        </div>
+
+        <div class="projects">
+          <!-- Project 1 -->
+          <article class="project reveal">
+            <div class="project__media">
+              <img
+                class="project__img"
+                id="project-image-1"
+                src="zombie-game.png"
+                alt="Zombie Game"
+                loading="lazy"
+              />
+            </div>
+
+            <div class="project__body">
+              <h3 class="project__title">Zombie Game (Canvas JS)</h3>
+              <p class="project__summary">
+                A browser-based zombie survival game using a canvas-style render loop. I focused on smooth controls,
+                collisions, and a responsive gameplay loop.
+              </p>
+
+              <div class="tags">
+                <span class="tag">Canvas</span>
+                <span class="tag">JavaScript</span>
+                <span class="tag">Game Loop</span>
+                <span class="tag">Collisions</span>
+              </div>
+
+              <h4 style="margin:14px 0 6px;font-size:1.02rem;">Code example</h4>
+              <pre class="project__detailsText" style="white-space:pre-wrap; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.10); padding:12px; border-radius:14px;">
+function step(dt) {
+  player.update(dt);
+  zombies.forEach(z => z.update(dt));
+  handleCollisions(player, zombies);
+  render();
+}
+requestAnimationFrame((t) => step(t - lastT));
+              </pre>
+
+              <h4 style="margin:14px 0 6px;font-size:1.02rem;">Process</h4>
+              <ul class="bullets">
+                <li>Sketch gameplay loop + entity responsibilities</li>
+                <li>Implement movement + hitboxes</li>
+                <li>Tune collision feel (speed, push-back, response)</li>
+                <li>Polish render and UI feedback</li>
+              </ul>
+
+              <div class="project__links" style="flex-wrap:wrap;">
+                <a class="link" href="https://gracehoppercenter.github.io/ict/s26/courses/itd210/projects/game/mahnamejoks/" target="_blank" rel="noopener noreferrer">Live</a>
+                <a class="link" href="#" onclick="event.preventDefault();">Source</a>
+              </div>
+
+              <details class="project__details" open>
+                <summary class="project__summaryLink">Photos (click)</summary>
+                <div style="margin-top:10px; display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:12px;">
+                  <img src="zombie-game.png" alt="Zombie gameplay photo" style="width:100%; border-radius:14px; border:1px solid rgba(255,255,255,0.14);" loading="lazy" />
+                  <img src="zombie-game.png" alt="Zombie UI photo" style="width:100%; border-radius:14px; border:1px solid rgba(255,255,255,0.14);" loading="lazy" />
+                </div>
+              </details>
+            </div>
+          </article>
+
+          <!-- Project 2 -->
+          <article class="project reveal">
+            <div class="project__media">
+              <img
+                class="project__img"
+                id="project-image-2"
+                src="recipe-project.png"
+                alt="Recipe Book"
+                loading="lazy"
+              />
+            </div>
+
+            <div class="project__body">
+              <h3 class="project__title">Recipe Book</h3>
+              <p class="project__summary">
+                A structured recipe browsing interface. I prioritized clean layouts, readability, and lightweight UI.
+              </p>
+
+              <div class="tags">
+                <span class="tag">HTML</span>
+                <span class="tag">CSS</span>
+                <span class="tag">UI/UX</span>
+              </div>
+
+              <h4 style="margin:14px 0 6px;font-size:1.02rem;">Code example</h4>
+              <pre class="project__detailsText" style="white-space:pre-wrap; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.10); padding:12px; border-radius:14px;">
+.card {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+              </pre>
+
+              <h4 style="margin:14px 0 6px;font-size:1.02rem;">Process</h4>
+              <ul class="bullets">
+                <li>Define sections (search, categories, recipe view)</li>
+                <li>Build responsive grid + typography scale</li>
+                <li>Optimize spacing for scanning</li>
+                <li>Iterate on UI polish</li>
+              </ul>
+
+              <div class="project__links" style="flex-wrap:wrap;">
+                <a class="link" href="../projects/recipes/" target="_blank" rel="noopener noreferrer">Live</a>
+                <a class="link" href="#" onclick="event.preventDefault();">Source</a>
+              </div>
+
+              <details class="project__details" open>
+                <summary class="project__summaryLink">Photos (click)</summary>
+                <div style="margin-top:10px; display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:12px;">
+                  <img src="recipe-project.png" alt="Recipe list photo" style="width:100%; border-radius:14px; border:1px solid rgba(255,255,255,0.14);" loading="lazy" />
+                  <img src="recipe-project.png" alt="Recipe details photo" style="width:100%; border-radius:14px; border:1px solid rgba(255,255,255,0.14);" loading="lazy" />
+                </div>
+              </details>
+            </div>
+          </article>
+
+          <!-- Project 3 -->
+          <article class="project reveal">
+            <div class="project__media">
+              <img
+                class="project__img"
+                id="project-image-3"
+                src="client-project.png"
+                alt="Client Website"
+                loading="lazy"
+              />
+            </div>
+
+            <div class="project__body">
+              <h3 class="project__title">Client Website</h3>
+              <p class="project__summary">
+                A responsive front-end layout focused on spacing, hierarchy, and interaction polish.
+              </p>
+
+              <div class="tags">
+                <span class="tag">HTML</span>
+                <span class="tag">CSS</span>
+                <span class="tag">JavaScript</span>
+                <span class="tag">Responsive</span>
+              </div>
+
+              <h4 style="margin:14px 0 6px;font-size:1.02rem;">Code example</h4>
+              <pre class="project__detailsText" style="white-space:pre-wrap; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.10); padding:12px; border-radius:14px;">
+document.querySelectorAll('a').forEach(a => {
+  a.addEventListener('click', () => {
+    // UX enhancements go here
+  });
+});
+              </pre>
+
+              <h4 style="margin:14px 0 6px;font-size:1.02rem;">Process</h4>
+              <ul class="bullets">
+                <li>Layout from wireframes + responsive breakpoints</li>
+                <li>Typography and spacing pass</li>
+                <li>Small JS enhancements</li>
+                <li>Cross-device testing</li>
+              </ul>
+
+              <div class="project__links" style="flex-wrap:wrap;">
+                <a class="link" href="../projects/client/" target="_blank" rel="noopener noreferrer">Live</a>
+                <a class="link" href="#" onclick="event.preventDefault();">Source</a>
+              </div>
+
+              <details class="project__details" open>
+                <summary class="project__summaryLink">Photos (click)</summary>
+                <div style="margin-top:10px; display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:12px;">
+                  <img src="client-project.png" alt="Client landing photo" style="width:100%; border-radius:14px; border:1px solid rgba(255,255,255,0.14);" loading="lazy" />
+                  <img src="client-project.png" alt="Client layout photo" style="width:100%; border-radius:14px; border:1px solid rgba(255,255,255,0.14);" loading="lazy" />
+                </div>
+              </details>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container footer__inner">
+        <p class="footer__text" id="footerText">© <span id="year"></span> Your Name. Built with HTML • CSS • JavaScript.</p>
+        <div class="footer__mini">
+          <a class="link" href="index.html#top">Back to top</a>
+          <span class="sep" aria-hidden="true">•</span>
+          <a class="link" href="index.html#projects">Main projects</a>
+        </div>
+      </div>
+    </footer>
+  </main>
+</body>
+</html>
+
